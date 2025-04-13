@@ -1,0 +1,14 @@
+*/TriCore Debug (TASKING)/*
+language.settings.xml
+makefile
+.metadata/*
+*.prefs
+*.o
+*.elf
+*.list
+*.map
+*.d
+*.su
+*/Debug/*
+*.mk
+*/makefile
