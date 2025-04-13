@@ -1,6 +1,8 @@
 #include "Camera.h"
+#include "EI2C.h"
 
 // the three image buffers to catch every single frame
+// each only writable by
 static uint8 g_Image1[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 static uint8 g_Image2[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 static uint8 g_Image3[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
@@ -9,7 +11,7 @@ uint8 (*writing_img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = &g_Image1;		// the
 uint8 (*occupied_img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = 0;				// the image that is currently being processed by CV
 uint8 (*latest_img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = 0;					// the last image received that hasn't been read yet
 
-uint8* Camera_GetLatest() {
+void* Camera_GetLatest(void) {
 	// if the previous buffer is not released, do not give it another one
 	if (occupied_img_ptr != 0)
 		return 0;
@@ -19,7 +21,7 @@ uint8* Camera_GetLatest() {
 	return occupied_img_ptr;
 }
 
-uint8* Camera_Release(uint8 (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
+void* Camera_Release(uint8 (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
 	// if it attempts to release the correct pointer, then proceed
 	if (img_ptr == occupied_img_ptr) {
 		occupied_img_ptr = 0;
@@ -29,8 +31,8 @@ uint8* Camera_Release(uint8 (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
 	return occupied_img_ptr;
 }
 
-uint8* _Camera_Image_Received(void) {
-	uint8 *temp_ptr = writing_img_ptr;
+void* _Camera_Image_Received(void) {
+	uint8 (*temp_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = writing_img_ptr;
 	// if there is a buffer occupied, then there is only one buffer available
 	if (occupied_img_ptr != 0) {
 		if (occupied_img_ptr == &g_Image1) {
@@ -55,8 +57,6 @@ uint8* _Camera_Image_Received(void) {
 				writing_img_ptr = &g_Image3;
 			else if (writing_img_ptr == &g_Image3)
 				writing_img_ptr = &g_Image1;
-			else
-				;		// should not happen
 		}
 	}
 	// assign the latest image pointer
