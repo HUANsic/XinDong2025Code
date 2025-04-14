@@ -3,7 +3,6 @@
 
 #include <Ifx_Types.h>
 #include <IfxPort.h>
-#include "_PinMap/IfxGtm_PinMap.h"
 
 #define		__weak__				__attribute__((weak))
 

@@ -29,6 +29,9 @@
 #include "IfxScuWdt.h"
 
 #include "XinDongLib/XinDong_Config.h"
+#include "XinDongLib/Intercore.h"
+#include "XinDongLib/Time.h"
+#include "XinDongLib/IO.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
@@ -53,8 +56,12 @@ void core0_main(void) {
 	// then set one of the LED and wait until it is connected
 
 	// allow initialization of other cores
+	Intercore_AllowInitialize();
 	// initialize other modules
 	// wait for other cores to finish initialization
+	Intercore_CPU0_Ready();
+	while (Intercore_ReadyToGo() == 0)
+		;
 
 	while (1) {
 		// some code to indicate that the core is not dead

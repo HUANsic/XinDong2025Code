@@ -28,6 +28,16 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "XinDongLib/Intercore.h"
+#include "XinDongLib/Bluetooth.h"
+#include "XinDongLib/Display.h"
+#include "XinDongLib/Encoder.h"
+#include "XinDongLib/IMU.h"
+#include "XinDongLib/Movements.h"
+#include "XinDongLib/Serial.h"
+#include "XinDongLib/Ultrasonic.h"
+#include "XinDongLib/Time.h"
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core2_main(void) {
@@ -43,11 +53,17 @@ void core2_main(void) {
 	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
 	// wait for signal to begin initialization
+	while (Intercore_InitAllowed() == 0)
+		;
 	// initialize any module needed
+
 	// wait for other cores to finish initialization
+	Intercore_CPU2_Ready();
+	while (Intercore_ReadyToGo() == 0)
+		;
 
 	while (1) {
-
+		// some code to indicate that the core is not dead
 	}
 }
 
