@@ -3,6 +3,8 @@
 
 IfxAsclin_Asc uartHandle_serial;
 
+//	reference code: TC264_XinDong_Demo_v51/Src/UART.c
+
 void Serial_Tx_ISR(void) {
 	IfxAsclin_Asc_isrTransmit(&uartHandle_serial);
 }

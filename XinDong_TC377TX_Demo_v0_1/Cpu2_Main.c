@@ -30,20 +30,25 @@
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
-void core2_main(void)
-{
-    IfxCpu_enableInterrupts();
-    
-    /* !!WATCHDOG2 IS DISABLED HERE!!
-     * Enable the watchdog and service it periodically if it is required
-     */
-    IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
-    
-    /* Wait for CPU sync event */
-    IfxCpu_emitEvent(&g_cpuSyncEvent);
-    IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
-    
-    while(1)
-    {
-    }
+void core2_main(void) {
+	IfxCpu_enableInterrupts();
+
+	/* !!WATCHDOG2 IS DISABLED HERE!!
+	 * Enable the watchdog and service it periodically if it is required
+	 */
+	IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
+
+	/* Wait for CPU sync event */
+	IfxCpu_emitEvent(&g_cpuSyncEvent);
+	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
+
+	// wait for signal to begin initialization
+	// initialize any module needed
+	// wait for other cores to finish initialization
+
+	while (1) {
+
+	}
 }
+
+// list out all ISR for CPU2

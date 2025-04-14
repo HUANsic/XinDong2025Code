@@ -3,6 +3,8 @@
 
 IfxAsclin_Asc uartHandle_ble;
 
+//	reference code: TC264_XinDong_Demo_v51/Src/UART.c
+
 void BLE_Tx_ISR(void) {
 	IfxAsclin_Asc_isrTransmit(&uartHandle_ble);
 }
@@ -20,5 +22,5 @@ void BLE_Err_ISR(void) {
 }
 
 __weak__ void BLE_Received(uint8 buff) {
-	(void) buff;
+	(void) buff;		// defined in USER code
 }

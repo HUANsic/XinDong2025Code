@@ -28,26 +28,37 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
-#include "XinDongLib/Time.h"
+#include "XinDongLib/XinDong_Config.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
-void core0_main(void)
-{
-    IfxCpu_enableInterrupts();
-    
-    /* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
-     * Enable the watchdogs and service them periodically if it is required
-     */
-    IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
-    IfxScuWdt_disableSafetyWatchdog(IfxScuWdt_getSafetyWatchdogPassword());
-    
-    /* Wait for CPU sync event */
-    IfxCpu_emitEvent(&g_cpuSyncEvent);
-    IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
-    
-    
-    while(1)
-    {
-    }
+void core0_main(void) {
+	IfxCpu_enableInterrupts();
+
+	/* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
+	 * Enable the watchdogs and service them periodically if it is required
+	 */
+	IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
+	IfxScuWdt_disableSafetyWatchdog(IfxScuWdt_getSafetyWatchdogPassword());
+
+	/* Wait for CPU sync event */
+	IfxCpu_emitEvent(&g_cpuSyncEvent);
+	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
+
+	// initialize timer
+	Time_Start();
+	// initialize LEDs and DIP switches, and the input for detecting battery balancing connector
+
+	// if battery balancing connector not connected
+	// then set one of the LED and wait until it is connected
+
+	// allow initialization of other cores
+	// initialize other modules
+	// wait for other cores to finish initialization
+
+	while (1) {
+		// some code to indicate that the core is not dead
+	}
 }
+
+// list out all ISR for CPU0

@@ -43,7 +43,7 @@ void Time_Start(void) {
 	tomConfig.base.frequency = 1000;		// by default
 	tomConfig.base.minResolution = 0.00001;
 	tomConfig.base.isrPriority = TIME_PERIODIC_PRIORITY;
-	tomConfig.base.isrProvider = IfxSrc_Tos_cpu0;
+	tomConfig.base.isrProvider = TIME_PERIODIC_TOS;
 	tomConfig.tom = IfxGtm_Tom_1;
 	tomConfig.timerChannel = IfxGtm_Tom_Ch_0;
 	tomConfig.initPins = FALSE;		// no output please (does nothing)

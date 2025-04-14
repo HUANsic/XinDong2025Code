@@ -6,6 +6,8 @@
 
 IfxGtm_Tim_In reedDriver;
 
+//	reference code: TC264_XinDong_Demo_v51/Src/Utilities.c
+
 void Reed_Init(void) {
 	/*
 	 * 	Here I'm using TIM because:
@@ -15,13 +17,13 @@ void Reed_Init(void) {
 	IfxGtm_Tim_In_Config config;
 
 	IfxGtm_Tim_In_initConfig(&config, &MODULE_GTM);
-	config.timIndex = IfxGtm_TIM0_2_P15_8_IN.tim;
-	config.channelIndex = IfxGtm_TIM0_2_P15_8_IN.channel;
+	config.timIndex = REED_TIM_PIN.tim;
+	config.channelIndex = REED_TIM_PIN.channel;
 	config.isrProvider = IfxSrc_Tos_cpu0;
 	config.isrPriority = IO_REED_PRIORITY;
 	config.capture.irqOnNewVal = TRUE;		// interrupt on falling edge!!!
 	config.capture.activeEdge = IfxGtm_Tim_In_ActiveEdge_falling;
-	config.filter.inputPin = &IfxGtm_TIM0_2_P15_8_IN;
+	config.filter.inputPin = &REED_TIM_PIN;
 	config.filter.risingEdgeMode = IfxGtm_Tim_In_ConfigFilterMode_individualDeglitchTimeHold;
 	config.filter.fallingEdgeMode = IfxGtm_Tim_In_ConfigFilterMode_individualDeglitchTimeHold;
 	config.filter.risingEdgeFilterTime = 0.003;		// de-glitch for 3ms
