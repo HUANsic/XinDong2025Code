@@ -200,6 +200,9 @@
 #define IFXCFG_P33_6_IO_CONFIG                  { &IfxPort_P33_6, IfxPort_Mode_inputNoPullDevice, IfxPort_PadDriver_cmosAutomotiveSpeed1 }
 #define IFXCFG_P33_7_IO_CONFIG                  { &IfxPort_P33_7, IfxPort_Mode_inputNoPullDevice, IfxPort_PadDriver_cmosAutomotiveSpeed1 }
 
+// gtm0_tim0_ch3
+#define IFXCFG_P21_5_IO_CONFIG                  { &IfxPort_P21_5, IfxPort_Mode_inputNoPullDevice, IfxPort_PadDriver_cmosAutomotiveSpeed1 }
+
 // i2c0
 #define IFXCFG_P13_1_IO_CONFIG                  { &IfxPort_P13_1, IfxPort_Mode_outputPushPullAlt6, IfxPort_PadDriver_cmosAutomotiveSpeed4 }
 #define IFXCFG_P13_1_IO_CONFIG_IN               { &IfxPort_P13_1, IfxPort_Mode_inputPullUp, IfxPort_PadDriver_cmosAutomotiveSpeed4 }
@@ -233,6 +236,8 @@ extern void eruin5_init_pins(void);
 extern void eruin6_init_pins(void);
 
 extern void gptone0_init_pins(void);
+
+extern void gtm0_tim0_ch3_init_pins(void);
 
 extern void i2c0_init_pins(void);
 

@@ -1,10 +1,6 @@
 #include "Time.h"
 #include "Interrupts.h"
-#include "IfxPort.h"
 #include "IfxGtm_Tom_Timer.h"
-#include "IfxGtm_Tim_In.h"
-#include "IfxCpu_Irq.h"
-#include "IfxScuEru.h"
 
 uint32 elapsed_ms;
 
@@ -80,27 +76,11 @@ void Time_Periodic_ISR(void) {
 
 	// run user ISR
 	if (elapsed_ms % 10 == 0)
-		Time_Tick_10ms();
+		SWINT_Trigger_100ms();
 	if (elapsed_ms % PID_PERIOD_MS == 0)
-		Time_Tick_PID();
+		SWINT_Trigger_pid();
 	if (elapsed_ms % 100 == 0)
-		Time_Tick_100ms();
+		SWINT_Trigger_100ms();
 	if (elapsed_ms % 1000 == 0)
-		Time_Tick_1s();
-}
-
-__weak__ void Time_Tick_10ms(void) {
-	;
-}
-
-__weak__ void Time_Tick_PID(void) {
-	;
-}
-
-__weak__ void Time_Tick_100ms(void) {
-	;
-}
-
-__weak__ void Time_Tick_1s(void) {
-	;
+		SWINT_Trigger_1s();
 }

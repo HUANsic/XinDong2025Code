@@ -185,6 +185,25 @@ extern void gptone0_init_pins(void)
 }
 
 
+/* GTM0_TIM0_CH3 pin configuration */
+
+static const IfxPort_Io_ConfigPin gtm0_tim0_ch3_pin_table[] = 
+{
+    IFXCFG_P21_5_IO_CONFIG
+};
+
+static const IfxPort_Io_Config gtm0_tim0_ch3_io_config_table = 
+{
+    sizeof(gtm0_tim0_ch3_pin_table)/sizeof(IfxPort_Io_ConfigPin),
+    (IfxPort_Io_ConfigPin*)gtm0_tim0_ch3_pin_table
+};
+
+extern void gtm0_tim0_ch3_init_pins(void)
+{
+    IfxPort_Io_initModule(&gtm0_tim0_ch3_io_config_table);
+}
+
+
 /* I2C0 pin configuration */
 
 static const IfxPort_Io_ConfigPin i2c0_pin_table[] = 

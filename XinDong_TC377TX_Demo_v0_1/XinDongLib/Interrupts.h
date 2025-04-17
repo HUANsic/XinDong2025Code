@@ -38,6 +38,15 @@
 #define     CAMERA_DMA_ERR_PRIORITY			13
 #define		CAMERA_NEW_IMAGE_PRIORITY		24			// didn't find example code for this, so not used yet
 
+#define		SWINT_1S_PERIODIC_PRIORITY		0
+#define		SWINT_100MS_PERIODIC_PRIORITY	0
+#define		SWINT_10MS_PERIODIC_PRIORITY	0
+#define		SWINT_PID_PERIODIC_PRIORITY		0
+#define		SWINT_USER0_PRIORITY			0
+#define		SWINT_USER1_PRIORITY			0
+#define		SWINT_USER2_PRIORITY			0
+#define		SWINT_USER3_PRIORITY			0
+
 // Interrupt Type Of Service
 #define     ENCODER_OVERFLOW_TOS			IfxSrc_Tos_cpu0
 #define     ULTRASONIC_PULSEIN_TOS			IfxSrc_Tos_cpu0
@@ -60,6 +69,15 @@
 #define     CAMERA_DMA_ERR_TOS				IfxSrc_Tos_cpu1
 #define		CAMERA_NEW_IMAGE_TOS			IfxSrc_Tos_cpu1			// didn't find example code for this, so not used yet
 
+#define		SWINT_1S_PERIODIC_TOS			IfxSrc_Tos_cpu2
+#define		SWINT_100MS_PERIODIC_TOS		IfxSrc_Tos_cpu2
+#define		SWINT_10MS_PERIODIC_TOS		IfxSrc_Tos_cpu2
+#define		SWINT_PID_PERIODIC_TOS			IfxSrc_Tos_cpu2
+#define		SWINT_USER0_TOS					IfxSrc_Tos_cpu2
+#define		SWINT_USER1_TOS					IfxSrc_Tos_cpu2
+#define		SWINT_USER2_TOS					IfxSrc_Tos_cpu2
+#define		SWINT_USER3_TOS					IfxSrc_Tos_cpu2
+
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
@@ -75,7 +93,23 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------Function Prototypes------------------------------------------------*/
 /*********************************************************************************************************************/
-void Reed_Init(void);
+void Interrupts_Init(void);
+
+void SWINT_Trigger_10ms(void);
+
+void SWINT_Trigger_100ms(void);
+
+void SWINT_Trigger_1s(void);
+
+void SWINT_Trigger_pid(void);
+
+void SWINT_Trigger_user0(void);
+
+void SWINT_Trigger_user1(void);
+
+void SWINT_Trigger_user2(void);
+
+void SWINT_Trigger_user3(void);
 
 // define functions below in YOUR code
 void Encoder_Overflow_ISR(void);
@@ -104,5 +138,21 @@ void IO_Vsync_ISR(void);
 
 void IO_Hsync_ISR(void);
 
+// define below functions in main
+void Periodic_1s_ISR(void);
+
+void Periodic_100ms_ISR(void);
+
+void Periodic_10ms_ISR(void);
+
+void Periodic_PID_ISR(void);
+
+void SWINT_User0_ISR(void);
+
+void SWINT_User1_ISR(void);
+
+void SWINT_User2_ISR(void);
+
+void SWINT_User3_ISR(void);
 
 #endif /* XINDONGLIB_INTERRUPTS_H_ */

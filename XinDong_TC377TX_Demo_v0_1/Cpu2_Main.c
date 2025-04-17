@@ -28,6 +28,7 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "XinDongLib/Interrupts.h"
 #include "XinDongLib/Intercore.h"
 #include "XinDongLib/Bluetooth.h"
 #include "XinDongLib/Display.h"
@@ -68,3 +69,34 @@ void core2_main(void) {
 }
 
 // list out all ISR for CPU2
+void Periodic_1s_ISR(void){
+	;
+}
+
+void Periodic_100ms_ISR(void){
+	;
+}
+
+void Periodic_10ms_ISR(void){
+	;
+}
+
+void Periodic_PID_ISR(void){
+	;
+}
+
+void SWINT_User0_ISR(void){
+	;
+}
+
+void SWINT_User1_ISR(void){
+	;
+}
+
+void SWINT_User2_ISR(void){
+	;
+}
+
+void SWINT_User3_ISR(void){
+	;
+}
