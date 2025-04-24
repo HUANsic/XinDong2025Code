@@ -163,3 +163,7 @@
 #define		CAM_RESET_PIN			3
 
 #endif		// XINDONGLIB_XINDONG_CONFIG_H_
+
+/*
+ * So the total RAM space is about 200k bytes, each 120x188 images takes up 22.56k bytes, for now we use three buffers, which takes 67.68k bytes
+ */

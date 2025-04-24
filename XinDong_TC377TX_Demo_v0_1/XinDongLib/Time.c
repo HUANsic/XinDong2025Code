@@ -76,7 +76,7 @@ void Time_Periodic_ISR(void) {
 
 	// run user ISR
 	if (elapsed_ms % 10 == 0)
-		SWINT_Trigger_100ms();
+		SWINT_Trigger_10ms();
 	if (elapsed_ms % PID_PERIOD_MS == 0)
 		SWINT_Trigger_pid();
 	if (elapsed_ms % 100 == 0)

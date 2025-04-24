@@ -9,6 +9,8 @@ makefile
 *.map
 *.d
 *.su
-*/Debug/*
 *.mk
 */makefile
+# ignore all folders/files starting with test and temp
+test*
+temp*
