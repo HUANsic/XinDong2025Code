@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "ifxport.h": "c"
+        "ifxport.h": "c",
+        "xindong_config.h": "c",
+        "ifx_types.h": "c",
+        "oled_data.h": "c",
+        "ei2c.h": "c",
+        "platform_types.h": "c"
     }
 }
