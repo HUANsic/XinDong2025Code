@@ -62,12 +62,23 @@ void Time_Delay(uint32 duration) {
 
 void Time_Delay_us(uint32 duration) {
 	uint32 i;
-	uint8 j;
-	// j at outside to reduce error, though compensated by "duration - 1"
-	for (j = 0; j < 60; j++)	// 60 for loops is 1 us (40 * 0.025)
-		for (i = 1; i < duration; i++)
-			// avoid overflow bug
-			__asm("NOP");
+	/*
+	 *           Time_Delay_us:
+8000227a:   mov  d15,0x01
+8000227c:   j  0x80002282
+67        		__asm("NOP");
+8000227e:   nop
+65        	for (i = 1; i < duration; i++)
+80002280:   add  d15,0x01
+80002282:   jlt.u  d15,d4,"Time.c"::67 (0x8000227E)
+68        }
+80002286:   ret
+	 */
+	// ~300 / 4, but based on measured result, i starts at 5 to compensate for function call time
+	for (i = 5; i < duration * 75; i++){
+		// avoid overflow bug
+		__asm("NOP");
+	}
 }
 
 void Time_Periodic_ISR(void) {
