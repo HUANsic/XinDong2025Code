@@ -27,56 +27,133 @@
 #include "Ifx_Types.h"
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
+#include "IfxDma_Dma.h"
+#include "IfxDma.h"
 
 #include "XinDongLib/XinDong_Config.h"
 #include "XinDongLib/Intercore.h"
 #include "XinDongLib/Time.h"
 #include "XinDongLib/IO.h"
+#include "XinDongLib/Camera.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 void core0_main(void) {
-	IfxCpu_enableInterrupts();
+    IfxCpu_enableInterrupts();
 
-	/* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
-	 * Enable the watchdogs and service them periodically if it is required
-	 */
-	IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
-	IfxScuWdt_disableSafetyWatchdog(IfxScuWdt_getSafetyWatchdogPassword());
+    /* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
+     * Enable the watchdogs and service them periodically if it is required
+     */
+    IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
+    IfxScuWdt_disableSafetyWatchdog(IfxScuWdt_getSafetyWatchdogPassword());
 
-	/* Wait for CPU sync event */
-	IfxCpu_emitEvent(&g_cpuSyncEvent);
-	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
+    /* Wait for CPU sync event */
+    IfxCpu_emitEvent(&g_cpuSyncEvent);
+    IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
-	// initialize timer
-	Time_Start();
-	// initialize LEDs and DIP switches, and the input for detecting battery balancing connector
+    // initialize timer
+    Time_Start();
+    // initialize LEDs and DIP switches, and the input for detecting battery balancing connector
 
-	// if battery balancing connector not connected
-	// then set one of the LED and wait until it is connected
+    // if battery balancing connector not connected
+    // then set one of the LED and wait until it is connected
 
-	// allow initialization of other cores
-	Intercore_AllowInitialize();
-	// initialize other modules
+    // allow initialization of other cores
+    Intercore_AllowInitialize();
+    // initialize other modules
 
-	/*
-	 * test start
-	 */
+    IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
+    IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
 
-	IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
+    IfxPort_setPinMode(IO_LED2_PORT, IO_LED2_PIN, IfxPort_Mode_outputPushPullGeneral);
+    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
 
-	/*
-	 * test end
-	 */
+    IfxPort_setPinMode(IO_LED3_PORT, IO_LED3_PIN, IfxPort_Mode_outputPushPullGeneral);
+    IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_high);
 
-	// wait for other cores to finish initialization
-	Intercore_CPU0_Ready();
-	while (Intercore_ReadyToGo() == 0)
-		;
+    for(uint8 pin = 0; pin < 8; pin++) {
+        IfxPort_setPinModeInput(&MODULE_P02, pin, IfxPort_InputMode_noPullDevice);
+    }
 
-	while (1) {
-		// some code to indicate that the core is not dead
-	}
+    IfxPort_setPinMode(CAM_D0_PORT, CAM_D0_PIN, IfxPort_Mode_inputPullUp);
+
+    typedef struct
+    {
+        IfxDma_Dma                dmaHandle;                         /* Module handle to HW module SFR set              */
+        IfxDma_Dma_Config         dmaConfig;                         /* Module configuration structure                  */
+        IfxDma_Dma_ChannelConfig  dmaChNCfg;                         /* DMA whole channel configurations                */
+        IfxDma_Dma_Channel        dmaChannel;                        /* DMA channel configuration set                   */
+        uint32                    successfulDmaTransaction;          /* Number of successful DMA transactions           */
+        uint32                    failedDmaTransaction;              /* Number of failed DMA transactions               */
+        void                     *pSourceAddressForDmaTransfer;      /* DMA data source address - reload value          */
+        void                     *pDestinationAddressForDmaTransfer; /* DMA data destination address - reload v.        */
+    } dmaParams;
+    #define DMA_CHANNEL_ID      IfxDma_ChannelId_0     /* DMA Channel Id used to transfer data              */
+    #define DATA_ARRAY_LENGTH   10                     /* Data Length of the DMA transaction in words       */
+    dmaParams g_DMA;
+    /* Load default module configuration into configuration structure */
+    IfxDma_Dma_initModuleConfig(&g_DMA.dmaConfig, &MODULE_DMA);
+
+    /* Initialize module with configuration. */
+    IfxDma_Dma_initModule(&g_DMA.dmaHandle, &g_DMA.dmaConfig);
+
+    /* Get/initialize DMA channel configuration for all DMA channels otherwise use &g_Dma.dmaChannel as target */
+    IfxDma_Dma_initChannelConfig(&g_DMA.dmaChNCfg, &g_DMA.dmaHandle);
+
+    /* Set desired DMA channel: Channel 0 is used */
+    g_DMA.dmaChNCfg.channelId = DMA_CHANNEL_ID;
+
+    /* Setup the operation mode/settings for DMA channel */
+    g_DMA.dmaChNCfg.moveSize = IfxDma_ChannelMoveSize_8bit;
+
+    /* Set the number of DMA transfers */
+    g_DMA.dmaChNCfg.transferCount = 1;
+
+    /* Execute the DMA transaction with only one trigger */
+    g_DMA.dmaChNCfg.requestMode = IfxDma_ChannelRequestMode_completeTransactionPerRequest;
+
+    /* Set destination and source address data to DMA channel */
+    uint8 destination;
+    g_DMA.dmaChNCfg.sourceAddress      = (uint32)(&(MODULE_P02.IN.U));
+    g_DMA.dmaChNCfg.destinationAddress = (uint32) &destination;
+
+    /* Setup the specific DMA channel configuration */
+    IfxDma_Dma_initChannel(&g_DMA.dmaChannel, &g_DMA.dmaChNCfg);
+
+    /* Save start address of source and destination buffers, into the Application global variable */
+
+    //g_DMA.pSourceAddressForDmaTransfer      = CAM_D0_PORT;
+    //g_DMA.pDestinationAddressForDmaTransfer = &destination;
+
+
+
+    // wait for other cores to finish initialization
+    Intercore_CPU0_Ready();
+
+    while (Intercore_ReadyToGo() == 0)
+        ;
+
+    Camera_Init();
+    while (1) {
+        // some code to indicate that the core is not dead
+        IfxDma_Dma_initChannel(&g_DMA.dmaChannel, &g_DMA.dmaChNCfg);
+        IfxDma_Dma_startChannelTransaction(&g_DMA.dmaChannel);
+        while(IfxDma_Dma_getAndClearChannelInterrupt(&g_DMA.dmaChannel) != TRUE)
+        {
+            __nop(); /* NOP == Do nothing - No operation */
+        }
+
+        if (destination & 0x01) IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
+        else IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_low);
+        if (destination & 0x02) IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_high);
+        else IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_low);
+
+      Time_Delay(1000);
+      IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
+      Time_Delay(1000);
+        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
+
+    }
 }
 
 // list out all ISR for CPU0
