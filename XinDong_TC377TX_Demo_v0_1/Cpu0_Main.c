@@ -58,6 +58,17 @@ void core0_main(void) {
 	// allow initialization of other cores
 	Intercore_AllowInitialize();
 	// initialize other modules
+
+	/*
+	 * test start
+	 */
+
+	IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
+
+	/*
+	 * test end
+	 */
+
 	// wait for other cores to finish initialization
 	Intercore_CPU0_Ready();
 	while (Intercore_ReadyToGo() == 0)
