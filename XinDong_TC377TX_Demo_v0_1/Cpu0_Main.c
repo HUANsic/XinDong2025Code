@@ -71,6 +71,9 @@ void core0_main(void) {
     IfxPort_setPinMode(IO_LED3_PORT, IO_LED3_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_high);
 
+    IfxPort_setPinMode(IO_LED4_PORT, IO_LED4_PIN, IfxPort_Mode_outputPushPullGeneral);
+    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_high);
+
     for(uint8 pin = 0; pin < 8; pin++) {
         IfxPort_setPinModeInput(&MODULE_P02, pin, IfxPort_InputMode_noPullDevice);
     }
@@ -133,26 +136,77 @@ void core0_main(void) {
     while (Intercore_ReadyToGo() == 0)
         ;
 
-    Camera_Init();
+    // initiate camera
+    while(Camera_Init() == 0);
+    static uint8 g_Image_main[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
+
     while (1) {
         // some code to indicate that the core is not dead
-        IfxDma_Dma_initChannel(&g_DMA.dmaChannel, &g_DMA.dmaChNCfg);
-        IfxDma_Dma_startChannelTransaction(&g_DMA.dmaChannel);
-        while(IfxDma_Dma_getAndClearChannelInterrupt(&g_DMA.dmaChannel) != TRUE)
-        {
-            __nop(); /* NOP == Do nothing - No operation */
+//        IfxDma_Dma_initChannel(&g_DMA.dmaChannel, &g_DMA.dmaChNCfg);
+//        IfxDma_Dma_startChannelTransaction(&g_DMA.dmaChannel);
+//        while(IfxDma_Dma_getAndClearChannelInterrupt(&g_DMA.dmaChannel) != TRUE)
+//        {
+//            __nop(); /* NOP == Do nothing - No operation */
+//        }
+
+//        if (destination & 0x01) IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
+//        else IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_low);
+//        if (destination & 0x02) IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_high);
+//        else IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_low);
+//
+//        Time_Delay(1000);
+//        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
+//        Time_Delay(1000);
+//        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
+        static uint8 state_pclk = 0, state_vsync = 0;
+        static uint32 pixel_count = 0, pixel_count_max = 0;
+
+        if(state_pclk == 1 && IfxPort_getPinState(CAM_PCLK_HW_PORT, CAM_PCLK_HW_PIN) == 0) {
+            state_pclk = 0;  // 传输完成一个像素，接下来idle
+
+        }else if(state_pclk == 0 && IfxPort_getPinState(CAM_PCLK_HW_PORT, CAM_PCLK_HW_PIN) == 1) {
+            state_pclk = 1;  // reading finished
+            // 开始读取像素
+            if (state_vsync == 1 && IfxPort_getPinState(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN) == 0) {
+                // 这帧已经传输完成，接下来idle
+                IfxPort_togglePin(IO_LED3_PORT, IO_LED3_PIN);
+                pixel_count_max = pixel_count;
+                if (pixel_count_max > 45120 - 1 && pixel_count_max < 45120 + 1) {
+                    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
+                } else {
+                    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_low);
+                }
+                if (g_Image_main[60][94] > 60) {
+                    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_high);
+                } else {
+                    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_low);
+                }
+                pixel_count = 0;
+                state_vsync = 0;    // 这帧已经传输完成，接下来idle
+            }
+            if (state_vsync == 0 && IfxPort_getPinState(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN) == 1) {
+                // 这帧继续传输
+                state_vsync = 1;
+            }
+            if (IfxPort_getPinState(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN) == 1) {
+                if (IfxPort_getPinState(CAM_HSYNC_HW_PORT, CAM_HSYNC_HW_PIN) == 1) {
+                    // 在范围内
+                    uint8 first, second, gray, r, g, b;
+                    if (pixel_count & 0x01 == 0) {
+                        first = (uint8)MODULE_P02.IN.U;
+                    } else {
+                        second = (uint8)MODULE_P02.IN.U;
+                        r = (first) >> 3;
+                        g = (((first) & 0x07) << 3) + (((second) & 0xE0) >> 5);
+                        b = ((second) & 0x1F);
+                        gray = (r * 38 + g * 75 + b * 15) >> 5;
+                        g_Image_main[(pixel_count/2) / CAM_IMAGE_WIDTH][(pixel_count/2) % CAM_IMAGE_WIDTH] = gray;
+                    }
+                    pixel_count++;
+                }
+            }
+
         }
-
-        if (destination & 0x01) IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
-        else IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_low);
-        if (destination & 0x02) IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_high);
-        else IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_low);
-
-      Time_Delay(1000);
-      IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
-      Time_Delay(1000);
-        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
-
     }
 }
 

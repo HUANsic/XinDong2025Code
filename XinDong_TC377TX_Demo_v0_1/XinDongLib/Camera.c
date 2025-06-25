@@ -1691,7 +1691,7 @@ uint8 Camera_Init(void) {
 //
 //        }
     }
-    atk_mc2640_set_output_speed(1, 28);                                     /* 输出速率 */
+    atk_mc2640_set_output_speed(5, 28);                                     /* 输出速率 */
     atk_mc2640_set_light_mode(ATK_MC2640_LIGHT_MODE_SUNNY);                 /* 设置灯光模式 */
     atk_mc2640_set_color_saturation(ATK_MC2640_COLOR_SATURATION_1);         /* 设置色彩饱和度 */
     atk_mc2640_set_brightness(ATK_MC2640_BRIGHTNESS_1);                     /* 设置亮度 */
