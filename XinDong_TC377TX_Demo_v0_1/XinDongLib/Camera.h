@@ -214,7 +214,7 @@ typedef enum
 void* Camera_GetLatest(void);
 
 // release the image buffer; make sure the returned value IS ZERO (NULLPTR), otherwise the buffer failed to release, and the occupied buffer is returned
-void* Camera_Release(uint8 (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]);
+void* Camera_Release(void (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]);
 
 uint8 Camera_Init(void);
 
