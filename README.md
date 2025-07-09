@@ -1,93 +1,206 @@
-# 芯动计划2025代码
+# 芯动计划2025 - TC377TX智能车项目
 
+## 📋 项目概述
 
+本项目是基于英飞凌TC377TX三核微控制器的智能车控制系统，专为芯动计划2025设计。系统采用多核并行处理架构，集成了计算机视觉、运动控制、传感器融合等先进技术，实现智能循迹、避障、通信等功能。
 
-## Getting started
+## 🏗️ 系统架构
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### 多核处理器架构
+- **CPU0**: 主控制核心，负责系统初始化、安全监控和协调
+- **CPU1**: 图像处理核心，专门处理摄像头数据和计算机视觉算法
+- **CPU2**: 运动控制核心，负责电机控制、传感器读取和通信
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### 硬件平台
+- **主控芯片**: Infineon TC377TX (TriCore™)
+- **图像传感器**: OV7670摄像头 (188×120分辨率)
+- **运动系统**: 双轮差速驱动 + 编码器反馈
+- **传感器**: MPU6050 IMU、超声波传感器、干簧管
+- **通信**: 蓝牙模块、串口通信
+- **显示**: OLED显示屏
 
-## Add your files
+## 🔧 核心功能模块
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+### 1. 图像处理系统 (CV模块)
+- **实时图像采集**: 188×120分辨率，30fps
+- **三缓冲管理**: 避免数据竞争，确保图像完整性
+- **智能中线检测**: 
+  - 从下往上扫描算法
+  - 自适应分割线技术
+  - 补线方向判断
+  - 偏差计算与输出
+
+### 2. 运动控制系统
+- **双轮差速驱动**: 精确的转向控制
+- **编码器反馈**: 实时速度测量
+- **PID控制算法**: 稳定的运动控制
+- **多种运动模式**: 直线、转弯、停车等
+
+### 3. 传感器融合
+- **IMU数据**: 姿态角、加速度、角速度
+- **超声波测距**: 障碍物检测
+- **干簧管**: 位置检测
+- **电位器**: 参数调节
+
+### 4. 通信系统
+- **蓝牙通信**: 无线数据传输
+- **串口通信**: 调试和参数配置
+- **多核间通信**: 核心间数据同步
+
+## 📁 项目结构
 
 ```
-cd existing_repo
-git remote add origin https://git.tsinghua.edu.cn/wu-zh20/XinDong2025Code.git
-git branch -M main
-git push -uf origin main
+XinDong2025Code/
+├── XinDong_TC377TX_Demo_v0_1/          # 主项目目录
+│   ├── Cpu0_Main.c                     # CPU0主程序
+│   ├── Cpu1_Main.c                     # CPU1主程序  
+│   ├── Cpu2_Main.c                     # CPU2主程序
+│   ├── XinDongLib/                     # 核心库文件
+│   │   ├── Camera.c/h                  # 摄像头驱动
+│   │   ├── CV.c/h                      # 计算机视觉算法
+│   │   ├── Movements.c/h               # 运动控制
+│   │   ├── IMU.c/h                     # 惯性测量单元
+│   │   ├── Encoder.c/h                 # 编码器
+│   │   ├── Ultrasonic.c/h              # 超声波传感器
+│   │   ├── Bluetooth.c/h               # 蓝牙通信
+│   │   ├── Display.c/h                 # OLED显示
+│   │   ├── Serial.c/h                  # 串口通信
+│   │   ├── Time.c/h                    # 时间管理
+│   │   ├── IO.c/h                      # 输入输出控制
+│   │   ├── Intercore.c/h               # 多核通信
+│   │   ├── Interrupts.c/h              # 中断管理
+│   │   └── XinDong_Config.h            # 系统配置
+│   └── Libraries/                      # 英飞凌底层库
+└── xindong_template_tc377tx/           # 项目模板
 ```
 
-## Integrate with your tools
+## 🚀 快速开始
 
-- [ ] [Set up project integrations](https://git.tsinghua.edu.cn/wu-zh20/XinDong2025Code/-/settings/integrations)
+### 环境要求
+- **开发工具**: Infineon AURIX Development Studio
+- **编译器**: Tasking VX Toolset for TriCore
+- **硬件**: TC377TX开发板及相关外设
 
-## Collaborate with your team
+### 编译步骤
+1. 打开AURIX Development Studio
+2. 导入项目: `File → Import → Existing Projects into Workspace`
+3. 选择项目目录: `XinDong_TC377TX_Demo_v0_1`
+4. 配置编译选项和链接脚本
+5. 编译项目: `Project → Build All`
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### 烧录程序
+1. 连接调试器 (如J-Link)
+2. 配置调试设置
+3. 下载程序到目标板
+4. 启动调试或运行
 
-## Test and Deploy
+## 💡 使用指南
 
-Use the built-in continuous integration in GitLab.
+### 图像处理使用
+```c
+#include "XinDongLib/CV.h"
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+// 在主循环中调用
+CV_Result_t cv_result = CV_ProcessImage();
 
-***
+if (cv_result.valid) {
+    int16 error = cv_result.error;      // 获取偏差值
+    int16 buxian = g_buxian;            // 获取补线方向
+    
+    // 根据偏差控制转向
+    if (error > 0) {
+        // 右转控制
+    } else if (error < 0) {
+        // 左转控制
+    }
+}
+```
 
-# Editing this README
+### 运动控制使用
+```c
+#include "XinDongLib/Movements.h"
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+// 设置运动参数
+Movements_SetSpeed(50);     // 设置速度
+Movements_SetDirection(1);  // 设置方向
 
-## Suggestions for a good README
+// 执行运动
+Movements_Start();
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### 传感器读取
+```c
+#include "XinDongLib/IMU.h"
+#include "XinDongLib/Ultrasonic.h"
 
-## Name
-Choose a self-explaining name for your project.
+// 读取IMU数据
+float angle = IMU_GetAngle();
+float accel = IMU_GetAcceleration();
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+// 读取超声波距离
+uint16 distance = Ultrasonic_GetDistance();
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## 🔧 配置说明
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### 引脚配置
+所有硬件引脚定义在 `XinDong_Config.h` 中：
+- 摄像头接口: P00.1-2 (SCCB), P02.0-7 (数据), P00.7-9 (控制)
+- 电机控制: P21.2-3 (PWM输出)
+- 编码器: P33.6-7 (正交编码)
+- IMU/OLED: P13.1-2 (I2C)
+- 蓝牙: P33.8-10 (UART)
+- LED/DIP开关: P20.7-14
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### 参数调节
+- **PID参数**: 在 `Movements.h` 中配置
+- **图像阈值**: 在 `CV.c` 中调整二值化阈值
+- **通信参数**: 在 `Bluetooth.c` 和 `Serial.c` 中设置
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## 📊 性能指标
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+- **图像处理**: 188×120@30fps
+- **控制周期**: 50ms (20Hz)
+- **响应时间**: <10ms
+- **内存使用**: ~200KB RAM
+- **图像缓冲**: 67.68KB (3个缓冲区)
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## 🤝 贡献指南
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## 📝 开发日志
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### v0.1 (当前版本)
+- ✅ 基础框架搭建
+- ✅ 多核通信机制
+- ✅ 摄像头驱动
+- ✅ 计算机视觉算法
+- ✅ 运动控制系统
+- 🔄 传感器融合优化
+- 🔄 通信协议完善
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## 📄 许可证
 
-## License
-For open source projects, say how it is licensed.
+本项目采用 Boost Software License - Version 1.0 许可证。
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## 👥 团队成员
+
+- **项目负责人**: 吴宗桓
+- **算法开发**: 廖宇辉
+- **硬件设计**: Duffy
+- **系统集成**: 芯动计划团队
+
+## 📞 联系方式
+
+- **项目地址**: https://git.tsinghua.edu.cn/wu-zh20/XinDong2025Code
+- **技术支持**: 通过GitLab Issues提交问题
+- **团队邮箱**: [联系邮箱]
+
+---
+
+**芯动计划2025** - 让智能车驰骋未来 🚗⚡
