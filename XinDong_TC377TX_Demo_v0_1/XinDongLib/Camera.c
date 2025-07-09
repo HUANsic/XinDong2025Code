@@ -32,7 +32,7 @@ void* Camera_Release(void (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
 }
 
 void* _Camera_Image_Received(void) {
-	uint8 (*temp_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = writing_img_ptr;
+	uint16 (*temp_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = writing_img_ptr;
 	// if there is a buffer occupied, then there is only one buffer available
 	if (occupied_img_ptr != 0) {
 		if (occupied_img_ptr == &g_Image1) {

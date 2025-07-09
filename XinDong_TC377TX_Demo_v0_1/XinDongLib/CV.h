@@ -26,15 +26,15 @@
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
-extern int16 g_buxian;  // 补线方向判断变量
+sint16 g_buxian;  // 补线方向判断变量
 
 /*********************************************************************************************************************/
 /*-------------------------------------------------Data Structures---------------------------------------------------*/
 /*********************************************************************************************************************/
 typedef struct {
-    uint8* image_data;
-    int16 error;
-    uint8 valid;
+    uint16* image_data;
+    sint16 error;
+    uint16 valid;
 } CV_Result_t;
 
 /*********************************************************************************************************************/
@@ -45,15 +45,23 @@ typedef struct {
 /*------------------------------------------------Function Prototypes------------------------------------------------*/
 /*********************************************************************************************************************/
 // 图像预处理：转换为二值化掩码
-void CV_PreprocessImage(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
-                       uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+void CV_PreprocessImage(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                       uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+
+// 检查指定区域是否全为黑色
+uint16 CV_IsRegionEmpty(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                      uint16 y, uint16 start_x, uint16 end_x);
+
+// 计算指定区域的平均位置
+uint16 CV_CalculateAveragePosition(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                                  uint16 y, uint16 start_x, uint16 end_x);
 
 // 中线检测主函数
-CV_Result_t CV_DetectMidline(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+CV_Result_t CV_DetectMidline(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
 
 // 计算图像中线的偏差
-int16 CV_CalculateMidlineError(uint8 (*follow)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
-                              uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+sint16 CV_CalculateMidlineError(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                              uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
 
 // 图像处理主函数
 CV_Result_t CV_ProcessImage(void);

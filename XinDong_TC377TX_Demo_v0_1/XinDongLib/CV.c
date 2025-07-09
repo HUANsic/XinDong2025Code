@@ -5,11 +5,11 @@
 //	reference code: TC264_XinDong_Demo_v42/Cpu1_Main.c
 
 // 全局变量
-int16 g_buxian = 0;  // 补线方向判断变量
+sint16 g_buxian = 0;  // 补线方向判断变量
 
 // 图像预处理：转换为二值化掩码
-void CV_PreprocessImage(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
-                       uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
+void CV_PreprocessImage(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                       uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
     uint16 y, x;
     
     // 简单的二值化处理：将图像转换为黑白掩码
@@ -26,7 +26,7 @@ void CV_PreprocessImage(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH],
 }
 
 // 检查指定区域是否全为黑色
-uint8 CV_IsRegionEmpty(uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+uint16 CV_IsRegionEmpty(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
                       uint16 y, uint16 start_x, uint16 end_x) {
     uint16 x;
     for (x = start_x; x < end_x; x++) {
@@ -38,7 +38,7 @@ uint8 CV_IsRegionEmpty(uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH],
 }
 
 // 计算指定区域的平均位置
-uint16 CV_CalculateAveragePosition(uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+uint16 CV_CalculateAveragePosition(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
                                   uint16 y, uint16 start_x, uint16 end_x) {
     uint16 x;
     uint32 sum = 0;
@@ -59,13 +59,13 @@ uint16 CV_CalculateAveragePosition(uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH
 }
 
 // 计算图像中线的偏差（优化版本，直接在原图上处理）
-int16 CV_CalculateMidlineError(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
-                              uint8 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
+sint16 CV_CalculateMidlineError(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                              uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
     uint16 y;
     uint16 half_width = CV_IMAGE_WIDTH / 2;
     uint16 half = half_width;  // 从下往上扫描赛道，最下端取图片中线为分割线
     uint16 left, right, mid;
-    int16 mid_output = 0;
+    sint16 mid_output = 0;
     
     g_buxian = 0;  // 重置补线方向判断变量
     
@@ -116,9 +116,9 @@ int16 CV_CalculateMidlineError(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDT
 }
 
 // 中线检测主函数（优化版本，最多使用2个buffer）
-CV_Result_t CV_DetectMidline(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
+CV_Result_t CV_DetectMidline(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
     CV_Result_t result;
-    static uint8 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+    static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
     
     // 参数检查
     if (input_img == NULL) {
@@ -131,7 +131,7 @@ CV_Result_t CV_DetectMidline(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]
     // 初始化结果
     result.valid = 0;
     result.error = 0;
-    result.image_data = (uint8*)input_img;
+    result.image_data = (uint16*)input_img;
     
     // 清空掩码缓冲区
     memset(mask, 0, sizeof(mask));
@@ -149,7 +149,7 @@ CV_Result_t CV_DetectMidline(uint8 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]
 // 图像处理主函数
 CV_Result_t CV_ProcessImage(void) {
     CV_Result_t result;
-    uint8 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+    uint16 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
     
     // 初始化结果
     result.valid = 0;
@@ -157,7 +157,7 @@ CV_Result_t CV_ProcessImage(void) {
     result.image_data = NULL;
     
     // 获取最新的图像缓冲区
-    img_ptr = (uint8 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
+    img_ptr = (uint16 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
     
     if (img_ptr != NULL) {
         // 进行中线检测
@@ -187,10 +187,10 @@ CV_Result_t CV_ProcessImage(void) {
  * 
  * if (cv_result.valid) {
  *     // 获取偏差值
- *     int16 error = cv_result.error;
+ *     sint16 error = cv_result.error;
  *     
  *     // 获取补线方向
- *     int16 buxian = g_buxian;
+ *     sint16 buxian = g_buxian;
  *     
  *     // 根据偏差控制转向
  *     if (error > 0) {
@@ -214,18 +214,18 @@ CV_Result_t CV_ProcessImage(void) {
  *   1. input_img: 来自Camera模块的原始图像
  *   2. mask: 二值化掩码缓冲区（静态分配）
  * - 移除了follow缓冲区，直接在原图上处理
- * - 总内存使用：约45KB (22.56KB × 2)
+ * - 总内存使用：约90KB (45.12KB × 2) - 注意：由于使用uint16，内存使用量翻倍
  * 
  * 注意：CV_ProcessImage()函数会自动处理图像缓冲区的获取和释放，
  * 无需手动调用Camera_Release()函数。
  * 
  * 如果需要手动管理图像缓冲区，可以使用以下方式：
  * 
- * uint8 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * uint16 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
  * CV_Result_t result;
  * 
  * // 获取图像缓冲区
- * img_ptr = (uint8 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
+ * img_ptr = (uint16 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
  * 
  * if (img_ptr != NULL) {
  *     // 进行图像处理
