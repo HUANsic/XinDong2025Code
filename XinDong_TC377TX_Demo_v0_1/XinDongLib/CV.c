@@ -54,7 +54,6 @@ uint16 CV_CalculateAveragePosition(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDT
     if (count == 0) {
         return start_x;  // 如果没有找到白色像素，返回起始位置
     }
-    
     return (uint16)(sum / count);
 }
 
@@ -66,7 +65,6 @@ sint16 CV_CalculateMidlineError(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WI
     uint16 half = half_width;  // 从下往上扫描赛道，最下端取图片中线为分割线
     uint16 left, right, mid;
     sint16 mid_output = 0;
-    
     g_buxian = 0;  // 重置补线方向判断变量
     
     // 从下往上扫描
