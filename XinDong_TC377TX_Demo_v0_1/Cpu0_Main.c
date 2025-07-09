@@ -35,9 +35,10 @@
 #include "XinDongLib/Time.h"
 #include "XinDongLib/IO.h"
 #include "XinDongLib/Camera.h"
+#include "XinDongLib/Display.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
-
+uint8 g_Image_main[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 void core0_main(void) {
     IfxCpu_enableInterrupts();
 
@@ -61,6 +62,14 @@ void core0_main(void) {
     // allow initialization of other cores
     Intercore_AllowInitialize();
     // initialize other modules
+
+
+    OLED_Init();
+    OLED_ShowString(0, 0, "system start", OLED_8X16);
+    for (uint8 i = 0; i < 128; i++) {
+        OLED_DrawPoint(i, 48);
+    }
+    OLED_Update();
 
     IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
@@ -138,7 +147,6 @@ void core0_main(void) {
 
     // initiate camera
     while(Camera_Init() == 0);
-    static uint8 g_Image_main[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 
     while (1) {
         // some code to indicate that the core is not dead
@@ -196,9 +204,9 @@ void core0_main(void) {
                         first = (uint8)MODULE_P02.IN.U;
                     } else {
                         second = (uint8)MODULE_P02.IN.U;
-                        r = (first) >> 3;
-                        g = (((first) & 0x07) << 3) + (((second) & 0xE0) >> 5);
-                        b = ((second) & 0x1F);
+                        r = (second) >> 3;
+                        g = (((second) & 0x07) << 3) + (((first) & 0xE0) >> 5);
+                        b = ((first) & 0x1F);
                         gray = (r * 38 + g * 75 + b * 15) >> 5;
                         g_Image_main[(pixel_count/2) / CAM_IMAGE_WIDTH][(pixel_count/2) % CAM_IMAGE_WIDTH] = gray;
                     }
@@ -207,6 +215,10 @@ void core0_main(void) {
             }
 
         }
+
+
+
+
     }
 }
 
