@@ -36,6 +36,129 @@ void Reed_Init(void) {
 __weak__ void Reed_Triggered(void) {
 	;		// defined in USER file
 }
+//----------------------------------------------------------------LED--------------------------------------------------------
+void IO_LED_1_init(void)
+{
+    IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
+}
+
+void IO_LED_1_on(void)
+{
+    IfxPort_setPinHigh(IO_LED1_PORT, IO_LED1_PIN);
+}
+
+void IO_LED_1_off(void)
+{
+    IfxPort_setPinLow(IO_LED1_PORT, IO_LED1_PIN);
+}
+
+void IO_LED_1_toggle(void)
+{
+    IfxPort_togglePin(IO_LED1_PORT, IO_LED1_PIN);
+}
+
+void IO_LED_2_init(void)
+{
+    IfxPort_setPinMode(IO_LED2_PORT, IO_LED2_PIN, IfxPort_Mode_outputPushPullGeneral);
+}
+
+void IO_LED_2_on(void)
+{
+    IfxPort_setPinHigh(IO_LED2_PORT, IO_LED2_PIN);
+}
+
+void IO_LED_2_off(void)
+{
+    IfxPort_setPinLow(IO_LED2_PORT, IO_LED2_PIN);
+}
+
+void IO_LED_2_toggle(void)
+{
+    IfxPort_togglePin(IO_LED2_PORT, IO_LED2_PIN);
+}
+
+void IO_LED_3_init(void)
+{
+    IfxPort_setPinMode(IO_LED3_PORT, IO_LED3_PIN, IfxPort_Mode_outputPushPullGeneral);
+}
+
+void IO_LED_3_on(void)
+{
+    IfxPort_setPinHigh(IO_LED3_PORT, IO_LED3_PIN);
+}
+
+void IO_LED_3_off(void)
+{
+    IfxPort_setPinLow(IO_LED3_PORT, IO_LED3_PIN);
+}
+
+void IO_LED_3_toggle(void)
+{
+    IfxPort_togglePin(IO_LED3_PORT, IO_LED3_PIN);
+}
+
+void IO_LED_4_init(void)
+{
+    IfxPort_setPinMode(IO_LED4_PORT, IO_LED4_PIN, IfxPort_Mode_outputPushPullGeneral);
+}
+
+void IO_LED_4_on(void)
+{
+    IfxPort_setPinHigh(IO_LED4_PORT, IO_LED4_PIN);
+}
+
+void IO_LED_4_off(void)
+{
+    IfxPort_setPinLow(IO_LED4_PORT, IO_LED4_PIN);
+}
+
+void IO_LED_4_toggle(void)
+{
+    IfxPort_togglePin(IO_LED4_PORT, IO_LED4_PIN);
+}
+
+//----------------------------------------------------------------SWITCH-------------------------------------------------------
+
+void IO_SW1_1_init(void)
+{
+    IfxPort_setPinMode(&MODULE_P20, 11, IfxPort_Mode_inputPullUp);
+}
+
+boolean IO_SW1_1_read(void)
+{
+    return IfxPort_getPinState(&MODULE_P20, 11);
+}
+
+void IO_SW1_2_init(void)
+{
+    IfxPort_setPinMode(&MODULE_P20, 11, IfxPort_Mode_inputPullUp);
+}
+
+boolean IO_SW1_2_read(void)
+{
+    return IfxPort_getPinState(&MODULE_P20, 11);
+}
+
+void IO_SW1_3_init(void)
+{
+    IfxPort_setPinMode(&MODULE_P20, 11, IfxPort_Mode_inputPullUp);
+}
+
+boolean IO_SW1_3_read(void)
+{
+    return IfxPort_getPinState(&MODULE_P20, 11);
+}
+
+void IO_SW1_4_init(void)
+{
+    IfxPort_setPinMode(&MODULE_P20, 11, IfxPort_Mode_inputPullUp);
+}
+
+boolean IO_SW1_4_read(void)
+{
+    return IfxPort_getPinState(&MODULE_P20, 11);
+}
+
 
 void IO_Reed_ISR() {
 	IfxGtm_Tim_In_update(&reedDriver);
