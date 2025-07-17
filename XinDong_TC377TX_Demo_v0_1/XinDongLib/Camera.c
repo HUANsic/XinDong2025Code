@@ -21,7 +21,7 @@ void* Camera_GetLatest(void) {
 	return occupied_img_ptr;
 }
 
-void* Camera_Release(void (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
+void* Camera_Release(uint16 (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
 	// if it attempts to release the correct pointer, then proceed
 	if (img_ptr == occupied_img_ptr) {
 		occupied_img_ptr = 0;
