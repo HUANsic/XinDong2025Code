@@ -32,6 +32,36 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------Function Prototypes------------------------------------------------*/
 /*********************************************************************************************************************/
+
+void IO_LED_1_init(void);
+void IO_LED_1_on(void);
+void IO_LED_1_off(void);
+void IO_LED_1_toggle(void);
+
+void IO_LED_2_init(void);
+void IO_LED_2_on(void);
+void IO_LED_2_off(void);
+void IO_LED_2_toggle(void);
+
+void IO_LED_3_init(void);
+void IO_LED_3_on(void);
+void IO_LED_3_off(void);
+void IO_LED_3_toggle(void);
+
+void IO_LED_4_init(void);
+void IO_LED_4_on(void);
+void IO_LED_4_off(void);
+void IO_LED_4_toggle(void);
+
+void IO_SW1_1_init(void);
+boolean IO_SW1_1_read(void);
+void IO_SW1_2_init(void);
+boolean IO_SW1_2_read(void);
+void IO_SW1_3_init(void);
+boolean IO_SW1_3_read(void);
+void IO_SW1_4_init(void);
+boolean IO_SW1_4_read(void);
+
 void Reed_Init(void);
 
 //define functions below in YOUR file
