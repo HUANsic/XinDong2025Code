@@ -141,6 +141,53 @@ float accel = IMU_GetAcceleration();
 uint16 distance = Ultrasonic_GetDistance();
 ```
 
+### LED调试使用
+```c
+include "XinDongLib/IO.h"
+
+// ------------------------ 初始化 ------------------------
+// 在使用 LED 前必须先进行初始化，设置为推挽输出模式
+IO_LED_1_init();
+IO_LED_2_init();
+IO_LED_3_init();
+IO_LED_4_init();
+
+
+//点亮 LED
+IO_LED_1_on();  
+//熄灭 LED
+IO_LED_2_off();  
+//翻转 LED 状态
+IO_LED_3_toggle();   
+
+//闪烁LED
+#include "Time.h"
+
+while (1)
+{
+    IO_LED_4_on();         // 点亮
+    Time_Delayms(500);     // 延时 500ms
+    IO_LED_4_off();        // 熄灭
+    Time_Delayms(500);     // 延时 500ms
+}
+```
+
+### 拨码开关调试使用
+```c
+include "XinDongLib/IO.h"
+
+// ------------------------ 初始化 ------------------------
+// 在使用 拨码开关 前必须先进行初始化，再读取状态。
+IO_SW1_1_init();
+IO_SW1_2_init();
+IO_SW1_3_init();
+IO_SW1_4_init();
+
+
+//读取状态
+boolean sw1 = IO_SW1_1_read();   // 返回 true 表示高电平（开），false 表示低电平（关）
+```
+
 ## 🔧 配置说明
 
 ### 引脚配置
