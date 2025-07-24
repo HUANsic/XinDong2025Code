@@ -34,6 +34,7 @@
 #include "XinDongLib/Display.h"
 #include "XinDongLib/Encoder.h"
 #include "XinDongLib/IMU.h"
+#include "XinDongLib/IO.h"
 #include "XinDongLib/Movements.h"
 #include "XinDongLib/Serial.h"
 #include "XinDongLib/Ultrasonic.h"
@@ -42,8 +43,7 @@
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core2_main(void) {
-	IfxCpu_enableInterrupts();
-
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG2 IS DISABLED HERE!!
 	 * Enable the watchdog and service it periodically if it is required
 	 */
@@ -56,8 +56,11 @@ void core2_main(void) {
 	// wait for signal to begin initialization
 	while (Intercore_InitAllowed() == 0)
 		;
-	// initialize any module needed
 
+
+	// initialize any module needed
+//	Ultrasonic_Init();
+	IO_LED_3_init();
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
@@ -65,20 +68,23 @@ void core2_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
+//        Time_Delay(500);
+//        IO_LED_3_toggle();
 	}
 }
 
 // list out all ISR for CPU2
 void Periodic_1s_ISR(void){
-	;
+    ;
 }
 
 void Periodic_100ms_ISR(void){
-	;
+//	Ultrasonic_Trigger();
+    ;
 }
 
 void Periodic_10ms_ISR(void){
-	;
+    IO_LED_3_toggle();
 }
 
 void Periodic_PID_ISR(void){

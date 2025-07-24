@@ -2,6 +2,7 @@
 
 #include "IfxGtm_Tim_In.h"
 #include "IfxCpu_Irq.h"
+#include "IfxSrc.h"
 
 // those must be defined before the enum is parsed in IfxSrc_cfg.h
 /*
@@ -191,7 +192,10 @@ void Interrupts_Init(void) {
 }
 
 void SWINT_Trigger_10ms(void) {
-	timDriver_10ms.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+//	timDriver_10ms.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_10ms.timIndex, timDriver_10ms.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_100ms(void) {

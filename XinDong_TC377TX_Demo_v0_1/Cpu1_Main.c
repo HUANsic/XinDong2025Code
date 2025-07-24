@@ -31,12 +31,13 @@
 #include "XinDongLib/Intercore.h"
 #include "XinDongLib/Camera.h"
 #include "XinDongLib/CV.h"
+#include "XinDongLib/IO.h"
+#include "XinDongLib/Time.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core1_main(void) {
-	IfxCpu_enableInterrupts();
-
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG1 IS DISABLED HERE!!
 	 * Enable the watchdog and service it periodically if it is required
 	 */
@@ -49,7 +50,9 @@ void core1_main(void) {
 	// wait for signal to begin initialization
 	while(Intercore_InitAllowed() == 0)
 			;
+
 	// initialize camera module
+	IO_LED_2_init();
 	// wait for other cores to finish initialization
 	Intercore_CPU1_Ready();
 	while (Intercore_ReadyToGo() == 0)
@@ -57,6 +60,8 @@ void core1_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
+        Time_Delay(500);
+        IO_LED_2_toggle();
 	}
 }
 
