@@ -95,3 +95,19 @@ void Time_Periodic_ISR(void) {
 	if (elapsed_ms % 1000 == 0)
 		SWINT_Trigger_1s();
 }
+
+__weak__ void Periodic_1s_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_100ms_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_10ms_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_PID_ISR(void) {
+	;		// defined in main.c
+}

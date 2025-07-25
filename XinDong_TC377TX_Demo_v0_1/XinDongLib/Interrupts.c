@@ -16,13 +16,13 @@
 #define	IfxSrc_Tos_cpu0		0
 #endif
 #ifndef	IfxSrc_Tos_dma
-#define IfxSrc_Tos_dma		1
+#define IfxSrc_Tos_dma		3
 #endif
 #ifndef IfxSrc_Tos_cpu1
-#define IfxSrc_Tos_cpu1		2
+#define IfxSrc_Tos_cpu1		1
 #endif
 #ifndef IfxSrc_Tos_cpu2
-#define IfxSrc_Tos_cpu2		3
+#define IfxSrc_Tos_cpu2		2
 #endif
 
 IfxGtm_Tim_In timDriver_10ms, timDriver_100ms, timDriver_1s, timDriver_pid;
@@ -223,7 +223,7 @@ void SWINT_Trigger_user3(void) {
 }
 
 __weak__ void Encoder_Overflow_ISR(void) {
-	;		// should be defined in Encoder.c
+	;		// defined in Encoder.c
 }
 
 __weak__ void Time_Periodic_ISR(void) {
@@ -274,34 +274,18 @@ __weak__ void IO_Hsync_ISR(void) {
 	;		// defined in Camera.c if using software flow control
 }
 
-__weak__ void Periodic_1s_ISR(void) {
-	;
-}
-
-__weak__ void Periodic_100ms_ISR(void) {
-	;
-}
-
-__weak__ void Periodic_10ms_ISR(void) {
-	;
-}
-
-__weak__ void Periodic_PID_ISR(void) {
-	;
-}
-
 __weak__ void SWINT_User0_ISR(void) {
-	;
+	;		// defined in main.c
 }
 
 __weak__ void SWINT_User1_ISR(void) {
-	;
+	;		// defined in main.c
 }
 
 __weak__ void SWINT_User2_ISR(void) {
-	;
+	;		// defined in main.c
 }
 
 __weak__ void SWINT_User3_ISR(void) {
-	;
+	;		// defined in main.c
 }
