@@ -75,7 +75,7 @@ void core2_main(void) {
 
 // list out all ISR for CPU2
 void Periodic_1s_ISR(void){
-    ;
+    IO_LED_3_toggle();
 }
 
 void Periodic_100ms_ISR(void){
@@ -84,7 +84,7 @@ void Periodic_100ms_ISR(void){
 }
 
 void Periodic_10ms_ISR(void){
-    IO_LED_3_toggle();
+    ;
 }
 
 void Periodic_PID_ISR(void){

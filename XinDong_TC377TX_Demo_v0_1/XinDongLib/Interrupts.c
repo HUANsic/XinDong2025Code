@@ -30,94 +30,94 @@ IfxGtm_Tim_In timDriver_10ms, timDriver_100ms, timDriver_1s, timDriver_pid;
 IfxGtm_Tim_In timDriver_user0, timDriver_user1, timDriver_user2, timDriver_user3;
 
 // encoder overflow
-IFX_INTERRUPT(ENCODER_OVERFLOW_ISR, ENCODER_OVERFLOW_TOS, ENCODER_OVERFLOW_PRIORITY) {
+IFX_INTERRUPT(ENCODER_OVERFLOW_ISR, 2, ENCODER_OVERFLOW_PRIORITY) {
 	Encoder_Overflow_ISR();
 }
 
-IFX_INTERRUPT(TIME_PERIODIC_ISR, TIME_PERIODIC_TOS, TIME_PERIODIC_PRIORITY) {
+IFX_INTERRUPT(TIME_PERIODIC_ISR, 0, TIME_PERIODIC_PRIORITY) {
 	Time_Periodic_ISR();
 }
 
-IFX_INTERRUPT(EXTI_REED_ISR, IO_REED_TOS, IO_REED_PRIORITY) {
+IFX_INTERRUPT(EXTI_REED_ISR, 2, IO_REED_PRIORITY) {
 	IO_Reed_ISR();
 }
 
-IFX_INTERRUPT(SERIAL_TX_ISR, SERIAL_TOS, SERIAL_TX_PRIORITY) {
+IFX_INTERRUPT(SERIAL_TX_ISR, 2, SERIAL_TX_PRIORITY) {
 	Serial_Tx_ISR();
 }
 
-IFX_INTERRUPT(SERIAL_RX_ISR, SERIAL_TOS, SERIAL_RX_PRIORITY) {
+IFX_INTERRUPT(SERIAL_RX_ISR, 2, SERIAL_RX_PRIORITY) {
 	Serial_Rx_ISR();
 }
 
-IFX_INTERRUPT(SERIAL_ERR_ISR, SERIAL_TOS, SERIAL_ERR_PRIORITY) {
+IFX_INTERRUPT(SERIAL_ERR_ISR, 2, SERIAL_ERR_PRIORITY) {
 	Serial_Err_ISR();
 }
 
-IFX_INTERRUPT(BLE_TX_ISR, BLE_TOS, BLE_TX_PRIORITY) {
+IFX_INTERRUPT(BLE_TX_ISR, 2, BLE_TX_PRIORITY) {
 	BLE_Tx_ISR();
 }
 
-IFX_INTERRUPT(BLE_RX_ISR, BLE_TOS, BLE_RX_PRIORITY) {
+IFX_INTERRUPT(BLE_RX_ISR, 2, BLE_RX_PRIORITY) {
 	BLE_Rx_ISR();
 }
 
-IFX_INTERRUPT(BLE_ERR_ISR, BLE_TOS, BLE_ERR_PRIORITY) {
+IFX_INTERRUPT(BLE_ERR_ISR, 2, BLE_ERR_PRIORITY) {
 	BLE_Err_ISR();
 }
 
-IFX_INTERRUPT(ULTRASONIC_PULSEIN_ISR, ULTRASONIC_PULSEIN_TOS, ULTRASONIC_PULSEIN_PRIORITY) {
+IFX_INTERRUPT(ULTRASONIC_PULSEIN_ISR, 2, ULTRASONIC_PULSEIN_PRIORITY) {
 	Ultrasonic_PulseIn_ISR();
 }
 
-IFX_INTERRUPT(EXTI_PCLK_ISR, CAMERA_PCLK_TOS, CAMERA_PCLK_PRIORITY) {
+IFX_INTERRUPT(EXTI_PCLK_ISR, 3, CAMERA_PCLK_PRIORITY) {
 	IO_Pclk_ISR();
 }
 
-IFX_INTERRUPT(EXTI_VSYNC_ISR, CAMERA_VSYNC_TOS, CAMERA_VSYNC_PRIORITY) {
+IFX_INTERRUPT(EXTI_VSYNC_ISR, 1, CAMERA_VSYNC_PRIORITY) {
 	IO_Vsync_ISR();
 }
 
-IFX_INTERRUPT(EXTI_HSYNC_ISR, CAMERA_HSYNC_TOS, CAMERA_HSYNC_PRIORITY) {
+IFX_INTERRUPT(EXTI_HSYNC_ISR, 1, CAMERA_HSYNC_PRIORITY) {
 	IO_Hsync_ISR();
 }
 
-IFX_INTERRUPT(SWINT_1S_PERIODIC_ISR, SWINT_1S_PERIODIC_TOS, SWINT_1S_PERIODIC_PRIORITY) {
+IFX_INTERRUPT(SWINT_1S_PERIODIC_ISR, 2, SWINT_1S_PERIODIC_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_1s);
 	Periodic_1s_ISR();
 }
 
-IFX_INTERRUPT(SWINT_100MS_PERIODIC_ISR, SWINT_100MS_PERIODIC_TOS, SWINT_100MS_PERIODIC_PRIORITY) {
+IFX_INTERRUPT(SWINT_100MS_PERIODIC_ISR, 2, SWINT_100MS_PERIODIC_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_100ms);
 	Periodic_100ms_ISR();
 }
 
-IFX_INTERRUPT(SWINT_10MS_PERIODIC_ISR, SWINT_10MS_PERIODIC_TOS, SWINT_10MS_PERIODIC_PRIORITY) {
+IFX_INTERRUPT(SWINT_10MS_PERIODIC_ISR, 2, SWINT_10MS_PERIODIC_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_10ms);
 	Periodic_10ms_ISR();
 }
 
-IFX_INTERRUPT(SWINT_PID_PERIODIC_ISR, SWINT_PID_PERIODIC_TOS, SWINT_PID_PERIODIC_PRIORITY) {
+IFX_INTERRUPT(SWINT_PID_PERIODIC_ISR, 2, SWINT_PID_PERIODIC_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_pid);
 	Periodic_PID_ISR();
 }
 
-IFX_INTERRUPT(SWINT_USER0_ISR, SWINT_USER0_TOS, SWINT_USER0_PRIORITY) {
+IFX_INTERRUPT(SWINT_USER0_ISR, 2, SWINT_USER0_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_user0);
 	SWINT_User0_ISR();
 }
 
-IFX_INTERRUPT(SWINT_USER1_ISR, SWINT_USER1_TOS, SWINT_USER1_PRIORITY) {
+IFX_INTERRUPT(SWINT_USER1_ISR, 2, SWINT_USER1_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_user1);
 	SWINT_User1_ISR();
 }
 
-IFX_INTERRUPT(SWINT_USER2_ISR, SWINT_USER2_TOS, SWINT_USER2_PRIORITY) {
+IFX_INTERRUPT(SWINT_USER2_ISR, 2, SWINT_USER2_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_user2);
 	SWINT_User2_ISR();
 }
 
-IFX_INTERRUPT(SWINT_USER3_ISR, SWINT_USER3_TOS, SWINT_USER3_PRIORITY) {
+IFX_INTERRUPT(SWINT_USER3_ISR, 2, SWINT_USER3_PRIORITY) {
 	IfxGtm_Tim_In_update(&timDriver_user3);
 	SWINT_User3_ISR();
 }
@@ -199,31 +199,46 @@ void SWINT_Trigger_10ms(void) {
 }
 
 void SWINT_Trigger_100ms(void) {
-	timDriver_100ms.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_100ms.timIndex, timDriver_100ms.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_1s(void) {
-	timDriver_1s.channel->IRQ.FORCINT.U = 0x0001;			// force trigger
+//	timDriver_1s.channel->IRQ.FORCINT.U = 0x0001;			// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_1s.timIndex, timDriver_1s.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_pid(void) {
-	timDriver_pid.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_pid.timIndex, timDriver_pid.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_user0(void) {
-	timDriver_user0.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_user0.timIndex, timDriver_user0.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_user1(void) {
-	timDriver_user1.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_user1.timIndex, timDriver_user1.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_user2(void) {
-	timDriver_user2.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_user2.timIndex, timDriver_user2.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 void SWINT_Trigger_user3(void) {
-	timDriver_user3.channel->IRQ.FORCINT.U = 0x0001;		// force trigger
+    volatile Ifx_SRC_SRCR *src = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, timDriver_user3.timIndex, timDriver_user3.channelIndex);
+    IfxSrc_clearRequest(src);
+    IfxSrc_setRequest(src);
 }
 
 __weak__ void Encoder_Overflow_ISR(void) {
