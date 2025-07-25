@@ -59,28 +59,32 @@ void core2_main(void) {
 
 
 	// initialize any module needed
-//	Ultrasonic_Init();
+	Ultrasonic_Init();
 	IO_LED_3_init();
+	IO_LED_4_init();
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
 		;
 
 	while (1) {
-		// some code to indicate that the core is not dead
-//        Time_Delay(500);
-//        IO_LED_3_toggle();
+	    if(ultrasonicReady && ultrasonicDistance < 500){
+	        IO_LED_3_on();
+	    }
+	    else{
+	        IO_LED_3_off();
+	    }
 	}
 }
 
 // list out all ISR for CPU2
 void Periodic_1s_ISR(void){
-    IO_LED_3_toggle();
+    ;
 }
 
 void Periodic_100ms_ISR(void){
-//	Ultrasonic_Trigger();
-    ;
+	Ultrasonic_Trigger();
+	IO_LED_4_toggle();
 }
 
 void Periodic_10ms_ISR(void){
