@@ -16,13 +16,13 @@
 #define	IfxSrc_Tos_cpu0		0
 #endif
 #ifndef	IfxSrc_Tos_dma
-#define IfxSrc_Tos_dma		1
+#define IfxSrc_Tos_dma		3
 #endif
 #ifndef IfxSrc_Tos_cpu1
-#define IfxSrc_Tos_cpu1		2
+#define IfxSrc_Tos_cpu1		1
 #endif
 #ifndef IfxSrc_Tos_cpu2
-#define IfxSrc_Tos_cpu2		3
+#define IfxSrc_Tos_cpu2		2
 #endif
 
 IfxGtm_Tim_In timDriver_10ms, timDriver_100ms, timDriver_1s, timDriver_pid;
@@ -41,27 +41,27 @@ IFX_INTERRUPT(EXTI_REED_ISR, IO_REED_TOS, IO_REED_PRIORITY) {
 	IO_Reed_ISR();
 }
 
-IFX_INTERRUPT(SERIAL_TX_ISR, SERIAL_TX_TOS, SERIAL_TX_PRIORITY) {
+IFX_INTERRUPT(SERIAL_TX_ISR, SERIAL_TOS, SERIAL_TX_PRIORITY) {
 	Serial_Tx_ISR();
 }
 
-IFX_INTERRUPT(SERIAL_RX_ISR, SERIAL_RX_TOS, SERIAL_RX_PRIORITY) {
+IFX_INTERRUPT(SERIAL_RX_ISR, SERIAL_TOS, SERIAL_RX_PRIORITY) {
 	Serial_Rx_ISR();
 }
 
-IFX_INTERRUPT(SERIAL_ERR_ISR, SERIAL_ERR_TOS, SERIAL_ERR_PRIORITY) {
+IFX_INTERRUPT(SERIAL_ERR_ISR, SERIAL_TOS, SERIAL_ERR_PRIORITY) {
 	Serial_Err_ISR();
 }
 
-IFX_INTERRUPT(BLE_TX_ISR, BLE_TX_TOS, BLE_TX_PRIORITY) {
+IFX_INTERRUPT(BLE_TX_ISR, BLE_TOS, BLE_TX_PRIORITY) {
 	BLE_Tx_ISR();
 }
 
-IFX_INTERRUPT(BLE_RX_ISR, BLE_RX_TOS, BLE_RX_PRIORITY) {
+IFX_INTERRUPT(BLE_RX_ISR, BLE_TOS, BLE_RX_PRIORITY) {
 	BLE_Rx_ISR();
 }
 
-IFX_INTERRUPT(BLE_ERR_ISR, BLE_ERR_TOS, BLE_ERR_PRIORITY) {
+IFX_INTERRUPT(BLE_ERR_ISR, BLE_TOS, BLE_ERR_PRIORITY) {
 	BLE_Err_ISR();
 }
 
@@ -223,7 +223,7 @@ void SWINT_Trigger_user3(void) {
 }
 
 __weak__ void Encoder_Overflow_ISR(void) {
-	;		// should be defined in Encoder.c
+	;		// defined in Encoder.c
 }
 
 __weak__ void Time_Periodic_ISR(void) {
@@ -274,34 +274,18 @@ __weak__ void IO_Hsync_ISR(void) {
 	;		// defined in Camera.c if using software flow control
 }
 
-__weak__ void Periodic_1s_ISR(void) {
-	;
-}
-
-__weak__ void Periodic_100ms_ISR(void) {
-	;
-}
-
-__weak__ void Periodic_10ms_ISR(void) {
-	;
-}
-
-__weak__ void Periodic_PID_ISR(void) {
-	;
-}
-
 __weak__ void SWINT_User0_ISR(void) {
-	;
+	;		// defined in main.c
 }
 
 __weak__ void SWINT_User1_ISR(void) {
-	;
+	;		// defined in main.c
 }
 
 __weak__ void SWINT_User2_ISR(void) {
-	;
+	;		// defined in main.c
 }
 
 __weak__ void SWINT_User3_ISR(void) {
-	;
+	;		// defined in main.c
 }

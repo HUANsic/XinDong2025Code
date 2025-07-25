@@ -117,29 +117,29 @@ void EI2C_Hold() {
 	for (i = 0; i < 100; i++) {		// 100kHz if i=100
 		// place [CPU_CLK_MHz/10 - 3] number of NOPs in this loop
 		// then each cycle is approximately 100ns
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
-		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
+//		__asm("NOP");
 
 		__asm("NOP");
 		__asm("NOP");
