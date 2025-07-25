@@ -41,13 +41,4 @@ void Time_Delay(uint32 duration);
 
 void Time_Delay_us(uint32 duration);
 
-// define below functions in main
-void Periodic_1s_ISR(void);
-
-void Periodic_100ms_ISR(void);
-
-void Periodic_10ms_ISR(void);
-
-void Periodic_PID_ISR(void);
-
 #endif /* XINDONGLIB_TIME_H_ */

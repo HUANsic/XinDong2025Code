@@ -25,9 +25,7 @@
 #define IfxSrc_Tos_cpu2		2
 #endif
 
-IfxGtm_Tim_In timDriver_10ms, timDriver_100ms, timDriver_1s, timDriver_pid;
-IfxGtm_Tim_In timDriver_user0, timDriver_user1, timDriver_user2, timDriver_user3;
-Ifx_SRC_SRCR *src_10ms, *src_100ms, *src_1s, *src_pid, *src_user0, *src_user1, *src_user2, *src_user3;
+volatile Ifx_SRC_SRCR *src_10ms, *src_100ms, *src_1s, *src_pid, *src_user0, *src_user1, *src_user2, *src_user3;
 
 // encoder overflow
 IFX_INTERRUPT(ENCODER_OVERFLOW_ISR, ENCODER_OVERFLOW_TOS, ENCODER_OVERFLOW_PRIORITY) {
@@ -131,7 +129,6 @@ IFX_INTERRUPT(SWINT_USER3_ISR, SWINT_USER3_TOS, SWINT_USER3_PRIORITY) {
 void Interrupts_Init(void) {
 	IfxGtm_Tim_In_Config config;
 	IfxGtm_Tim_In timDriver;
-	Ifx_SRC_SRCR *src_10ms, *src_100ms, *src_1s, *src_pid, *src_user0, *src_user1, *src_user2, *src_user3;
 
 	IfxGtm_Tim_In_initConfig(&config, &MODULE_GTM);
 
@@ -139,8 +136,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_0;
 	config.isrProvider = SWINT_10MS_PERIODIC_TOS;
 	config.isrPriority = SWINT_10MS_PERIODIC_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_10ms, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_10ms.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_10ms = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_0);
     IfxSrc_clearRequest(src_10ms);
 
@@ -148,8 +145,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_1;
 	config.isrProvider = SWINT_100MS_PERIODIC_TOS;
 	config.isrPriority = SWINT_100MS_PERIODIC_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_100ms, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_1s.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_100ms = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_1);
     IfxSrc_clearRequest(src_100ms);
 
@@ -157,8 +154,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_2;
 	config.isrProvider = SWINT_1S_PERIODIC_TOS;
 	config.isrPriority = SWINT_1S_PERIODIC_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_1s, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_100ms.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_1s = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_2);
     IfxSrc_clearRequest(src_1s);
 
@@ -166,8 +163,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_3;
 	config.isrProvider = SWINT_PID_PERIODIC_TOS;
 	config.isrPriority = SWINT_PID_PERIODIC_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_pid, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_pid.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_pid = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_3);
     IfxSrc_clearRequest(src_pid);
 
@@ -175,8 +172,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_4;
 	config.isrProvider = SWINT_USER0_TOS;
 	config.isrPriority = SWINT_USER0_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_user0, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_user0.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_user0 = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_4);
     IfxSrc_clearRequest(src_user0);
 
@@ -184,8 +181,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_5;
 	config.isrProvider = SWINT_USER1_TOS;
 	config.isrPriority = SWINT_USER1_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_user1, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_user1.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_user1 = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_5);
     IfxSrc_clearRequest(src_user1);
 
@@ -193,8 +190,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_6;
 	config.isrProvider = SWINT_USER2_TOS;
 	config.isrPriority = SWINT_USER2_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_user2, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_user2.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_user2 = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_6);
     IfxSrc_clearRequest(src_user2);
 
@@ -202,8 +199,8 @@ void Interrupts_Init(void) {
 	config.channelIndex = IfxGtm_Tim_Ch_7;
 	config.isrProvider = SWINT_USER3_TOS;
 	config.isrPriority = SWINT_USER3_PRIORITY;
-	IfxGtm_Tim_In_init(&timDriver_user3, &config);
-	IfxGtm_Tim_Ch_setChannelNotification(timDriver_user3.channel, 1, 0, 0, 0);
+	IfxGtm_Tim_In_init(&timDriver, &config);
+	IfxGtm_Tim_Ch_setChannelNotification(timDriver.channel, 1, 0, 0, 0);
 	src_user3 = IfxGtm_Tim_Ch_getSrcPointer(&MODULE_GTM, IfxGtm_Tim_2, IfxGtm_Tim_Ch_7);
     IfxSrc_clearRequest(src_user3);
 }
