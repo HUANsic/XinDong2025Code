@@ -127,13 +127,21 @@ void BLE_Err_ISR(void);
 
 void Ultrasonic_PulseIn_ISR(void);
 
-void IO_Pclk_ISR(void);
+void Camera_Pclk_ISR(void);
 
-void IO_Vsync_ISR(void);
+void Camera_Vsync_ISR(void);
 
-void IO_Hsync_ISR(void);
+void Camera_Hsync_ISR(void);
 
 // define below functions in main
+void Periodic_1s_ISR(void);
+
+void Periodic_100ms_ISR(void);
+
+void Periodic_10ms_ISR(void);
+
+void Periodic_PID_ISR(void);
+
 void SWINT_User0_ISR(void);
 
 void SWINT_User1_ISR(void);
