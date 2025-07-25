@@ -29,6 +29,8 @@
 #include "IfxScuWdt.h"
 #include "IfxDma_Dma.h"
 #include "IfxDma.h"
+#include "IfxPort.h"
+#include "IfxSrc.h"
 
 #include "XinDongLib/XinDong_Config.h"
 #include "XinDongLib/Intercore.h"
@@ -36,6 +38,17 @@
 #include "XinDongLib/IO.h"
 #include "XinDongLib/Camera.h"
 #include "XinDongLib/Display.h"
+#include "XinDongLib/Interrupts.h"
+
+#include "Ifx_Types.h"
+#include "IfxSrc.h"
+#include "IfxScuEru.h"
+
+void Int_Test(void) {
+
+}
+
+
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 uint8 g_Image_main[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
@@ -53,7 +66,7 @@ void core0_main(void) {
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
     // initialize timer
-    Time_Start();
+//    Time_Start();
     // initialize LEDs and DIP switches, and the input for detecting battery balancing connector
 
     // if battery balancing connector not connected
@@ -87,56 +100,53 @@ void core0_main(void) {
         IfxPort_setPinModeInput(&MODULE_P02, pin, IfxPort_InputMode_noPullDevice);
     }
 
-    IfxPort_setPinMode(CAM_D0_PORT, CAM_D0_PIN, IfxPort_Mode_inputPullUp);
-
-    typedef struct
-    {
-        IfxDma_Dma                dmaHandle;                         /* Module handle to HW module SFR set              */
-        IfxDma_Dma_Config         dmaConfig;                         /* Module configuration structure                  */
-        IfxDma_Dma_ChannelConfig  dmaChNCfg;                         /* DMA whole channel configurations                */
-        IfxDma_Dma_Channel        dmaChannel;                        /* DMA channel configuration set                   */
-        uint32                    successfulDmaTransaction;          /* Number of successful DMA transactions           */
-        uint32                    failedDmaTransaction;              /* Number of failed DMA transactions               */
-        void                     *pSourceAddressForDmaTransfer;      /* DMA data source address - reload value          */
-        void                     *pDestinationAddressForDmaTransfer; /* DMA data destination address - reload v.        */
-    } dmaParams;
-    #define DMA_CHANNEL_ID      IfxDma_ChannelId_0     /* DMA Channel Id used to transfer data              */
-    #define DATA_ARRAY_LENGTH   10                     /* Data Length of the DMA transaction in words       */
-    dmaParams g_DMA;
-    /* Load default module configuration into configuration structure */
-    IfxDma_Dma_initModuleConfig(&g_DMA.dmaConfig, &MODULE_DMA);
-
-    /* Initialize module with configuration. */
-    IfxDma_Dma_initModule(&g_DMA.dmaHandle, &g_DMA.dmaConfig);
-
-    /* Get/initialize DMA channel configuration for all DMA channels otherwise use &g_Dma.dmaChannel as target */
-    IfxDma_Dma_initChannelConfig(&g_DMA.dmaChNCfg, &g_DMA.dmaHandle);
-
-    /* Set desired DMA channel: Channel 0 is used */
-    g_DMA.dmaChNCfg.channelId = DMA_CHANNEL_ID;
-
-    /* Setup the operation mode/settings for DMA channel */
-    g_DMA.dmaChNCfg.moveSize = IfxDma_ChannelMoveSize_8bit;
-
-    /* Set the number of DMA transfers */
-    g_DMA.dmaChNCfg.transferCount = 1;
-
-    /* Execute the DMA transaction with only one trigger */
-    g_DMA.dmaChNCfg.requestMode = IfxDma_ChannelRequestMode_completeTransactionPerRequest;
-
-    /* Set destination and source address data to DMA channel */
-    uint8 destination;
-    g_DMA.dmaChNCfg.sourceAddress      = (uint32)(&(MODULE_P02.IN.U));
-    g_DMA.dmaChNCfg.destinationAddress = (uint32) &destination;
-
-    /* Setup the specific DMA channel configuration */
-    IfxDma_Dma_initChannel(&g_DMA.dmaChannel, &g_DMA.dmaChNCfg);
-
-    /* Save start address of source and destination buffers, into the Application global variable */
-
-    //g_DMA.pSourceAddressForDmaTransfer      = CAM_D0_PORT;
-    //g_DMA.pDestinationAddressForDmaTransfer = &destination;
-
+//    typedef struct
+//    {
+//        IfxDma_Dma                dmaHandle;                         /* Module handle to HW module SFR set              */
+//        IfxDma_Dma_Config         dmaConfig;                         /* Module configuration structure                  */
+//        IfxDma_Dma_ChannelConfig  dmaChNCfg;                         /* DMA whole channel configurations                */
+//        IfxDma_Dma_Channel        dmaChannel;                        /* DMA channel configuration set                   */
+//        uint32                    successfulDmaTransaction;          /* Number of successful DMA transactions           */
+//        uint32                    failedDmaTransaction;              /* Number of failed DMA transactions               */
+//        void                     *pSourceAddressForDmaTransfer;      /* DMA data source address - reload value          */
+//        void                     *pDestinationAddressForDmaTransfer; /* DMA data destination address - reload v.        */
+//    } dmaParams;
+//    #define DMA_CHANNEL_ID      IfxDma_ChannelId_0     /* DMA Channel Id used to transfer data              */
+//    #define DATA_ARRAY_LENGTH   10                     /* Data Length of the DMA transaction in words       */
+//    dmaParams g_DMA;
+//    /* Load default module configuration into configuration structure */
+//    IfxDma_Dma_initModuleConfig(&g_DMA.dmaConfig, &MODULE_DMA);
+//
+//    /* Initialize module with configuration. */
+//    IfxDma_Dma_initModule(&g_DMA.dmaHandle, &g_DMA.dmaConfig);
+//
+//    /* Get/initialize DMA channel configuration for all DMA channels otherwise use &g_Dma.dmaChannel as target */
+//    IfxDma_Dma_initChannelConfig(&g_DMA.dmaChNCfg, &g_DMA.dmaHandle);
+//
+//    /* Set desired DMA channel: Channel 0 is used */
+//    g_DMA.dmaChNCfg.channelId = DMA_CHANNEL_ID;
+//
+//    /* Setup the operation mode/settings for DMA channel */
+//    g_DMA.dmaChNCfg.moveSize = IfxDma_ChannelMoveSize_8bit;
+//
+//    /* Set the number of DMA transfers */
+//    g_DMA.dmaChNCfg.transferCount = 1;
+//
+//    /* Execute the DMA transaction with only one trigger */
+//    g_DMA.dmaChNCfg.requestMode = IfxDma_ChannelRequestMode_completeTransactionPerRequest;
+//
+//    /* Set destination and source address data to DMA channel */
+//    uint8 destination;
+//    g_DMA.dmaChNCfg.sourceAddress      = (uint32)(&(MODULE_P02.IN.U));
+//    g_DMA.dmaChNCfg.destinationAddress = (uint32) &destination;
+//
+//    /* Setup the specific DMA channel configuration */
+//    IfxDma_Dma_initChannel(&g_DMA.dmaChannel, &g_DMA.dmaChNCfg);
+//
+//    /* Save start address of source and destination buffers, into the Application global variable */
+//
+//    //g_DMA.pSourceAddressForDmaTransfer      = CAM_D0_PORT;
+//    //g_DMA.pDestinationAddressForDmaTransfer = &destination;
 
 
     // wait for other cores to finish initialization
@@ -145,8 +155,18 @@ void core0_main(void) {
     while (Intercore_ReadyToGo() == 0)
         ;
 
-    // initiate camera
-    while(Camera_Init() == 0);
+
+
+
+    IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
+
+
+
+
+
+
+
+
 
     while (1) {
         // some code to indicate that the core is not dead
@@ -162,9 +182,9 @@ void core0_main(void) {
 //        if (destination & 0x02) IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_high);
 //        else IfxPort_setPinState(IO_LED3_PORT, IO_LED3_PIN, IfxPort_State_low);
 //
-//        Time_Delay(1000);
+//        Time_Delay_us(1000000);
 //        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
-//        Time_Delay(1000);
+//        Time_Delay_us(1000000);
 //        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
         static uint8 state_pclk = 0, state_vsync = 0;
         static uint32 pixel_count = 0, pixel_count_max = 0;
@@ -177,17 +197,17 @@ void core0_main(void) {
             // 开始读取像素
             if (state_vsync == 1 && IfxPort_getPinState(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN) == 0) {
                 // 这帧已经传输完成，接下来idle
-                IfxPort_togglePin(IO_LED3_PORT, IO_LED3_PIN);
+//                IfxPort_togglePin(IO_LED3_PORT, IO_LED3_PIN);
                 pixel_count_max = pixel_count;
                 if (pixel_count_max > 45120 - 1 && pixel_count_max < 45120 + 1) {
-                    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
+//                    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_high);
                 } else {
-                    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_low);
+//                    IfxPort_setPinState(IO_LED2_PORT, IO_LED2_PIN, IfxPort_State_low);
                 }
                 if (g_Image_main[60][94] > 60) {
-                    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_high);
+//                    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_high);
                 } else {
-                    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_low);
+//                    IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_low);
                 }
                 pixel_count = 0;
                 state_vsync = 0;    // 这帧已经传输完成，接下来idle

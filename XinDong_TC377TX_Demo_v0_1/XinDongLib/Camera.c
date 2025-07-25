@@ -1,6 +1,11 @@
 #include "Camera.h"
 #include "EI2C.h"
 #include "Time.h"
+#include "IfxScuEru.h"
+#include "IfxDma_Dma.h"
+#include "IfxDma_reg.h"
+#include "IfxDma.h"
+#include "XinDongLib/Interrupts.h"
 
 // (DO NOT EXTERN!!!) the three image buffers to catch every single frame
 // each only writable by either Camera.c OR cv.c (static just to possess their uniqueness)
@@ -8,9 +13,9 @@ static uint16 g_Image1[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 static uint16 g_Image2[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 static uint16 g_Image3[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
 
-uint16 (*writing_img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = &g_Image1;		// the image that is currently being received
-uint16 (*occupied_img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = 0;				// the image that is currently being processed by CV
-uint16 (*latest_img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = 0;				// the last image received that hasn't been read yet
+uint16 (*writing_img_ptr)[CAM_IMAGE_WIDTH] = g_Image1;		// the image that is currently being received
+uint16 (*occupied_img_ptr)[CAM_IMAGE_WIDTH] = 0;				// the image that is currently being processed by CV
+uint16 (*latest_img_ptr)[CAM_IMAGE_WIDTH] = 0;				// the last image received that hasn't been read yet
 
 void* Camera_GetLatest(void) {
 	// if the previous buffer is not released, do not give it another one
@@ -22,7 +27,7 @@ void* Camera_GetLatest(void) {
 	return occupied_img_ptr;
 }
 
-void* Camera_Release(void (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
+void* Camera_Release(uint16 (*img_ptr)[CAM_IMAGE_WIDTH]) {
 	// if it attempts to release the correct pointer, then proceed
 	if (img_ptr == occupied_img_ptr) {
 		occupied_img_ptr = 0;
@@ -33,31 +38,31 @@ void* Camera_Release(void (*img_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH]) {
 }
 
 void* _Camera_Image_Received(void) {
-	uint16 (*temp_ptr)[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH] = writing_img_ptr;
+	uint16 (*temp_ptr)[CAM_IMAGE_WIDTH] = writing_img_ptr;
 	// if there is a buffer occupied, then there is only one buffer available
 	if (occupied_img_ptr != 0) {
-		if (occupied_img_ptr == &g_Image1) {
-			if (writing_img_ptr == &g_Image2)
-				writing_img_ptr = &g_Image3;
+		if (occupied_img_ptr == g_Image1) {
+			if (writing_img_ptr == g_Image2)
+				writing_img_ptr = g_Image3;
 			else
-				writing_img_ptr = &g_Image2;
-		} else if (occupied_img_ptr == &g_Image2) {
-			if (writing_img_ptr == &g_Image1)
-				writing_img_ptr = &g_Image3;
+				writing_img_ptr = g_Image2;
+		} else if (occupied_img_ptr == g_Image2) {
+			if (writing_img_ptr == g_Image1)
+				writing_img_ptr = g_Image3;
 			else
-				writing_img_ptr = &g_Image1;
-		} else if (occupied_img_ptr == &g_Image3) {
-			if (writing_img_ptr == &g_Image1)
-				writing_img_ptr = &g_Image2;
+				writing_img_ptr = g_Image1;
+		} else if (occupied_img_ptr == g_Image3) {
+			if (writing_img_ptr == g_Image1)
+				writing_img_ptr = g_Image2;
 			else
-				writing_img_ptr = &g_Image1;
+				writing_img_ptr = g_Image1;
 		} else {		// no image is occupied
-			if (writing_img_ptr == &g_Image1)
-				writing_img_ptr = &g_Image2;
-			else if (writing_img_ptr == &g_Image2)
-				writing_img_ptr = &g_Image3;
-			else if (writing_img_ptr == &g_Image3)
-				writing_img_ptr = &g_Image1;
+			if (writing_img_ptr == g_Image1)
+				writing_img_ptr = g_Image2;
+			else if (writing_img_ptr == g_Image2)
+				writing_img_ptr = g_Image3;
+			else if (writing_img_ptr == g_Image3)
+				writing_img_ptr = g_Image1;
 		}
 	}
 	// assign the latest image pointer
@@ -864,17 +869,20 @@ static uint8 atk_mc2640_reg_bank_select(atk_mc2640_reg_bank_t bank)
  */
 static void atk_mc2640_hw_init(void)
 {
-    IfxPort_setPinMode(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_HSYNC_HW_PORT, CAM_HSYNC_HW_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_PCLK_HW_PORT, CAM_PCLK_HW_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D0_PORT, CAM_D0_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D1_PORT, CAM_D1_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D2_PORT, CAM_D2_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D3_PORT, CAM_D3_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D4_PORT, CAM_D4_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D5_PORT, CAM_D5_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D6_PORT, CAM_D6_PIN, IfxPort_Mode_inputPullUp);
-    IfxPort_setPinMode(CAM_D7_PORT, CAM_D7_PIN, IfxPort_Mode_inputPullUp);
+    IfxPort_setPinMode(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_HSYNC_HW_PORT, CAM_HSYNC_HW_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_PCLK_HW_PORT, CAM_PCLK_HW_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_VSYNC_SW_PORT, CAM_VSYNC_SW_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_HSYNC_SW_PORT, CAM_HSYNC_SW_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_PCLK_SW_PORT, CAM_PCLK_SW_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D0_PORT, CAM_D0_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D1_PORT, CAM_D1_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D2_PORT, CAM_D2_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D3_PORT, CAM_D3_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D4_PORT, CAM_D4_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D5_PORT, CAM_D5_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D6_PORT, CAM_D6_PIN, IfxPort_Mode_inputNoPullDevice);
+    IfxPort_setPinMode(CAM_D7_PORT, CAM_D7_PIN, IfxPort_Mode_inputNoPullDevice);
     IfxPort_setPinMode(CAM_RESET_PORT, CAM_RESET_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinMode(CAM_PWDN_PORT, CAM_PWDN_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinMode(CAM_FLASH_PORT, CAM_FLASH_PIN, IfxPort_Mode_outputPushPullGeneral);
@@ -892,7 +900,7 @@ static void atk_mc2640_hw_init(void)
 static void atk_mc2640_exit_power_down(void)
 {
     ATK_MC2640_PWDN(0);
-    Time_Delay(10);
+    Time_Delay_us(10000);
 }
 
 /**
@@ -903,9 +911,9 @@ static void atk_mc2640_exit_power_down(void)
 static void atk_mc2640_hw_reset(void)
 {
     ATK_MC2640_RST(0);
-    Time_Delay(10);
+    Time_Delay_us(10000);
     ATK_MC2640_RST(1);
-    Time_Delay(10);
+    Time_Delay_us(10000);
 }
 
 /**
@@ -917,7 +925,7 @@ static void atk_mc2640_sw_reset(void)
 {
     atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
     atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, 0x80);
-    Time_Delay(50);
+    Time_Delay_us(50000);
 }
 
 /**
@@ -968,6 +976,11 @@ static void atk_mc2640_init_reg(void)
     {
         atk_mc2640_write_reg(atk_mc2640_init_uxga_cfg[cfg_index][0], atk_mc2640_init_uxga_cfg[cfg_index][1]);
     }
+
+//    for (cfg_index=0; cfg_index<(sizeof(atk_mc2640_init_svga_cfg)/sizeof(atk_mc2640_init_svga_cfg[0])); cfg_index++)
+//    {
+//        atk_mc2640_write_reg(atk_mc2640_init_svga_cfg[cfg_index][0], atk_mc2640_init_svga_cfg[cfg_index][1]);
+//    }
 
     atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
     zmow = atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMOW);
@@ -1674,16 +1687,228 @@ void atk_mc2640_colorbar_disable(void)
     atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, com7);
 }
 
+
+void IO_Vsync_ISR(void) {
+    if (IfxPort_getPinState(CAM_VSYNC_SW_PORT, CAM_VSYNC_SW_PIN) == 1) {
+        IfxDma_setChannelDestinationAddress(&MODULE_DMA, CAMERA_PCLK_PRIORITY,
+        (void*) IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), writing_img_ptr));
+    } else {
+        IfxDma_disableChannelTransaction(&MODULE_DMA, CAMERA_PCLK_PRIORITY);
+        _Camera_Image_Received();
+    }
+    IfxPort_togglePin(IO_LED2_PORT, IO_LED2_PIN);
+}
+
+void IO_Hsync_ISR(void) {
+    if (IfxPort_getPinState(CAM_HSYNC_SW_PORT, CAM_HSYNC_SW_PIN) == 1) {
+        IfxDma_enableChannelTransaction(&MODULE_DMA, CAMERA_PCLK_PRIORITY);
+    } else {
+        IfxDma_disableChannelTransaction(&MODULE_DMA, CAMERA_PCLK_PRIORITY);
+    }
+    IfxPort_togglePin(IO_LED3_PORT, IO_LED3_PIN);
+}
+
+
+// P15.04 VSYNC channelId = 0
+// P11.10 PCLK channelId = 6
+// P10.03 HREF channelId = 3
+
+// EXI flags
+const unsigned char PinIrqVectabNum[4] =
+        {CAMERA_VSYNC_TOS, 0, CAMERA_PCLK_TOS, CAMERA_HSYNC_TOS};
+
+// EXI priority
+const unsigned char PinIrqPriority[4] = {CAMERA_VSYNC_PRIORITY, 0, CAMERA_PCLK_PRIORITY, CAMERA_HSYNC_PRIORITY};
+
+// ISR pointers
+//const void *PinIrqFuncPointer[4] = {&PIN_INT0_IRQHandler, &PIN_INT1_IRQHandler, &PIN_INT2_IRQHandler,
+//        &PIN_INT3_IRQHandler};
+
+
+
+void PIN_Exti (Ifx_P *port, uint8 pinIndex, IfxPort_InputMode mode)
+{
+    int i, j;
+
+    // disable interrupts
+    unsigned char interruptState = IfxCpu_disableInterrupts();
+
+    IfxScu_Req_In *reqPin = 0;
+
+    /// check pins
+    for (i = 0; i < 8; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
+            if (IfxScu_Req_In_pinTable[0][i][j] == NULL_PTR)
+            {
+
+            }
+            else if ((uint32) port == (uint32) IfxScu_Req_In_pinTable[0][i][j]->pin.port
+                    && pinIndex == IfxScu_Req_In_pinTable[0][i][j]->pin.pinIndex)
+            {
+                reqPin = IfxScu_Req_In_pinTable[0][i][j];
+            }
+        }
+    }
+
+    if (!reqPin)
+    {
+        while (1)
+            ;
+    }
+
+    // pull up/down
+    IfxScuEru_initReqPin(reqPin, mode);
+
+    // set channel
+    IfxScuEru_InputChannel inputChannel = (IfxScuEru_InputChannel) reqPin->channelId;
+
+    // set up interrupt mode
+    IfxScuEru_disableFallingEdgeDetection(inputChannel);
+    IfxScuEru_disableRisingEdgeDetection(inputChannel);
+    if (mode == IfxPort_InputMode_pullUp || mode == IfxPort_InputMode_noPullDevice)
+    {
+        IfxScuEru_enableFallingEdgeDetection(inputChannel);
+    }
+    if (mode == IfxPort_InputMode_pullDown || mode == IfxPort_InputMode_noPullDevice)
+    {
+        IfxScuEru_enableRisingEdgeDetection(inputChannel);
+    }
+    IfxScuEru_enableAutoClear(inputChannel);
+
+    // signal destination
+    IfxScuEru_InputNodePointer triggerSelect = (IfxScuEru_InputNodePointer) inputChannel;
+    IfxScuEru_OutputChannel outputChannel = (IfxScuEru_OutputChannel) inputChannel;
+
+    // connecting matrix
+    IfxScuEru_enableTriggerPulse(inputChannel);
+    IfxScuEru_connectTrigger(inputChannel, triggerSelect);
+
+    // output channels
+    IfxScuEru_setFlagPatternDetection(outputChannel, inputChannel, 0);
+    IfxScuEru_disablePatternDetectionTrigger(outputChannel);
+    IfxScuEru_setInterruptGatingPattern(outputChannel, IfxScuEru_InterruptGatingPattern_alwaysActive);
+
+    uint8 vectabNum = PinIrqVectabNum[(int) inputChannel % 4];
+    uint8 Priority = PinIrqPriority[(int) inputChannel % 4];
+
+    // service req config
+    {
+        volatile Ifx_SRC_SRCR *src = &MODULE_SRC.SCU.SCUERU[(int) outputChannel % 4];
+        IfxSrc_init(src, vectabNum, Priority);
+        IfxSrc_enable(src);
+    }
+
+    // install int.
+//    IfxCpu_Irq_installInterruptHandler((void*) PinIrqFuncPointer[(int) inputChannel % 4], Priority);
+
+    // enable interrupts
+    IfxCpu_restoreInterrupts(interruptState);
+}
+
+/**
+ * 摄像头 DMA 配置结构体
+ */
+typedef struct
+{
+        Ifx_DMA_CH linkedList[2];               //总是报错，去掉了IFX_ALIGN(256)，实测没有影响
+        //IFX_ALIGN(256) Ifx_DMA_CH linkedList[2]; //链表存储。必须与256位地址对齐，否则DMA无法读取
+        IfxDma_Dma_Channel chn;                 // Dma channel handle
+} Dma_Camera_t;
+
+Dma_Camera_t g_DmaCameraLinkedList;
+
+void DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAddr, unsigned long channel)
+{
+    /* 关闭中断 */
+    boolean interruptState = IfxCpu_disableInterrupts();
+
+    /* create module config */
+    IfxDma_Dma_Config dmaConfig;
+    IfxDma_Dma_initModuleConfig(&dmaConfig, &MODULE_DMA);
+
+    /* initialize module */
+    IfxDma_Dma dma;
+    IfxDma_Dma_initModule(&dma, &dmaConfig);
+
+    /* initial configuration for all channels */
+    IfxDma_Dma_ChannelConfig cfg;
+    IfxDma_Dma_initChannelConfig(&cfg, &dma);
+
+//  cfg.busPriority   = IfxDma_ChannelBusPriority_high;                    //优先级最高
+    cfg.requestMode = IfxDma_ChannelRequestMode_oneTransferPerRequest;   //请求启动一次传输
+    cfg.moveSize = IfxDma_ChannelMoveSize_8bit;                       //一次move 8bit
+    cfg.shadowControl = IfxDma_ChannelShadow_none;                         //单次模式
+    cfg.operationMode = IfxDma_ChannelOperationMode_continuous;            //传输完成继续传输
+    cfg.hardwareRequestEnabled = TRUE;                                     //使能硬件触发传输
+    cfg.sourceAddress = IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), srcStartAddr);  //设置源地址
+//    cfg.sourceAddress = srcStartAddr;  //设置源地址
+    cfg.sourceCircularBufferEnabled = TRUE;                                      //保持源地址不变
+    cfg.sourceAddressCircularRange = IfxDma_ChannelIncrementCircular_none;
+    cfg.channelId = channel;                                                 //设置DMA通道
+    cfg.channelInterruptEnabled = FALSE;
+    cfg.channelInterruptPriority = CAMERA_DMA_CPLT_PRIORITY;
+    cfg.channelInterruptTypeOfService = CAMERA_DMA_CPLT_TOS;
+
+    /* 设置传输表述符 */
+    cfg.destinationAddress = IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), dstStartAddr);
+//    cfg.destinationAddress = dstStartAddr;
+
+    /* address to next transaction set */
+    cfg.shadowAddress = 0;
+
+    cfg.transferCount = 11280;
+    cfg.transferCount = CAM_IMAGE_HEIGHT * CAM_IMAGE_WIDTH * 2;
+
+    /* transfer first transaction set into DMA channel */
+    IfxDma_Dma_initChannel(&g_DmaCameraLinkedList.chn, &cfg);
+
+    /* transfer into linked list storage */
+    IfxDma_Dma_initLinkedListEntry((void*) &g_DmaCameraLinkedList.linkedList[0], &cfg);
+
+//    IfxCpu_Irq_installInterruptHandler((void*) DMA_IRQHandler, DMA_PRIORITY);
+
+    /* clear service request flag */
+    (IfxDma_Dma_getSrcPointer(&g_DmaCameraLinkedList.chn))->B.CLRR = 1;
+
+    IfxDma_clearChannelInterrupt(&MODULE_DMA, channel);
+
+    IfxDma_disableChannelTransaction(&MODULE_DMA, channel);
+
+    /* 开启中断 */
+    IfxCpu_restoreInterrupts(interruptState);
+}
+
+
+
+
 /**
  * @brief       ATK-MC2640初始化，可以在main函数中调用
  * @param       无
  * @retval      0：失败；1：成功
  */
 uint8 Camera_Init(void) {
+
     uint8 ret;
     ret  = atk_mc2640_init();                                               /* 初始化ATK-MC2640模块 */
     ret |= atk_mc2640_set_output_format(ATK_MC2640_OUTPUT_FORMAT_RGB565);   /* 输出图像格式 */
     ret |= atk_mc2640_set_output_size(CAM_IMAGE_WIDTH, CAM_IMAGE_HEIGHT);         /* 输出图像分辨率 */
+    ret |= atk_mc2640_set_image_window(100, 0, CAM_IMAGE_WIDTH * 8, CAM_IMAGE_HEIGHT * 8);
+
+    uint8 V_DIVIDER = 2;
+    uint8 H_DIVIDER = 2;
+    atk_mc2640_write_reg(0x50, ((V_DIVIDER << 3) & 0x38) + (H_DIVIDER & 0x07));
+
+    atk_mc2640_set_sensor_window(200, 0, CAM_IMAGE_WIDTH * 8, CAM_IMAGE_HEIGHT * 8);
+
+    uint8 Horizontal_mirror = 0;
+    uint8 Vertical_flip = 1;
+    uint8 temp = atk_mc2640_read_reg(0x04);
+    temp |= (Horizontal_mirror << 7) + (Vertical_flip << 6);
+    atk_mc2640_write_reg(0xff, 0x01);
+    atk_mc2640_write_reg(0x04, temp);
+
     if (ret != 0) {
         return 0;
         // printf("ATK-MC2640 Init Failed!\r\n");
@@ -1691,12 +1916,23 @@ uint8 Camera_Init(void) {
 //
 //        }
     }
-    atk_mc2640_set_output_speed(5, 28);                                     /* 输出速率 */
+    atk_mc2640_set_output_speed(2, 22);                                     /* 输出速率 */
     atk_mc2640_set_light_mode(ATK_MC2640_LIGHT_MODE_SUNNY);                 /* 设置灯光模式 */
     atk_mc2640_set_color_saturation(ATK_MC2640_COLOR_SATURATION_1);         /* 设置色彩饱和度 */
     atk_mc2640_set_brightness(ATK_MC2640_BRIGHTNESS_1);                     /* 设置亮度 */
     atk_mc2640_set_contrast(ATK_MC2640_CONTRAST_2);                         /* 设置对比度 */
     atk_mc2640_set_special_effect(ATK_MC2640_SPECIAL_EFFECT_NORMAL);        /* 设置特殊效果 */
+
+
+    IfxCpu_disableInterrupts();
+
+    PIN_Exti(CAM_PCLK_SW_PORT, CAM_PCLK_SW_PIN, PIN_IRQ_MODE_RISING);
+    PIN_Exti(CAM_VSYNC_SW_PORT, CAM_VSYNC_SW_PIN, PIN_IRQ_MODE_RISING_FALLING);
+    PIN_Exti(CAM_HSYNC_SW_PORT, CAM_HSYNC_SW_PIN, PIN_IRQ_MODE_RISING_FALLING);
+
+    DMA_CameraInitConfig((unsigned long) (&(MODULE_P02.IN.U)), (unsigned long) writing_img_ptr, CAMERA_PCLK_PRIORITY);
+
+    IfxCpu_enableInterrupts();
 
     return 1;
 }

@@ -62,7 +62,7 @@
 #define     BLE_TX_TOS						IfxSrc_Tos_cpu0
 #define     BLE_ERR_TOS						IfxSrc_Tos_cpu0
 
-#define     CAMERA_PCLK_TOS					IfxSrc_Tos_cpu1
+#define     CAMERA_PCLK_TOS					IfxSrc_Tos_dma
 #define     CAMERA_VSYNC_TOS				IfxSrc_Tos_cpu1
 #define     CAMERA_HSYNC_TOS				IfxSrc_Tos_cpu1
 #define     CAMERA_DMA_CPLT_TOS				IfxSrc_Tos_cpu1

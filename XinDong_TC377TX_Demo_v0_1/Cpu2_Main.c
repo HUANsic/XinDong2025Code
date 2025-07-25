@@ -39,7 +39,19 @@
 #include "XinDongLib/Ultrasonic.h"
 #include "XinDongLib/Time.h"
 
+#include "XinDongLib/Camera.h"
+#include "XinDongLib/CV.h"
+#include "Display.h"
+
+#include "XinDongLib/Time.h"
+
+#include "Ifx_Types.h"
+#include "IfxSrc.h"
+#include "IfxScuEru.h"
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+extern uint8 g_Image_main[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
+extern uint16 (*writing_img_ptr)[CAM_IMAGE_WIDTH];
 
 void core2_main(void) {
 	IfxCpu_enableInterrupts();
@@ -65,6 +77,26 @@ void core2_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
+	    uint16 (*reading_img_ptr)[CAM_IMAGE_WIDTH] = Camera_GetLatest();
+	    OLED_Clear();
+	    if (reading_img_ptr != 0) {
+            for (uint8 i = 0; i < 61; i++) {
+                for (uint8 j = 0; j < 128; j++) {
+                    uint8 second = (uint8)(reading_img_ptr[2*i][j] >> 8);
+                    uint8 first = (uint8)reading_img_ptr[2*i][j];
+                    uint8 r = (second) >> 3;
+                    uint8 g = (((second) & 0x07) << 3) + (((first) & 0xE0) >> 5);
+                    uint8 b = ((first) & 0x1F);
+                    uint8 gray = (r * 38 + g * 75 + b * 15) >> 5;
+                    if (gray > 100) OLED_DrawPoint(j, i);
+    //                if (g_Image_main[2*i][j] > 100) OLED_DrawPoint(j, 63-i);
+                }
+            }
+            if(Camera_Release(reading_img_ptr) != 0) IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_high);
+            else IfxPort_setPinState(IO_LED4_PORT, IO_LED4_PIN, IfxPort_State_low);
+            OLED_Update();
+	    }
+
 	}
 }
 

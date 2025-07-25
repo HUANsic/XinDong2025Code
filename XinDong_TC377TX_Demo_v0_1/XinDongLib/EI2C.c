@@ -114,7 +114,7 @@ void EI2C_Hold() {
 	 .L411:
 	 ret						1(n*30+5)
 	 */
-	for (i = 0; i < 100; i++) {		// 100kHz if i=100
+	for (i = 0; i < 10; i++) {		// 100kHz if i=100
 		// place [CPU_CLK_MHz/10 - 3] number of NOPs in this loop
 		// then each cycle is approximately 100ns
 		__asm("NOP");

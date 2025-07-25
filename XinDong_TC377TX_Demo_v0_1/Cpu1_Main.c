@@ -31,9 +31,18 @@
 #include "XinDongLib/Intercore.h"
 #include "XinDongLib/Camera.h"
 #include "XinDongLib/CV.h"
+#include "Display.h"
+
+#include "XinDongLib/Interrupts.h"
+#include "XinDongLib/Time.h"
+
+#include "Ifx_Types.h"
+#include "IfxSrc.h"
+#include "IfxScuEru.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 extern uint8 g_Image_main[CAM_IMAGE_HEIGHT][CAM_IMAGE_WIDTH];
+
 void core1_main(void) {
 	IfxCpu_enableInterrupts();
 
@@ -55,15 +64,18 @@ void core1_main(void) {
 	while (Intercore_ReadyToGo() == 0)
 		;
 
+
+
+    // initiate camera
+    while(Camera_Init() == 0);
+
 	while (1) {
 		// some code to indicate that the core is not dead
-	    OLED_Clear();
-        for (uint8 i = 0; i < 61; i++) {
-            for (uint8 j = 0; j < 128; j++) {
-                if (g_Image_main[2*i][j] > 100) OLED_DrawPoint(j, 63-i);
-            }
-        }
-        OLED_Update();
+
+//	    Time_Delay_us(1000000);
+//        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_high);
+//        Time_Delay_us(1000000);
+//        IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
 	}
 }
 
