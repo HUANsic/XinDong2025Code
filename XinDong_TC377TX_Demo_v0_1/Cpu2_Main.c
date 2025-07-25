@@ -38,9 +38,11 @@
 #include "XinDongLib/Movements.h"
 #include "XinDongLib/Serial.h"
 #include "XinDongLib/Ultrasonic.h"
+#include "XinDongLib/Encoder.h"
 #include "XinDongLib/Time.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+sint32 pos;
 
 void core2_main(void) {
     IfxCpu_enableInterrupts();
@@ -60,6 +62,7 @@ void core2_main(void) {
 
 	// initialize any module needed
 	Ultrasonic_Init();
+	Encoder_Init();
 	IO_LED_3_init();
 	IO_LED_4_init();
 	// wait for other cores to finish initialization
@@ -68,7 +71,15 @@ void core2_main(void) {
 		;
 
 	while (1) {
-	    if(ultrasonicReady && ultrasonicDistance < 500){
+	    // Ultrasonic test.
+//	    if(ultrasonicReady && ultrasonicDistance < 500){
+//	        IO_LED_3_on();
+//	    }
+//	    else{
+//	        IO_LED_3_off();
+//	    }
+	    pos = Encoder_GetValue();
+	    if(pos >= 0){
 	        IO_LED_3_on();
 	    }
 	    else{
@@ -85,6 +96,7 @@ void Periodic_1s_ISR(void){
 void Periodic_100ms_ISR(void){
 	Ultrasonic_Trigger();
 	IO_LED_4_toggle();
+    ;
 }
 
 void Periodic_10ms_ISR(void){

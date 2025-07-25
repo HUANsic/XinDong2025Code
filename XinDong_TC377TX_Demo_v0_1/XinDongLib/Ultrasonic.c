@@ -68,3 +68,11 @@ void Ultrasonic_Trigger() {
     // enable new value and timeout interrupt
     IfxGtm_Tim_Ch_setChannelNotification(timDriver_pulseIn.channel, 1, 1, 0, 0);
 }
+
+uint32 Ultrasonic_GetValue(){
+    return ultrasonicDistance;
+}
+
+uint8 Ultrasonic_IsReady(){
+    return ultrasonicReady;
+}
