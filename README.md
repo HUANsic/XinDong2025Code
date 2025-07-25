@@ -97,6 +97,7 @@ XinDong2025Code/
 ## 💡 使用指南
 
 ### 图像处理使用
+本项目在`XinDong_TC377TX_Demo_v0_1/XinDongLib/CV.c`中实现了多种适用于资源受限单片机的高效图像处理算法，适合赛道检测、路径识别等场景。
 ```c
 #include "XinDongLib/CV.h"
 
@@ -115,6 +116,92 @@ if (cv_result.valid) {
     }
 }
 ```
+#### 1. 自适应阈值二值化（滑动窗口均值）
+
+**函数：**
+```c
+void CV_PreprocessImage(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+```
+- 对每一行采用滑动窗口均值作为阈值，实现自适应二值化，适应不同光照。
+- 推荐窗口宽度9~15，已内置。
+
+**用法：**
+```c
+static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+CV_PreprocessImage(input_img, &mask);
+```
+
+---
+
+#### 2. 行/列投影法
+
+**函数：**
+```c
+void CV_RowProjection(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 row_proj[CV_IMAGE_HEIGHT]);
+void CV_ColProjection(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 col_proj[CV_IMAGE_WIDTH]);
+```
+- 统计每一行/列的白色像素数量，快速判断赛道宽度、断裂、岔路等。
+
+**用法：**
+```c
+uint16 row_proj[CV_IMAGE_HEIGHT];
+uint16 col_proj[CV_IMAGE_WIDTH];
+CV_RowProjection(&mask, row_proj);
+CV_ColProjection(&mask, col_proj);
+```
+
+---
+
+#### 3. 简单形态学操作（3x3腐蚀/膨胀）
+
+**函数：**
+```c
+void CV_Erode3x3(uint16 (*src)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 (*dst)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+void CV_Dilate3x3(uint16 (*src)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 (*dst)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]);
+```
+- 腐蚀：去除噪点，细化赛道。
+- 膨胀：填补小空洞，粗化赛道。
+- 适合嵌入式环境，资源消耗低。
+
+**用法：**
+```c
+static uint16 temp[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+CV_Erode3x3(&mask, &temp);    // 腐蚀
+CV_Dilate3x3(&mask, &temp);   // 膨胀
+// temp为输出结果
+```
+
+---
+
+#### 4. 斜率/角度检测
+
+**函数：**
+```c
+float CV_CalcMidlineSlopeAngle(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], const uint16* rows, uint16 num_rows, uint16 mid_x[], float* out_slope);
+```
+- 计算指定多行的中线横坐标，拟合直线，输出斜率和角度（单位：度）。
+- 适合辅助判断弯道、直道、急转等。
+
+**用法：**
+```c
+uint16 rows[5] = {100, 110, 120, 130, 140}; // 选取5个感兴趣的行
+uint16 mid_x[5];
+float slope, angle;
+angle = CV_CalcMidlineSlopeAngle(&mask, rows, 5, mid_x, &slope);
+// angle为角度，slope为斜率
+```
+
+---
+
+#### 5. 典型流程示例
+
+```c
+static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+static uint16 temp[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+uint16 row_proj[CV_IMAGE_HEIGHT];
+uint16 col_proj[CV_IMAGE_WIDTH];
+uint16 rows[5] = {100, 110, 120, 130, 140};
+uint16 mid_x
 
 ### 运动控制使用
 ```c
@@ -243,11 +330,9 @@ boolean sw1 = IO_SW1_1_read();   // 返回 true 表示高电平（开），false
 - **系统集成**: 芯动计划团队
 
 ## 📞 联系方式
-
-- **项目地址**: https://git.tsinghua.edu.cn/wu-zh20/XinDong2025Code
 - **技术支持**: 通过GitLab Issues提交问题
-- **团队邮箱**: [联系邮箱]
 
 ---
 
 **芯动计划2025** - 让智能车驰骋未来 🚗⚡
+
