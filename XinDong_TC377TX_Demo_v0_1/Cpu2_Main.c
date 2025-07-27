@@ -65,6 +65,8 @@ void core2_main(void) {
 	Encoder_Init();
 	IO_LED_3_init();
 	IO_LED_4_init();
+	Servo_Init();
+	Motor_Init();
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
@@ -78,13 +80,15 @@ void core2_main(void) {
 //	    else{
 //	        IO_LED_3_off();
 //	    }
-	    pos = Encoder_GetValue();
-	    if(pos >= 0){
-	        IO_LED_3_on();
-	    }
-	    else{
-	        IO_LED_3_off();
-	    }
+//	    pos = Encoder_GetValue();
+//	    if(pos >= 0){
+//	        IO_LED_3_on();
+//	    }
+//	    else{
+//	        IO_LED_3_off();
+//	    }
+	    Servo_Set(-0.25);
+	    Motor_Set(0.5);
 	}
 }
 
