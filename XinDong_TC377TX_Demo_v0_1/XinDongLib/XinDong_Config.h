@@ -70,9 +70,9 @@
 #define		SERIAL_RX_PIN			7
 
 // servo: P13.3
-#define		SERVO_TOM_PIN			IfxGtm_TOM0_8_TOUT94_P13_3_OUT
-#define		SERVO_PORT				&MODULE_P13
-#define		SERVO_PIN				3
+#define		SERVO_TOM_PIN			IfxGtm_TOM1_0_TOUT26_P33_4_OUT
+#define		SERVO_PORT				&MODULE_P33
+#define		SERVO_PIN				4
 
 // motor: OUTA-P21.3, OUTB-P21.2
 #define		MOTOR_OUTA_TOM_PIN		IfxGtm_TOM2_1_TOUT54_P21_3_OUT
