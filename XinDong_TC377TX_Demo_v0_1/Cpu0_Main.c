@@ -34,6 +34,9 @@
 #include "XinDongLib/Time.h"
 #include "XinDongLib/IO.h"
 
+#include "XinDongLib/Time.h"
+#include "XinDongLib/IO.h"
+
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 void core0_main(void) {
@@ -68,7 +71,8 @@ void core0_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
-
+		IO_LED_1_toggle();
+		Time_Delay_us(100000);
 	}
 }
 

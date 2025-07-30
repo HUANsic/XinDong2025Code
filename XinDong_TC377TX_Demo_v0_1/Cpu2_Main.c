@@ -39,7 +39,11 @@
 #include "XinDongLib/Ultrasonic.h"
 #include "XinDongLib/Time.h"
 
+#include "XinDongLib/IO.h"
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+
+uint8 msg[] = "AT...\r\n";
 
 void core2_main(void) {
 	IfxCpu_enableInterrupts();
@@ -57,15 +61,25 @@ void core2_main(void) {
 	while (Intercore_InitAllowed() == 0)
 		;
 	// initialize any module needed
+	IO_LED_1_init();
+	IO_LED_2_init();
+	IO_LED_3_init();
+	Serial_Init();
+	Bluetooth_Init();
 
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
 		;
 
+	Bluetooth_AT(1);
+	Time_Delay_us(10000);
+	Bluetooth_Transmit(msg, 7);
 	// Serial_Receive(msg_rx, 1024, 1);
 	while (1) {
 		// some code to indicate that the core is not dead
+		IO_LED_3_toggle();
+		Time_Delay_us(100000);
 	}
 }
 
@@ -104,6 +118,16 @@ void SWINT_User3_ISR(void) {
 }
 
 void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		Bluetooth_Transmit(dataptr, 1);
+	}
+}
+
+void Bluetooth_Received(uint8 *dataptr, uint32 length, uint8 tag) {
 	switch (tag) {
 	case 1:
 

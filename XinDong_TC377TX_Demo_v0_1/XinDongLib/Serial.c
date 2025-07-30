@@ -11,7 +11,7 @@ uint8 serial_rx_tag;
 uint32 serial_rx_length, serial_rx_length_got;
 Ifx_SizeT serial_rx_count_this;
 
-uint8 rxBuffer[SERIAL_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8], txBuffer[SERIAL_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8];
+uint8 serial_rx_buffer[SERIAL_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8], serial_tx_buffer[SERIAL_BUFFER_SIZE + sizeof(Ifx_Fifo) + 8];
 
 void Serial_Init() {
 	/* Initialize an instance of IfxAsclin_Asc_Config with default values */
@@ -33,9 +33,9 @@ void Serial_Init() {
 	ascConfig.interrupt.typeOfService = SERIAL_TOS;
 
 	/* FIFO configuration */
-	ascConfig.txBuffer = txBuffer;
+	ascConfig.txBuffer = serial_tx_buffer;
 	ascConfig.txBufferSize = 256;
-	ascConfig.rxBuffer = rxBuffer;
+	ascConfig.rxBuffer = serial_rx_buffer;
 	ascConfig.rxBufferSize = 256;
 	// ascConfig.fifo.txFifoInterruptLevel = IfxAsclin_TxFifoInterruptLevel_0; /* txFifoInterruptLevel = 0. optimised to write upto 16 bytes at a time */
 	// ascConfig.fifo.rxFifoInterruptLevel = IfxAsclin_RxFifoInterruptLevel_1; /* interrupt on every byte */
