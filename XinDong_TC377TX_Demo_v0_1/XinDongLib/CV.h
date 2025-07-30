@@ -66,4 +66,15 @@ sint16 CV_CalculateMidlineError(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WI
 // 图像处理主函数
 CV_Result_t CV_ProcessImage(void);
 
+// 获取中线左右两侧的颜色值
+void CV_GetMidlineSideColors(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                            uint16 y_position, uint16 left_range, uint16 right_range,
+                            uint16* left_color, uint16* right_color);
+
+// 获取动态中线左右两侧的颜色值（基于检测到的中线位置）
+void CV_GetDynamicMidlineSideColors(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                                   uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH],
+                                   uint16 y_position, uint16 left_range, uint16 right_range,
+                                   uint16* left_color, uint16* right_color, uint16* midline_x);
+
 #endif /* XINDONGLIB_CV_H_ */
