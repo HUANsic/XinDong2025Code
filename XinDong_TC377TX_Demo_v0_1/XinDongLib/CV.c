@@ -1,5 +1,6 @@
 #include "CV.h"
 #include <string.h>
+#include <math.h>
 
 //	reference code: none, good luck
 //	reference code: TC264_XinDong_Demo_v42/Cpu1_Main.c
@@ -7,19 +8,37 @@
 // 全局变量
 sint16 g_buxian = 0;  // 补线方向判断变量
 
-// 图像预处理：转换为二值化掩码
+// 图像预处理：自适应阈值（每行滑动窗口均值）
 void CV_PreprocessImage(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
                        uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
     uint16 y, x;
-    
-    // 简单的二值化处理：将图像转换为黑白掩码
+    uint16 window = 9; // 滑动窗口宽度，奇数，建议5~15
+    uint16 half_win = window / 2;
+    uint32 sum;
+    uint16 mean;
+    uint16 left, right;
+
     for (y = 0; y < CV_IMAGE_HEIGHT; y++) {
+        // 先计算第一个窗口的和
+        sum = 0;
+        for (x = 0; x < window && x < CV_IMAGE_WIDTH; x++) {
+            sum += (*input_img)[y][x];
+        }
         for (x = 0; x < CV_IMAGE_WIDTH; x++) {
-            // 如果像素值大于阈值，认为是白色（赛道），否则为黑色（背景）
-            if ((*input_img)[y][x] > 128) {
-                (*mask)[y][x] = 255;  // 白色
+            // 窗口左右边界
+            left = (x > half_win) ? (x - half_win) : 0;
+            right = (x + half_win < CV_IMAGE_WIDTH) ? (x + half_win) : (CV_IMAGE_WIDTH - 1);
+            // 更新窗口和
+            if (x > half_win && right < CV_IMAGE_WIDTH) {
+                sum = sum - (*input_img)[y][left - 1] + (*input_img)[y][right];
+            }
+            // 计算均值
+            mean = sum / (right - left + 1);
+            // 二值化
+            if ((*input_img)[y][x] > mean) {
+                (*mask)[y][x] = 255;
             } else {
-                (*mask)[y][x] = 0;    // 黑色
+                (*mask)[y][x] = 0;
             }
         }
     }
@@ -50,7 +69,6 @@ uint16 CV_CalculateAveragePosition(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDT
             count++;
         }
     }
-    
     if (count == 0) {
         return start_x;  // 如果没有找到白色像素，返回起始位置
     }
@@ -173,6 +191,142 @@ CV_Result_t CV_ProcessImage(void) {
     return result;
 }
 
+// ================== 行/列投影法 ==================
+// 统计每一行的白色像素数量，结果存入row_proj，长度为CV_IMAGE_HEIGHT
+void CV_RowProjection(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 row_proj[CV_IMAGE_HEIGHT]) {
+    uint16 y, x, count;
+    for (y = 0; y < CV_IMAGE_HEIGHT; y++) {
+        count = 0;
+        for (x = 0; x < CV_IMAGE_WIDTH; x++) {
+            if ((*mask)[y][x] == 255) {
+                count++;
+            }
+        }
+        row_proj[y] = count;
+    }
+}
+
+// 统计每一列的白色像素数量，结果存入col_proj，长度为CV_IMAGE_WIDTH
+void CV_ColProjection(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 col_proj[CV_IMAGE_WIDTH]) {
+    uint16 y, x, count;
+    for (x = 0; x < CV_IMAGE_WIDTH; x++) {
+        count = 0;
+        for (y = 0; y < CV_IMAGE_HEIGHT; y++) {
+            if ((*mask)[y][x] == 255) {
+                count++;
+            }
+        }
+        col_proj[x] = count;
+    }
+}
+
+// ================== 简单形态学操作 ==================
+// 3x3腐蚀（Erosion）：去除噪点，细化赛道
+void CV_Erode3x3(uint16 (*src)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 (*dst)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
+    uint16 y, x, i, j;
+    for (y = 1; y < CV_IMAGE_HEIGHT - 1; y++) {
+        for (x = 1; x < CV_IMAGE_WIDTH - 1; x++) {
+            uint8 flag = 1;
+            for (i = y - 1; i <= y + 1; i++) {
+                for (j = x - 1; j <= x + 1; j++) {
+                    if ((*src)[i][j] == 0) {
+                        flag = 0;
+                        break;
+                    }
+                }
+                if (!flag) break;
+            }
+            (*dst)[y][x] = flag ? 255 : 0;
+        }
+    }
+    // 边界直接赋值为0
+    for (y = 0; y < CV_IMAGE_HEIGHT; y++) {
+        (*dst)[y][0] = 0;
+        (*dst)[y][CV_IMAGE_WIDTH-1] = 0;
+    }
+    for (x = 0; x < CV_IMAGE_WIDTH; x++) {
+        (*dst)[0][x] = 0;
+        (*dst)[CV_IMAGE_HEIGHT-1][x] = 0;
+    }
+}
+
+// 3x3膨胀（Dilation）：填补小空洞，粗化赛道
+void CV_Dilate3x3(uint16 (*src)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], uint16 (*dst)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH]) {
+    uint16 y, x, i, j;
+    for (y = 1; y < CV_IMAGE_HEIGHT - 1; y++) {
+        for (x = 1; x < CV_IMAGE_WIDTH - 1; x++) {
+            uint8 flag = 0;
+            for (i = y - 1; i <= y + 1; i++) {
+                for (j = x - 1; j <= x + 1; j++) {
+                    if ((*src)[i][j] == 255) {
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag) break;
+            }
+            (*dst)[y][x] = flag ? 255 : 0;
+        }
+    }
+    // 边界直接赋值为0
+    for (y = 0; y < CV_IMAGE_HEIGHT; y++) {
+        (*dst)[y][0] = 0;
+        (*dst)[y][CV_IMAGE_WIDTH-1] = 0;
+    }
+    for (x = 0; x < CV_IMAGE_WIDTH; x++) {
+        (*dst)[0][x] = 0;
+        (*dst)[CV_IMAGE_HEIGHT-1][x] = 0;
+    }
+}
+
+/*
+用法示例：
+    static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+    static uint16 temp[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+    // 先用CV_PreprocessImage生成mask
+    CV_PreprocessImage(input_img, &mask);
+    // 腐蚀
+    CV_Erode3x3(&mask, &temp);
+    // 膨胀
+    CV_Dilate3x3(&mask, &temp);
+    // temp为输出结果
+*/
+
+// ================== 斜率/角度检测 ==================
+// 计算中线在多行的横坐标，返回斜率和角度（单位：度）
+// rows: 需要检测的行号数组，num_rows: 数组长度
+// mid_x: 输出每一行的中线横坐标
+// 返回值：角度（float，单位度），斜率通过指针返回
+float CV_CalcMidlineSlopeAngle(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], const uint16* rows, uint16 num_rows, uint16 mid_x[], float* out_slope) {
+    uint16 i;
+    // 计算每一行的中线横坐标
+    for (i = 0; i < num_rows; i++) {
+        mid_x[i] = CV_CalculateAveragePosition(mask, rows[i], 0, CV_IMAGE_WIDTH);
+    }
+    // 用首尾两点拟合直线，计算斜率
+    int dy = rows[num_rows-1] - rows[0];
+    int dx = (int)mid_x[num_rows-1] - (int)mid_x[0];
+    float slope = (dy != 0) ? ((float)dx / (float)dy) : 0.0f;
+    if (out_slope) *out_slope = slope;
+    // 角度 = atan(斜率) * 180 / pi
+    float angle = atan(slope) * 57.29578f;
+    return angle;
+}
+
+/*
+用法示例：
+    static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+    uint16 rows[5] = {100, 110, 120, 130, 140}; // 选取5个感兴趣的行
+    uint16 mid_x[5];
+    float slope, angle;
+    // 先用CV_PreprocessImage生成mask
+    CV_PreprocessImage(input_img, &mask);
+    // 计算中线斜率和角度
+    angle = CV_CalcMidlineSlopeAngle(&mask, rows, 5, mid_x, &slope);
+    // angle为角度，slope为斜率
+*/
+
+
 /*
  * 使用示例：
  * 
@@ -232,6 +386,194 @@ CV_Result_t CV_ProcessImage(void) {
  *     // 处理结果...
  *     
  *     // 重要：处理完成后必须释放缓冲区
+ *     Camera_Release(img_ptr);
+ * }
+ */
+
+// ================== 中线左右两侧颜色检测 ==================
+// 获取中线左右两侧的颜色值
+// input_img: 输入图像
+// y_position: 检测的Y坐标位置
+// left_range: 左侧检测范围（像素数）
+// right_range: 右侧检测范围（像素数）
+// left_color: 输出左侧平均颜色值
+// right_color: 输出右侧平均颜色值
+void CV_GetMidlineSideColors(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                            uint16 y_position, uint16 left_range, uint16 right_range,
+                            uint16* left_color, uint16* right_color) {
+    uint16 x;
+    uint16 center_x = CV_IMAGE_WIDTH / 2;  // 图像中心X坐标
+    uint16 left_start, left_end, right_start, right_end;
+    uint32 left_sum = 0, right_sum = 0;
+    uint16 left_count = 0, right_count = 0;
+    
+    // 参数检查
+    if (input_img == NULL || left_color == NULL || right_color == NULL) {
+        return;
+    }
+    
+    // 检查Y坐标是否有效
+    if (y_position >= CV_IMAGE_HEIGHT) {
+        return;
+    }
+    
+    // 计算左侧检测范围
+    left_start = (center_x > left_range) ? (center_x - left_range) : 0;
+    left_end = center_x;
+    
+    // 计算右侧检测范围
+    right_start = center_x;
+    right_end = (center_x + right_range < CV_IMAGE_WIDTH) ? (center_x + right_range) : CV_IMAGE_WIDTH;
+    
+    // 计算左侧平均颜色值
+    for (x = left_start; x < left_end; x++) {
+        left_sum += (*input_img)[y_position][x];
+        left_count++;
+    }
+    
+    // 计算右侧平均颜色值
+    for (x = right_start; x < right_end; x++) {
+        right_sum += (*input_img)[y_position][x];
+        right_count++;
+    }
+    
+    // 计算平均值并输出
+    if (left_count > 0) {
+        *left_color = (uint16)(left_sum / left_count);
+    } else {
+        *left_color = 0;
+    }
+    
+    if (right_count > 0) {
+        *right_color = (uint16)(right_sum / right_count);
+    } else {
+        *right_color = 0;
+    }
+}
+
+/*
+ * 使用示例：
+ * 
+ * uint16 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * uint16 left_color, right_color;
+ * 
+ * // 获取图像缓冲区
+ * img_ptr = (uint16 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
+ * 
+ * if (img_ptr != NULL) {
+ *     // 获取中线左右两侧的颜色（在Y=100位置，左右各检测10个像素）
+ *     CV_GetMidlineSideColors(img_ptr, 100, 10, 10, &left_color, &right_color);
+ *     
+ *     // 使用颜色值进行判断
+ *     if (left_color > right_color) {
+ *         // 左侧颜色较亮
+ *     } else if (right_color > left_color) {
+ *         // 右侧颜色较亮
+ *     } else {
+ *         // 两侧颜色相近
+ *     }
+ *     
+ *     // 释放图像缓冲区
+ *     Camera_Release(img_ptr);
+ * }
+ */
+
+// 获取动态中线左右两侧的颜色值（基于检测到的中线位置）
+// input_img: 输入图像
+// mask: 二值化掩码图像
+// y_position: 检测的Y坐标位置
+// left_range: 左侧检测范围（像素数）
+// right_range: 右侧检测范围（像素数）
+// left_color: 输出左侧平均颜色值
+// right_color: 输出右侧平均颜色值
+// midline_x: 输出检测到的中线X坐标
+void CV_GetDynamicMidlineSideColors(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                                   uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH],
+                                   uint16 y_position, uint16 left_range, uint16 right_range,
+                                   uint16* left_color, uint16* right_color, uint16* midline_x) {
+    uint16 x;
+    uint16 detected_midline_x;
+    uint16 left_start, left_end, right_start, right_end;
+    uint32 left_sum = 0, right_sum = 0;
+    uint16 left_count = 0, right_count = 0;
+    
+    // 参数检查
+    if (input_img == NULL || mask == NULL || left_color == NULL || right_color == NULL || midline_x == NULL) {
+        return;
+    }
+    
+    // 检查Y坐标是否有效
+    if (y_position >= CV_IMAGE_HEIGHT) {
+        return;
+    }
+    
+    // 检测指定Y位置的中线X坐标
+    detected_midline_x = CV_CalculateAveragePosition(mask, y_position, 0, CV_IMAGE_WIDTH);
+    *midline_x = detected_midline_x;
+    
+    // 计算左侧检测范围
+    left_start = (detected_midline_x > left_range) ? (detected_midline_x - left_range) : 0;
+    left_end = detected_midline_x;
+    
+    // 计算右侧检测范围
+    right_start = detected_midline_x;
+    right_end = (detected_midline_x + right_range < CV_IMAGE_WIDTH) ? (detected_midline_x + right_range) : CV_IMAGE_WIDTH;
+    
+    // 计算左侧平均颜色值
+    for (x = left_start; x < left_end; x++) {
+        left_sum += (*input_img)[y_position][x];
+        left_count++;
+    }
+    
+    // 计算右侧平均颜色值
+    for (x = right_start; x < right_end; x++) {
+        right_sum += (*input_img)[y_position][x];
+        right_count++;
+    }
+    
+    // 计算平均值并输出
+    if (left_count > 0) {
+        *left_color = (uint16)(left_sum / left_count);
+    } else {
+        *left_color = 0;
+    }
+    
+    if (right_count > 0) {
+        *right_color = (uint16)(right_sum / right_count);
+    } else {
+        *right_color = 0;
+    }
+}
+
+/*
+ * 使用示例：
+ * 
+ * uint16 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * uint16 left_color, right_color, midline_x;
+ * 
+ * // 获取图像缓冲区
+ * img_ptr = (uint16 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
+ * 
+ * if (img_ptr != NULL) {
+ *     // 生成二值化掩码
+ *     CV_PreprocessImage(img_ptr, &mask);
+ *     
+ *     // 获取动态中线左右两侧的颜色（在Y=100位置，左右各检测10个像素）
+ *     CV_GetDynamicMidlineSideColors(img_ptr, &mask, 100, 10, 10, &left_color, &right_color, &midline_x);
+ *     
+ *     // 使用颜色值和中线位置进行判断
+ *     printf("中线位置: %d, 左侧颜色: %d, 右侧颜色: %d\n", midline_x, left_color, right_color);
+ *     
+ *     if (left_color > right_color) {
+ *         // 左侧颜色较亮
+ *     } else if (right_color > left_color) {
+ *         // 右侧颜色较亮
+ *     } else {
+ *         // 两侧颜色相近
+ *     }
+ *     
+ *     // 释放图像缓冲区
  *     Camera_Release(img_ptr);
  * }
  */

@@ -41,13 +41,4 @@ void Time_Delay(uint32 duration);
 
 void Time_Delay_us(uint32 duration);
 
-// define functions below in YOUR code
-void Time_Tick_10ms(void);
-
-void Time_Tick_PID(void);
-
-void Time_Tick_100ms(void);
-
-void Time_Tick_1s(void);
-
 #endif /* XINDONGLIB_TIME_H_ */

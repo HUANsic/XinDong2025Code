@@ -63,40 +63,52 @@ void core2_main(void) {
 	while (Intercore_ReadyToGo() == 0)
 		;
 
+	// Serial_Receive(msg_rx, 1024, 1);
 	while (1) {
 		// some code to indicate that the core is not dead
 	}
 }
 
-// list out all ISR for CPU2
-void Periodic_1s_ISR(void){
+/* list out all ISR for CPU2 */
+
+void Periodic_1s_ISR(void) {
 	;
 }
 
-void Periodic_100ms_ISR(void){
+void Periodic_100ms_ISR(void) {
 	;
 }
 
-void Periodic_10ms_ISR(void){
+void Periodic_10ms_ISR(void) {
 	;
 }
 
-void Periodic_PID_ISR(void){
+void Periodic_PID_ISR(void) {
 	;
 }
 
-void SWINT_User0_ISR(void){
+void SWINT_User0_ISR(void) {
 	;
 }
 
-void SWINT_User1_ISR(void){
+void SWINT_User1_ISR(void) {
 	;
 }
 
-void SWINT_User2_ISR(void){
+void SWINT_User2_ISR(void) {
 	;
 }
 
-void SWINT_User3_ISR(void){
+void SWINT_User3_ISR(void) {
 	;
+}
+
+void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		Serial_Transmit(dataptr, 1);
+	}
 }

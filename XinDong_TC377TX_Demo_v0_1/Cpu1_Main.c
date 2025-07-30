@@ -60,4 +60,4 @@ void core1_main(void) {
 	}
 }
 
-// list out all ISR for CPU1
+/* list out all ISR for CPU1 */
