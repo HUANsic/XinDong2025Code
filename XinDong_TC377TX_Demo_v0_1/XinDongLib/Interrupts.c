@@ -206,42 +206,34 @@ void Interrupts_Init(void) {
 }
 
 void SWINT_Trigger_10ms(void) {
-    IfxSrc_clearRequest(src_10ms);
     IfxSrc_setRequest(src_10ms);
 }
 
 void SWINT_Trigger_100ms(void) {
-    IfxSrc_clearRequest(src_100ms);
     IfxSrc_setRequest(src_100ms);
 }
 
 void SWINT_Trigger_1s(void) {
-    IfxSrc_clearRequest(src_1s);
     IfxSrc_setRequest(src_1s);
 }
 
 void SWINT_Trigger_pid(void) {
-    IfxSrc_clearRequest(src_pid);
     IfxSrc_setRequest(src_pid);
 }
 
 void SWINT_Trigger_user0(void) {
-    IfxSrc_clearRequest(src_user0);
     IfxSrc_setRequest(src_user0);
 }
 
 void SWINT_Trigger_user1(void) {
-    IfxSrc_clearRequest(src_user1);
     IfxSrc_setRequest(src_user1);
 }
 
 void SWINT_Trigger_user2(void) {
-    IfxSrc_clearRequest(src_user2);
     IfxSrc_setRequest(src_user2);
 }
 
 void SWINT_Trigger_user3(void) {
-    IfxSrc_clearRequest(src_user3);
     IfxSrc_setRequest(src_user3);
 }
 

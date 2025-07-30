@@ -76,6 +76,8 @@ void core0_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
+		IO_LED_1_toggle();
+		Time_Delay_us(250000);
 	}
 }
 
