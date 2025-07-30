@@ -49,9 +49,11 @@ void core1_main(void) {
 	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
 	// wait for signal to begin initialization
-	while(Intercore_InitAllowed() == 0)
-			;
+	while (Intercore_InitAllowed() == 0)
+		;
+
 	// initialize camera module
+
 	// wait for other cores to finish initialization
 	Intercore_CPU1_Ready();
 	while (Intercore_ReadyToGo() == 0)
@@ -59,7 +61,7 @@ void core1_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
-		IO_LED_2_toggle();
+		IO_LED_Toggle(2);
 		Time_Delay_us(100000);
 	}
 }

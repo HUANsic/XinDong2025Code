@@ -43,8 +43,6 @@
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
-uint8 msg[] = "AT...\r\n";
-
 void core2_main(void) {
 	IfxCpu_enableInterrupts();
 
@@ -60,10 +58,8 @@ void core2_main(void) {
 	// wait for signal to begin initialization
 	while (Intercore_InitAllowed() == 0)
 		;
+
 	// initialize any module needed
-	IO_LED_1_init();
-	IO_LED_2_init();
-	IO_LED_3_init();
 	Serial_Init();
 	Bluetooth_Init();
 
@@ -73,12 +69,10 @@ void core2_main(void) {
 		;
 
 	Bluetooth_AT(1);
-	Time_Delay_us(10000);
-	Bluetooth_Transmit(msg, 7);
-	// Serial_Receive(msg_rx, 1024, 1);
+
 	while (1) {
 		// some code to indicate that the core is not dead
-		IO_LED_3_toggle();
+		IO_LED_Toggle(3);
 		Time_Delay_us(100000);
 	}
 }

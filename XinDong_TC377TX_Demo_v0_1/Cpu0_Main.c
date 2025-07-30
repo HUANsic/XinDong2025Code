@@ -55,13 +55,17 @@ void core0_main(void) {
 	// initialize timer
 	Time_Start();
 	Interrupts_Init();
+
 	// initialize LEDs and DIP switches, and the input for detecting battery balancing connector
+	IO_Init();
 
 	// if battery balancing connector not connected
+
 	// then set one of the LED and wait until it is connected
 
 	// allow initialization of other cores
 	Intercore_AllowInitialize();
+
 	// initialize other modules
 
 	// wait for other cores to finish initialization
@@ -71,7 +75,7 @@ void core0_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
-		IO_LED_1_toggle();
+		IO_LED_Toggle(1);
 		Time_Delay_us(100000);
 	}
 }
