@@ -50,6 +50,8 @@ void IO_LED_On(int ledNum);
  */
 void IO_LED_Off(int ledNum);
 
+void IO_LED_Set(uint8 ledNum, uint8 state);
+
 /**
  * @brief Toggles the state of the specified LED (1-4)
  * @param ledNum LED number (valid range: 1-4)

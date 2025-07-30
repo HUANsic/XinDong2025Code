@@ -68,12 +68,13 @@ void core2_main(void) {
 	while (Intercore_ReadyToGo() == 0)
 		;
 
-	Bluetooth_AT(1);
-
 	while (1) {
 		// some code to indicate that the core is not dead
 		IO_LED_Toggle(3);
 		Time_Delay_us(100000);
+		// update AT pin according to DIP state
+		Bluetooth_AT(IO_DIP_Read(1));
+		IO_LED_Set(4, IO_DIP_Read(1));
 	}
 }
 
