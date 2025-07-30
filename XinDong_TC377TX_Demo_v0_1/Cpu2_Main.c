@@ -39,11 +39,7 @@
 #include "XinDongLib/Ultrasonic.h"
 #include "XinDongLib/Time.h"
 
-#include "XinDongLib/Time.h"
-#include "XinDongLib/IO.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
-
-char msg[] = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
 
 void core2_main(void) {
 	IfxCpu_enableInterrupts();
@@ -61,53 +57,58 @@ void core2_main(void) {
 	while (Intercore_InitAllowed() == 0)
 		;
 	// initialize any module needed
-	IO_LED_2_init();
-	IO_LED_3_init();
-	Time_Delay_us(1000);
-	Serial_Init();
 
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
 		;
 
+	// Serial_Receive(msg_rx, 1024, 1);
 	while (1) {
 		// some code to indicate that the core is not dead
-		IO_LED_3_toggle();
-		Time_Delay_us(250000);
-		Serial_Transmit((uint8*)msg, 256);
 	}
 }
 
-// list out all ISR for CPU2
-void Periodic_1s_ISR(void){
+/* list out all ISR for CPU2 */
+
+void Periodic_1s_ISR(void) {
 	;
 }
 
-void Periodic_100ms_ISR(void){
+void Periodic_100ms_ISR(void) {
 	;
 }
 
-void Periodic_10ms_ISR(void){
+void Periodic_10ms_ISR(void) {
 	;
 }
 
-void Periodic_PID_ISR(void){
+void Periodic_PID_ISR(void) {
 	;
 }
 
-void SWINT_User0_ISR(void){
+void SWINT_User0_ISR(void) {
 	;
 }
 
-void SWINT_User1_ISR(void){
+void SWINT_User1_ISR(void) {
 	;
 }
 
-void SWINT_User2_ISR(void){
+void SWINT_User2_ISR(void) {
 	;
 }
 
-void SWINT_User3_ISR(void){
+void SWINT_User3_ISR(void) {
 	;
+}
+
+void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		Serial_Transmit(dataptr, 1);
+	}
 }

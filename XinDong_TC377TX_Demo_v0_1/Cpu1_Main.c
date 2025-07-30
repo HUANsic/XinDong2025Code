@@ -32,8 +32,6 @@
 #include "XinDongLib/Camera.h"
 #include "XinDongLib/CV.h"
 
-#include "XinDongLib/Time.h"
-#include "XinDongLib/IO.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core1_main(void) {
@@ -59,9 +57,7 @@ void core1_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
-		IO_LED_2_toggle();
-		Time_Delay_us(250000);
 	}
 }
 
-// list out all ISR for CPU1
+/* list out all ISR for CPU1 */

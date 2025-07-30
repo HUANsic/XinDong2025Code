@@ -59,21 +59,19 @@ uint8 Serial_Transmit(uint8 *dataptr, Ifx_SizeT length) {
 	if (Ifx_Fifo_writeCount(serial_handler.tx) < length)
 		return 1;
 	// make sure it only writes if it need not wait, i.e. all can be written in the sw fifo
-	IfxAsclin_Asc_write(&serial_handler, dataptr, &length, 100);
+	IfxAsclin_Asc_write(&serial_handler, dataptr, &length, 10);
 	return 0;
 }
 
 uint8 Serial_Receive(uint8 *dataptr, uint32 length, uint8 tag) {
-	if (length > SERIAL_BUFFER_SIZE)
-		return 2;
 	if (serial_rx_tag)
 		return 1;	// must abort previous ones before starting a new reception
 	if (!dataptr)
-		return 3;
+		return 2;
 	if (!length)
-		return 4;
+		return 3;
 	if (!tag)
-		return 5;	// not allowed to override default tag
+		return 4;	// not allowed to override default tag
 	serial_rx_ptr = dataptr;
 	serial_rx_length = length;	// record the number of bytes to receive
 	serial_rx_count_this = serial_rx_length > 240 ? 240 : (sint16) serial_rx_length;

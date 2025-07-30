@@ -24,8 +24,8 @@
 
 #define     IO_REED_PRIORITY				40
 
-#define     SERIAL_RX_PRIORITY				42
-#define     SERIAL_TX_PRIORITY				43
+#define     SERIAL_RX_PRIORITY				43
+#define     SERIAL_TX_PRIORITY				42		// TX must have higher priority than RX (but it doesn't really matter since you can't TX during RX)
 #define     SERIAL_ERR_PRIORITY				11
 #define     BLE_RX_PRIORITY					50
 #define     BLE_TX_PRIORITY					51
