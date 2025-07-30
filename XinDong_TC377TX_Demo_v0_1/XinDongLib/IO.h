@@ -68,7 +68,7 @@ void IO_LED_Toggle(int ledNum);
  */
 boolean IO_DIP_Read(int swNum);
 
-//define functions below in YOUR file
+//define functions below in main
 void Reed_Triggered(void);
 
 #endif /* XINDONGLIB_IO_H_ */

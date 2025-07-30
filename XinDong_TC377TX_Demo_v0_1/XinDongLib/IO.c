@@ -45,6 +45,7 @@ void IO_Init(void) {
     IfxPort_setPinMode(IO_DIP2_PORT, IO_DIP2_PIN, IfxPort_Mode_inputNoPullDevice);
     IfxPort_setPinMode(IO_DIP3_PORT, IO_DIP3_PIN, IfxPort_Mode_inputNoPullDevice);
     IfxPort_setPinMode(IO_DIP4_PORT, IO_DIP4_PIN, IfxPort_Mode_inputNoPullDevice);
+    Reed_Init();
 }
 
 // Turn on the LED with specified number (1-4)
