@@ -60,8 +60,6 @@ void core2_main(void) {
 		;
 
 	// initialize any module needed
-	Serial_Init();
-	Bluetooth_Init();
 
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
@@ -117,7 +115,7 @@ void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
 
 		break;
 	default:
-		Bluetooth_Transmit(dataptr, 1);
+		;
 	}
 }
 
@@ -127,6 +125,6 @@ void Bluetooth_Received(uint8 *dataptr, uint32 length, uint8 tag) {
 
 		break;
 	default:
-		Serial_Transmit(dataptr, 1);
+		;
 	}
 }
