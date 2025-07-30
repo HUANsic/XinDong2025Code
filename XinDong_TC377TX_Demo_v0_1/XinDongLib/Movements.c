@@ -83,3 +83,28 @@ void Motor_Set(float power) {
         }
     }
 }
+
+void PID_Init(float kp, float ki, float kd) {
+    pid.target_speed = 0.0;
+    pid.current_speed = 0.0;
+    pid.error = 0.0;
+    pid.last_error = 0.0;
+    pid.integral = 0.0;
+
+    pid.kp = kp;
+    pid.ki = ki;
+    pid.kd = kd;
+}
+
+float PID_Output(float target_speed, float current_speed) {
+    pid.target_speed = target_speed;
+    pid.current_speed = current_speed;
+
+    pid.error = pid.target_speed - pid.current_speed;
+    pid.integral += pid.error;
+
+    float output = pid.kp * pid.error + pid.ki * pid.integral + pid.kd * (pid.error - pid.last_error);
+
+    pid.last_error = pid.error;
+    return output;
+}

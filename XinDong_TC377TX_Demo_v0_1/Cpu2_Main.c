@@ -42,7 +42,9 @@
 #include "XinDongLib/Time.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+struct PID pid;
 sint32 pos;
+float target_speed;
 
 void core2_main(void) {
     IfxCpu_enableInterrupts();
@@ -67,6 +69,7 @@ void core2_main(void) {
 	IO_LED_4_init();
 	Servo_Init();
 	Motor_Init();
+	PID_Init(0.1, 0.0, 0.0);
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
@@ -80,7 +83,7 @@ void core2_main(void) {
 //	    else{
 //	        IO_LED_3_off();
 //	    }
-//	    pos = Encoder_GetValue();
+	    pos = Encoder_GetValue();
 //	    if(pos >= 0){
 //	        IO_LED_3_on();
 //	    }
@@ -88,7 +91,7 @@ void core2_main(void) {
 //	        IO_LED_3_off();
 //	    }
 	    Servo_Set(-0.25);
-	    Motor_Set(0.5);
+	    Motor_Set(0.2);
 	}
 }
 
@@ -108,7 +111,10 @@ void Periodic_10ms_ISR(void){
 }
 
 void Periodic_PID_ISR(void){
-	;
+    float current_speed = Encoder_GetValue() / 1000.0;
+    float motor_value = PID_Output(target_speed, current_speed);
+    Motor_Set(motor_value);
+    ;
 }
 
 void SWINT_User0_ISR(void){
