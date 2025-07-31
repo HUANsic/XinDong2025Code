@@ -40,6 +40,8 @@
 #include "XinDongLib/Ultrasonic.h"
 #include "XinDongLib/Time.h"
 
+#include "XinDongLib/IO.h"
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core2_main(void) {
@@ -57,7 +59,6 @@ void core2_main(void) {
 	while (Intercore_InitAllowed() == 0)
 		;
 
-
 	// initialize any module needed
 //	Ultrasonic_Init();
 	IO_LED_3_init();
@@ -66,43 +67,65 @@ void core2_main(void) {
 	while (Intercore_ReadyToGo() == 0)
 		;
 
+	Bluetooth_AT(1);
+
 	while (1) {
 		// some code to indicate that the core is not dead
-//        Time_Delay(500);
-//        IO_LED_3_toggle();
+		IO_LED_Toggle(3);
+		Time_Delay_us(100000);
 	}
 }
 
-// list out all ISR for CPU2
-void Periodic_1s_ISR(void){
-    ;
-}
+/* list out all ISR for CPU2 */
 
-void Periodic_100ms_ISR(void){
-//	Ultrasonic_Trigger();
-    ;
-}
-
-void Periodic_10ms_ISR(void){
-    IO_LED_3_toggle();
-}
-
-void Periodic_PID_ISR(void){
+void Periodic_1s_ISR(void) {
 	;
 }
 
-void SWINT_User0_ISR(void){
+void Periodic_100ms_ISR(void) {
 	;
 }
 
-void SWINT_User1_ISR(void){
+void Periodic_10ms_ISR(void) {
 	;
 }
 
-void SWINT_User2_ISR(void){
+void Periodic_PID_ISR(void) {
 	;
 }
 
-void SWINT_User3_ISR(void){
+void SWINT_User0_ISR(void) {
 	;
+}
+
+void SWINT_User1_ISR(void) {
+	;
+}
+
+void SWINT_User2_ISR(void) {
+	;
+}
+
+void SWINT_User3_ISR(void) {
+	;
+}
+
+void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		;
+	}
+}
+
+void Bluetooth_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		;
+	}
 }

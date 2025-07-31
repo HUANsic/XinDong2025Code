@@ -34,6 +34,8 @@
 #include "XinDongLib/IO.h"
 #include "XinDongLib/Time.h"
 
+#include "XinDongLib/Time.h"
+#include "XinDongLib/IO.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core1_main(void) {
@@ -48,11 +50,11 @@ void core1_main(void) {
 	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
 	// wait for signal to begin initialization
-	while(Intercore_InitAllowed() == 0)
-			;
+	while (Intercore_InitAllowed() == 0)
+		;
 
 	// initialize camera module
-	IO_LED_2_init();
+
 	// wait for other cores to finish initialization
 	Intercore_CPU1_Ready();
 	while (Intercore_ReadyToGo() == 0)
@@ -60,9 +62,9 @@ void core1_main(void) {
 
 	while (1) {
 		// some code to indicate that the core is not dead
-        Time_Delay(500);
-        IO_LED_2_toggle();
+		IO_LED_Toggle(2);
+		Time_Delay_us(100000);
 	}
 }
 
-// list out all ISR for CPU1
+/* list out all ISR for CPU1 */

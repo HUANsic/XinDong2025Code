@@ -38,16 +38,6 @@
 #define     CAMERA_DMA_ERR_PRIORITY			13
 #define		CAMERA_NEW_IMAGE_PRIORITY		24			// didn't find example code for this, so not used yet
 
-<<<<<<< HEAD
-#define		SWINT_1S_PERIODIC_PRIORITY		70
-#define		SWINT_100MS_PERIODIC_PRIORITY	71
-#define		SWINT_PID_PERIODIC_PRIORITY		72
-#define     SWINT_10MS_PERIODIC_PRIORITY    73
-#define		SWINT_USER0_PRIORITY			74
-#define		SWINT_USER1_PRIORITY			75
-#define		SWINT_USER2_PRIORITY			76
-#define		SWINT_USER3_PRIORITY			77
-=======
 #define		SWINT_1S_PERIODIC_PRIORITY		63
 #define		SWINT_100MS_PERIODIC_PRIORITY	62
 #define		SWINT_10MS_PERIODIC_PRIORITY	60
@@ -56,7 +46,6 @@
 #define		SWINT_USER1_PRIORITY			67
 #define		SWINT_USER2_PRIORITY			68
 #define		SWINT_USER3_PRIORITY			69
->>>>>>> ccea1d5ba804ca8768caba263cac035005a7b318
 
 // Interrupt Type Of Service
 #define     ENCODER_OVERFLOW_TOS			IfxSrc_Tos_cpu2
