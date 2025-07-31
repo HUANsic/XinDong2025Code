@@ -66,8 +66,6 @@ void core2_main(void) {
 	// initialize any module needed
 	Ultrasonic_Init();
 	Encoder_Init();
-	IO_LED_3_init();
-	IO_LED_4_init();
 	Servo_Init();
 	Motor_Init();
 	PID_Init(0.1, 0.0, 0.0);
