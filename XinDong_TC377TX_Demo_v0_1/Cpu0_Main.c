@@ -40,8 +40,7 @@
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 void core0_main(void) {
-	IfxCpu_enableInterrupts();
-
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
 	 * Enable the watchdogs and service them periodically if it is required
 	 */
@@ -70,6 +69,7 @@ void core0_main(void) {
 
 	// wait for other cores to finish initialization
 	Intercore_CPU0_Ready();
+
 	while (Intercore_ReadyToGo() == 0)
 		;
 

@@ -111,3 +111,19 @@ __weak__ void Periodic_10ms_ISR(void) {
 __weak__ void Periodic_PID_ISR(void) {
 	;		// defined in main.c
 }
+
+__weak__ void Periodic_1s_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_100ms_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_10ms_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_PID_ISR(void) {
+	;		// defined in main.c
+}

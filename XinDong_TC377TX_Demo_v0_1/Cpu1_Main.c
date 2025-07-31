@@ -31,14 +31,15 @@
 #include "XinDongLib/Intercore.h"
 #include "XinDongLib/Camera.h"
 #include "XinDongLib/CV.h"
+#include "XinDongLib/IO.h"
+#include "XinDongLib/Time.h"
 
 #include "XinDongLib/Time.h"
 #include "XinDongLib/IO.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 void core1_main(void) {
-	IfxCpu_enableInterrupts();
-
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG1 IS DISABLED HERE!!
 	 * Enable the watchdog and service it periodically if it is required
 	 */
