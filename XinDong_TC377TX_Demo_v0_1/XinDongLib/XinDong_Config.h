@@ -52,27 +52,23 @@
 #define		IO_BATT_PIN				0
 
 // bluetooth: AT-P33.10, TX-P33.9, RX-P33.8
+#define		BLE_BUFFER_SIZE			256
+#define		BLE_BAUDRATE			115200
 #define		BLE_AT_PORT				&MODULE_P33
 #define		BLE_AT_PIN				10
 #define		BLE_TX_ASCLIN_PIN		IfxAsclin2_TX_P33_9_OUT
-#define		BLE_TX_PORT				&MODULE_P33
-#define		BLE_TX_PIN				9
 #define		BLE_RX_ASCLIN_PIN		IfxAsclin2_RXE_P33_8_IN
-#define		BLE_RX_PORT				&MODULE_P33
-#define		BLE_RX_PIN				8
 
 // serial: TX-P15.6, RX-P15.7
+#define		SERIAL_BUFFER_SIZE		256
+#define		SERIAL_BAUDRATE			115200
 #define		SERIAL_TX_ASCLIN_PIN	IfxAsclin3_TX_P15_6_OUT
-#define		SERIAL_TX_PORT			&MODULE_P15
-#define		SERIAL_TX_PIN			6
 #define		SERIAL_RX_ASCLIN_PIN	IfxAsclin3_RXA_P15_7_IN
-#define		SERIAL_RX_PORT			&MODULE_P15
-#define		SERIAL_RX_PIN			7
 
-// servo: P13.3
-#define		SERVO_TOM_PIN			IfxGtm_TOM0_8_TOUT94_P13_3_OUT
-#define		SERVO_PORT				&MODULE_P13
-#define		SERVO_PIN				3
+// servo: P33.4
+#define		SERVO_TOM_PIN			IfxGtm_TOM1_0_TOUT26_P33_4_OUT
+#define		SERVO_PORT				&MODULE_P33
+#define		SERVO_PIN				4
 
 // motor: OUTA-P21.3, OUTB-P21.2
 #define		MOTOR_OUTA_TOM_PIN		IfxGtm_TOM2_1_TOUT54_P21_3_OUT

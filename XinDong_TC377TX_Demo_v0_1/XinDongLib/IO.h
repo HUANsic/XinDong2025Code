@@ -1,11 +1,8 @@
 /**********************************************************************************************************************
- * Author:WEI ZIQIN
- * Description:IO驱动库头文件，定义了LED控制、拨码开关读取等功能接口。
- *                - 支持 4 路 LED（初始化、点亮、熄灭、翻转）
- *                - 支持 4 路拨码开关（上拉输入读取）
- *                本头文件提供所有函数原型声明，具体实现见 IO.c 文件。
- *
- * Version:1.0.0
+ * Author:
+ * Description:
+ * 
+ * Version:
  *********************************************************************************************************************/
 
 #ifndef XINDONGLIB_IO_H_
@@ -35,39 +32,43 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------Function Prototypes------------------------------------------------*/
 /*********************************************************************************************************************/
+// Initialize all IO peripherals and pins
+void IO_Init(void);
 
-void IO_LED_1_init(void);
-void IO_LED_1_on(void);
-void IO_LED_1_off(void);
-void IO_LED_1_toggle(void);
+/* LED Control Function Declarations */
+/**
+ * @brief Turns on the LED with the specified number (1-4)
+ * @param ledNum LED number (valid range: 1-4)
+ * @note No action is taken for invalid LED numbers
+ */
+void IO_LED_On(uint8 ledNum);
 
-void IO_LED_2_init(void);
-void IO_LED_2_on(void);
-void IO_LED_2_off(void);
-void IO_LED_2_toggle(void);
+/**
+ * @brief Turns off the LED with the specified number (1-4)
+ * @param ledNum LED number (valid range: 1-4)
+ * @note No action is taken for invalid LED numbers
+ */
+void IO_LED_Off(uint8 ledNum);
 
-void IO_LED_3_init(void);
-void IO_LED_3_on(void);
-void IO_LED_3_off(void);
-void IO_LED_3_toggle(void);
+/**
+ * @brief Toggles the state of the specified LED (1-4)
+ * @param ledNum LED number (valid range: 1-4)
+ * @note If the LED is on, it will turn off, and vice versa
+ * @note No action is taken for invalid LED numbers
+ */
+void IO_LED_Toggle(uint8 ledNum);
 
-void IO_LED_4_init(void);
-void IO_LED_4_on(void);
-void IO_LED_4_off(void);
-void IO_LED_4_toggle(void);
+/* Switch Control Function Declarations */
+/**
+ * @brief Reads the state of the specified DIP switch (1-4)
+ * @param swNum Switch number (valid range: 1-4)
+ * @return boolean Switch state (TRUE/FALSE as defined by hardware)
+ * @retval TRUE Typically indicates switch is pressed/active
+ * @retval FALSE Indicates switch is not pressed/inactive or invalid number
+ */
+boolean IO_DIP_Read(uint8 swNum);
 
-void IO_SW1_1_init(void);
-boolean IO_SW1_1_read(void);
-void IO_SW1_2_init(void);
-boolean IO_SW1_2_read(void);
-void IO_SW1_3_init(void);
-boolean IO_SW1_3_read(void);
-void IO_SW1_4_init(void);
-boolean IO_SW1_4_read(void);
-
-void Reed_Init(void);
-
-//define functions below in YOUR file
+//define functions below in main
 void Reed_Triggered(void);
 
 #endif /* XINDONGLIB_IO_H_ */
