@@ -40,7 +40,7 @@
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 void core0_main(void) {
-    IfxCpu_disableInterrupts();
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
 	 * Enable the watchdogs and service them periodically if it is required
 	 */
@@ -72,7 +72,6 @@ void core0_main(void) {
 
 	while (Intercore_ReadyToGo() == 0)
 		;
-    IfxCpu_enableInterrupts();
 
 	while (1) {
 		// some code to indicate that the core is not dead
