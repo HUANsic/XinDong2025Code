@@ -49,7 +49,7 @@ void IO_Init(void) {
 }
 
 // Turn on the LED with specified number (1-4)
-void IO_LED_On(int ledNum) {
+void IO_LED_On(uint8 ledNum) {
     if (ledNum == 1) {
         IfxPort_setPinHigh(IO_LED1_PORT, IO_LED1_PIN);
     }
@@ -65,7 +65,7 @@ void IO_LED_On(int ledNum) {
 }
 
 // Turn off the LED with specified number (1-4)
-void IO_LED_Off(int ledNum) {
+void IO_LED_Off(uint8 ledNum) {
     if (ledNum == 1) {
         IfxPort_setPinLow(IO_LED1_PORT, IO_LED1_PIN);
     }
@@ -81,7 +81,7 @@ void IO_LED_Off(int ledNum) {
 }
 
 // Toggle the state of the LED with specified number (1-4)
-void IO_LED_Toggle(int ledNum) {
+void IO_LED_Toggle(uint8 ledNum) {
     if (ledNum == 1) {
         IfxPort_togglePin(IO_LED1_PORT, IO_LED1_PIN);
     }
@@ -100,18 +100,18 @@ void IO_LED_Toggle(int ledNum) {
 //----------------------------------------------------------------SWITCH-------------------------------------------------------
 // Read the state of the DIP switch with specified number (1-4)
 // Returns TRUE if the switch is in one state, FALSE otherwise
-boolean IO_DIP_Read(int swNum) {
+boolean IO_DIP_Read(uint8 swNum) {
     if (swNum == 1) {
-        return IfxPort_getPinState(&MODULE_P20, 14);
+        return !IfxPort_getPinState(&MODULE_P20, 14);
     }
     else if (swNum == 2) {
-        return IfxPort_getPinState(&MODULE_P20, 13);
+        return !IfxPort_getPinState(&MODULE_P20, 13);
     }
     else if (swNum == 3) {
-        return IfxPort_getPinState(&MODULE_P20, 12);
+        return !IfxPort_getPinState(&MODULE_P20, 12);
     }
     else if (swNum == 4) {
-        return IfxPort_getPinState(&MODULE_P20, 11);
+        return !IfxPort_getPinState(&MODULE_P20, 11);
     }
     else {
         return FALSE; // Return default value for invalid number

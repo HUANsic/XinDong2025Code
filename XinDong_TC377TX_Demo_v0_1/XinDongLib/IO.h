@@ -41,14 +41,14 @@ void IO_Init(void);
  * @param ledNum LED number (valid range: 1-4)
  * @note No action is taken for invalid LED numbers
  */
-void IO_LED_On(int ledNum);
+void IO_LED_On(uint8 ledNum);
 
 /**
  * @brief Turns off the LED with the specified number (1-4)
  * @param ledNum LED number (valid range: 1-4)
  * @note No action is taken for invalid LED numbers
  */
-void IO_LED_Off(int ledNum);
+void IO_LED_Off(uint8 ledNum);
 
 /**
  * @brief Toggles the state of the specified LED (1-4)
@@ -56,7 +56,7 @@ void IO_LED_Off(int ledNum);
  * @note If the LED is on, it will turn off, and vice versa
  * @note No action is taken for invalid LED numbers
  */
-void IO_LED_Toggle(int ledNum);
+void IO_LED_Toggle(uint8 ledNum);
 
 /* Switch Control Function Declarations */
 /**
@@ -66,7 +66,7 @@ void IO_LED_Toggle(int ledNum);
  * @retval TRUE Typically indicates switch is pressed/active
  * @retval FALSE Indicates switch is not pressed/inactive or invalid number
  */
-boolean IO_DIP_Read(int swNum);
+boolean IO_DIP_Read(uint8 swNum);
 
 //define functions below in main
 void Reed_Triggered(void);
