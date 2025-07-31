@@ -88,12 +88,12 @@ void Time_Periodic_ISR(void) {
 	// run user ISR
 	if (elapsed_ms % 10 == 0)
 		SWINT_Trigger_10ms();
-//	if (elapsed_ms % PID_PERIOD_MS == 0)
-//		SWINT_Trigger_pid();
-//	if (elapsed_ms % 100 == 0)
-//		SWINT_Trigger_100ms();
-//	if (elapsed_ms % 1000 == 0)
-//		SWINT_Trigger_1s();
+	if (elapsed_ms % PID_PERIOD_MS == 0)
+		SWINT_Trigger_pid();
+	if (elapsed_ms % 100 == 0)
+		SWINT_Trigger_100ms();
+	if (elapsed_ms % 1000 == 0)
+		SWINT_Trigger_1s();
 }
 
 __weak__ void Periodic_1s_ISR(void) {

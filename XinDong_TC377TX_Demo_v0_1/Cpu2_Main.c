@@ -38,11 +38,15 @@
 #include "XinDongLib/Movements.h"
 #include "XinDongLib/Serial.h"
 #include "XinDongLib/Ultrasonic.h"
+#include "XinDongLib/Encoder.h"
 #include "XinDongLib/Time.h"
 
 #include "XinDongLib/IO.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+struct PID pid;
+sint32 pos;
+float target_speed;
 
 void core2_main(void) {
     IfxCpu_enableInterrupts();
@@ -60,8 +64,13 @@ void core2_main(void) {
 		;
 
 	// initialize any module needed
-//	Ultrasonic_Init();
+	Ultrasonic_Init();
+	Encoder_Init();
 	IO_LED_3_init();
+	IO_LED_4_init();
+	Servo_Init();
+	Motor_Init();
+	PID_Init(0.1, 0.0, 0.0);
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)

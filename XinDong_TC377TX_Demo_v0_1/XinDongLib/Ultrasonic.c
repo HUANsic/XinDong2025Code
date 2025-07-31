@@ -2,35 +2,31 @@
 
 IfxGtm_Tim_In timDriver_pulseIn;
 
-volatile float32    ultrasonicDistance = 0;
+volatile uint32     ultrasonicDistance = 0;
 volatile uint8      ultrasonicReady = 0;
 
 void Ultrasonic_PulseIn_ISR(void)
 {
-    /* 1) 读取当前计数值 */
-    uint32 cnt = timDriver_pulseIn.channel->CNT.B.CNT;
+    uint16 cnt = timDriver_pulseIn.channel->GPR1.B.GPR1;
+    IfxGtm_Tim_In_update(&timDriver_pulseIn);
 
-    /* 2) 读取中断通知位域 */
-    Ifx_GTM_TIM_CH_IRQ_NOTIFY_Bits flags = timDriver_pulseIn.channel->IRQ.NOTIFY.B;
+    timDriver_pulseIn.channel->CNTS.B.CNTS = 0;
 
-    /* 3) 判断事件类型并保存 */
-    if (flags.NEWVAL) {
-        // 收到回波脉冲结束（新的测量值就绪）
-        ultrasonicDistance = (cnt / 100.0) * SPEED_SOUND_MM_MS;
+    // disable interrupts
+    IfxGtm_Tim_Ch_setChannelNotification(timDriver_pulseIn.channel, 0, 0, 0, 0);
+
+    // deal with data
+    if (cnt > 5000){
         ultrasonicReady = 1;
-    } else if (flags.TODET) {
-        // 达到超时阈值
-        ultrasonicDistance = 17150;  // 或其他你定义的“超时”标志值
-        ultrasonicReady = 0;
-    } else {
-        // 其它情况（如溢出、毛刺等）也可根据需要处理
-        ultrasonicDistance = 17151;
-        ultrasonicReady = 0;
+        ultrasonicDistance = -1;
     }
-
-    /* 4) 清除所有中断标志位 */
-    // 直接写 1 清（rw 类型位写 1 即清除），覆盖 NEWVAL、ECNTOFL、CNTOFL、GPROFL、TODET、GLITCHDET
-    timDriver_pulseIn.channel->IRQ.NOTIFY.U = 0x3F;
+    else {
+        ultrasonicReady = 1;
+        // find length in millimeters
+        ultrasonicDistance = cnt;
+        ultrasonicDistance *= 340000 / 2;
+        ultrasonicDistance /= timDriver_pulseIn.captureClockFrequency;
+    }
 }
 
 void Ultrasonic_Init() {
@@ -38,6 +34,7 @@ void Ultrasonic_Init() {
     IfxPort_setPinMode(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinState(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_State_low);
 
+    // initialize echo pin
     IfxGtm_Tim_In_Config config;
 
     IfxGtm_Tim_In_initConfig(&config, &MODULE_GTM);
@@ -53,12 +50,11 @@ void Ultrasonic_Init() {
 }
 
 void Ultrasonic_Trigger() {
-    // generate 10us pulse
+    // generate 15us pulse
     IfxPort_setPinState(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_State_high);
     Time_Delay_us(10);
     IfxPort_setPinState(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_State_low);
 
-    // force CNT to zero on next CLK, and trigger a time out for previous run
     timDriver_pulseIn.channel->CNTS.B.CNTS = 0;
     while (timDriver_pulseIn.channel->CNT.B.CNT != 0)
         ;       // wait for it
@@ -67,9 +63,16 @@ void Ultrasonic_Trigger() {
     timDriver_pulseIn.channel->CNTS.B.CNTS = 5000;
 
     // clear all interrupt flags
-    timDriver_pulseIn.channel->IRQ.NOTIFY.U = 0x03F;
+    timDriver_pulseIn.channel->IRQ.NOTIFY.U = 0x01F;
 
     // enable new value and timeout interrupt
     IfxGtm_Tim_Ch_setChannelNotification(timDriver_pulseIn.channel, 1, 1, 0, 0);
-    // timer in gated mode will start when rising edge hits
+}
+
+uint32 Ultrasonic_GetValue(){
+    return ultrasonicDistance;
+}
+
+uint8 Ultrasonic_IsReady(){
+    return ultrasonicReady;
 }
