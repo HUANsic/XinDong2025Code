@@ -41,12 +41,10 @@
 #include "XinDongLib/Encoder.h"
 #include "XinDongLib/Time.h"
 
-#include "XinDongLib/IO.h"
-
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+
 struct PID pid;
-sint32 pos;
-float target_speed;
+float center1 = 0;
 
 void core2_main(void) {
     IfxCpu_enableInterrupts();
@@ -68,18 +66,19 @@ void core2_main(void) {
 	Encoder_Init();
 	Servo_Init();
 	Motor_Init();
-	PID_Init(0.1, 0.0, 0.0);
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
 		;
 
-	Bluetooth_AT(1);
+	//
 
 	while (1) {
 		// some code to indicate that the core is not dead
 		IO_LED_Toggle(3);
 		Time_Delay_us(100000);
+
+		Servo_Set(center1);
 	}
 }
 
