@@ -33,7 +33,7 @@
 /*-------------------------------------------------Data Structures---------------------------------------------------*/
 /*********************************************************************************************************************/
 
-extern struct PID {
+struct PID {
     float target_speed;
     float current_speed;
     float error;
@@ -58,6 +58,8 @@ void Motor_Init(void);
 void Motor_Set(float power);
 
 void PID_Init(float kp, float ki, float kd);
+
+void PID_SetParams(float kp, float ki, float kd);
 
 float PID_Output(float target_speed, float current_speed);
 

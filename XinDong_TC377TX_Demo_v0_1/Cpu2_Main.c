@@ -44,7 +44,6 @@
 #include "XinDongLib/IO.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
-struct PID pid;
 sint32 pos;
 float target_speed;
 

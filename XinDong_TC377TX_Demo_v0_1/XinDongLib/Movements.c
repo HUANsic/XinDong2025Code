@@ -96,6 +96,12 @@ void PID_Init(float kp, float ki, float kd) {
     pid.kd = kd;
 }
 
+void PID_SetParams(float kp, float ki, float kd) {
+    pid.kp = kp;
+    pid.ki = ki;
+    pid.kd = kd;
+}
+
 float PID_Output(float target_speed, float current_speed) {
     pid.target_speed = target_speed;
     pid.current_speed = current_speed;
