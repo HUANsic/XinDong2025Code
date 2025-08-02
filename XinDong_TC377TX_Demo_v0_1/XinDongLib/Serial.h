@@ -34,7 +34,7 @@
 /*********************************************************************************************************************/
 void Serial_Init(void);
 
-uint8 Serial_Transmit(uint8 *dataptr, Ifx_SizeT length);
+uint8 Serial_Transmit(uint8 *dataptr, sint16 length);
 
 uint8 Serial_Receive(uint8 *dataptr, uint32 length, uint8 tag);
 

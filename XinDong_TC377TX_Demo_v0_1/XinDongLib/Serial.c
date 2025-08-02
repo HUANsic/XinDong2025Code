@@ -53,7 +53,7 @@ void Serial_Init() {
 	IfxAsclin_Asc_initModule(&serial_handler, &ascConfig);
 }
 
-uint8 Serial_Transmit(uint8 *dataptr, Ifx_SizeT length) {
+uint8 Serial_Transmit(uint8 *dataptr, sint16 length) {
 	if (length > SERIAL_BUFFER_SIZE)
 		return 2;
 	if (Ifx_Fifo_writeCount(serial_handler.tx) < length)
