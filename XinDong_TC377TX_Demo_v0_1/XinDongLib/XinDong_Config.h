@@ -104,51 +104,23 @@
 
 // camera CIF data: D0-P02.0, D1-P02.1, D2-P02.2, D3-P02.3, D4-P02.4, D5-P02.5, D6-P02.6, D7-P02.7
 #define		CAM_D0_CIF_PORT			IfxCif_D0_P02_0_IN
-#define		CAM_D0_PORT				&MODULE_P02
-#define		CAM_D0_PIN				0
 #define		CAM_D1_CIF_PORT			IfxCif_D1_P02_1_IN
-#define		CAM_D1_PORT				&MODULE_P02
-#define		CAM_D1_PIN				1
 #define		CAM_D2_CIF_PORT			IfxCif_D2_P02_2_IN
-#define		CAM_D2_PORT				&MODULE_P02
-#define		CAM_D2_PIN				2
 #define		CAM_D3_CIF_PORT			IfxCif_D3_P02_3_IN
-#define		CAM_D3_PORT				&MODULE_P02
-#define		CAM_D3_PIN				3
 #define		CAM_D4_CIF_PORT			IfxCif_D4_P02_4_IN
-#define		CAM_D4_PORT				&MODULE_P02
-#define		CAM_D4_PIN				4
 #define		CAM_D5_CIF_PORT			IfxCif_D5_P02_5_IN
-#define		CAM_D5_PORT				&MODULE_P02
-#define		CAM_D5_PIN				5
 #define		CAM_D6_CIF_PORT			IfxCif_D6_P02_6_IN
-#define		CAM_D6_PORT				&MODULE_P02
-#define		CAM_D6_PIN				6
 #define		CAM_D7_CIF_PORT			IfxCif_D7_P02_7_IN
-#define		CAM_D7_PORT				&MODULE_P02
-#define		CAM_D7_PIN				7
 
 // camera CIF hardware control: PCLK-P00.7, VSYNC-P00.8, HSYNC-P00.9
 #define		CAM_PCLK_HW_CIF_PIN		IfxCif_PCLK_P00_7_IN
-#define		CAM_PCLK_HW_PORT		&MODULE_P00
-#define		CAM_PCLK_HW_PIN			7
 #define		CAM_VSYNC_HW_CIF_PIN	IfxCif_VSYNC_P00_8_IN
-#define		CAM_VSYNC_HW_PORT		&MODULE_P00
-#define		CAM_VSYNC_HW_PIN		8
 #define		CAM_HSYNC_HW_CIF_PIN	IfxCif_HSYNC_P00_9_IN
-#define		CAM_HSYNC_HW_PORT		&MODULE_P00
-#define		CAM_HSYNC_HW_PIN		9
 
 // camera CIF software control: PCLK-P11.10, VSYNC-P15.4, HSYNC-P10.3
 #define		CAM_PCLK_SW_EXTI_PIN	IfxScu_REQ6D_P11_10_IN
-#define		CAM_PCLK_SW_PORT		&MODULE_P11
-#define		CAM_PCLK_SW_PIN			10
 #define		CAM_VSYNC_SW_EXTI_PIN	IfxScu_REQ0A_P15_4_IN
-#define		CAM_VSYNC_SW_PORT		&MODULE_P15
-#define		CAM_VSYNC_SW_PIN		4
 #define		CAM_HSYNC_SW_EXTI_PIN	IfxScu_REQ3A_P10_3_IN
-#define		CAM_HSYNC_SW_PORT		&MODULE_P10
-#define		CAM_HSYNC_SW_PIN		3
 
 // camera CIF general control: PWDN-P00.0, FLASH-P02.8, RESET-P00.3
 #define		CAM_PWDN_PORT			&MODULE_P00
