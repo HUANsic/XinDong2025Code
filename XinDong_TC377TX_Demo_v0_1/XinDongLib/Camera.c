@@ -534,7 +534,7 @@ const uint8 atk_mc2640_set_rgb565_cfg[][2] = {
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_sccb_set_sda_output(void)
+static void _atk_mc2640_sccb_set_sda_output(void)
 {
     IfxPort_setPinMode(CAM_SDA_PORT, CAM_SDA_PIN, IfxPort_Mode_outputPushPullGeneral);
 }
@@ -544,7 +544,7 @@ static void atk_mc2640_sccb_set_sda_output(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_sccb_set_sda_input(void)
+static void _atk_mc2640_sccb_set_sda_input(void)
 {
     IfxPort_setPinMode(CAM_SDA_PORT, CAM_SDA_PIN, IfxPort_Mode_inputPullUp);
 }
@@ -554,7 +554,7 @@ static void atk_mc2640_sccb_set_sda_input(void)
  * @param       无
  * @retval      无
  */
-static void ATK_MC2640_SCCB_SDA(uint8 bit) {
+static void _ATK_MC2640_SCCB_SDA(uint8 bit) {
     if (bit) IfxPort_setPinState(CAM_SDA_PORT, CAM_SDA_PIN, IfxPort_State_high);
     else IfxPort_setPinState(CAM_SDA_PORT, CAM_SDA_PIN, IfxPort_State_low);
 }
@@ -564,7 +564,7 @@ static void ATK_MC2640_SCCB_SDA(uint8 bit) {
  * @param       无
  * @retval      无
  */
-static void ATK_MC2640_SCCB_SCL(uint8 bit) {
+static void _ATK_MC2640_SCCB_SCL(uint8 bit) {
     if (bit) IfxPort_setPinState(CAM_SCL_PORT, CAM_SCL_PIN, IfxPort_State_high);
     else IfxPort_setPinState(CAM_SCL_PORT, CAM_SCL_PIN, IfxPort_State_low);
 }
@@ -574,7 +574,7 @@ static void ATK_MC2640_SCCB_SCL(uint8 bit) {
  * @param       无
  * @retval      无
  */
-static void ATK_MC2640_RST(uint8 bit) {
+static void _ATK_MC2640_RST(uint8 bit) {
     if (bit) IfxPort_setPinState(CAM_RESET_PORT, CAM_RESET_PIN, IfxPort_State_high);
     else IfxPort_setPinState(CAM_RESET_PORT, CAM_RESET_PIN, IfxPort_State_low);
 }
@@ -584,7 +584,7 @@ static void ATK_MC2640_RST(uint8 bit) {
  * @param       无
  * @retval      无
  */
-static void ATK_MC2640_PWDN(uint8 bit) {
+static void _ATK_MC2640_PWDN(uint8 bit) {
     if (bit) IfxPort_setPinState(CAM_PWDN_PORT, CAM_PWDN_PIN, IfxPort_State_high);
     else IfxPort_setPinState(CAM_PWDN_PORT, CAM_PWDN_PIN, IfxPort_State_low);
 }
@@ -594,7 +594,7 @@ static void ATK_MC2640_PWDN(uint8 bit) {
  * @param       无
  * @retval      无
  */
-static void ATK_MC2640_FLASH(uint8 bit) {
+static void _ATK_MC2640_FLASH(uint8 bit) {
     if (bit) IfxPort_setPinState(CAM_FLASH_PORT, CAM_FLASH_PIN, IfxPort_State_high);
     else IfxPort_setPinState(CAM_FLASH_PORT, CAM_FLASH_PIN, IfxPort_State_low);
 }
@@ -604,7 +604,7 @@ static void ATK_MC2640_FLASH(uint8 bit) {
  * @param       无
  * @retval      无
  */
-uint8 ATK_MC2640_SCCB_READ_SDA() {
+uint8 _ATK_MC2640_SCCB_READ_SDA() {
     uint8 bit = (uint8)IfxPort_getPinState(CAM_SDA_PORT, CAM_SDA_PIN);
     return bit;
 }
@@ -614,7 +614,7 @@ uint8 ATK_MC2640_SCCB_READ_SDA() {
  * @param       无
  * @retval      无
  */
-static inline void atk_mc2640_sccb_delay(void)
+static inline void _atk_mc2640_sccb_delay(void)
 {
     Time_Delay_us(5);
 }
@@ -624,14 +624,14 @@ static inline void atk_mc2640_sccb_delay(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_sccb_start(void)
+static void _atk_mc2640_sccb_start(void)
 {
-    ATK_MC2640_SCCB_SDA(1);
-    ATK_MC2640_SCCB_SCL(1);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SDA(0);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SCL(0);
+    _ATK_MC2640_SCCB_SDA(1);
+    _ATK_MC2640_SCCB_SCL(1);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SDA(0);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SCL(0);
 }
 
 /**
@@ -639,14 +639,14 @@ static void atk_mc2640_sccb_start(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_sccb_stop(void)
+static void _atk_mc2640_sccb_stop(void)
 {
-    ATK_MC2640_SCCB_SDA(0);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SCL(1);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SDA(1);
-    atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SDA(0);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SCL(1);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SDA(1);
+    _atk_mc2640_sccb_delay();
 }
 
 /**
@@ -654,7 +654,7 @@ static void atk_mc2640_sccb_stop(void)
  * @param       dat: 待写入的一个字节数据
  * @retval      无
  */
-static void atk_mc2640_sccb_write_byte(uint8 dat)
+static void _atk_mc2640_sccb_write_byte(uint8 dat)
 {
     sint8 dat_index;
     uint8 dat_bit;
@@ -662,18 +662,18 @@ static void atk_mc2640_sccb_write_byte(uint8 dat)
     for (dat_index=7; dat_index>=0; dat_index--)
     {
         dat_bit = (dat >> dat_index) & 0x01;
-        ATK_MC2640_SCCB_SDA(dat_bit);
-        atk_mc2640_sccb_delay();
-        ATK_MC2640_SCCB_SCL(1);
-        atk_mc2640_sccb_delay();
-        ATK_MC2640_SCCB_SCL(0);
+        _ATK_MC2640_SCCB_SDA(dat_bit);
+        _atk_mc2640_sccb_delay();
+        _ATK_MC2640_SCCB_SCL(1);
+        _atk_mc2640_sccb_delay();
+        _ATK_MC2640_SCCB_SCL(0);
     }
 
-    ATK_MC2640_SCCB_SDA(1);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SCL(1);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SCL(0);
+    _ATK_MC2640_SCCB_SDA(1);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SCL(1);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SCL(0);
 }
 
 /**
@@ -681,32 +681,32 @@ static void atk_mc2640_sccb_write_byte(uint8 dat)
  * @param       dat: 读取到的一个字节数据
  * @retval      无
  */
-static void atk_mc2640_sccb_read_byte(uint8 *dat)
+static void _atk_mc2640_sccb_read_byte(uint8 *dat)
 {
     sint8 dat_index;
     uint8 dat_bit;
 
-    atk_mc2640_sccb_set_sda_input();
+    _atk_mc2640_sccb_set_sda_input();
 
     for (dat_index=7; dat_index>=0; dat_index--)
     {
-        atk_mc2640_sccb_delay();
-        ATK_MC2640_SCCB_SCL(1);
-        dat_bit = ATK_MC2640_SCCB_READ_SDA();
+        _atk_mc2640_sccb_delay();
+        _ATK_MC2640_SCCB_SCL(1);
+        dat_bit = _ATK_MC2640_SCCB_READ_SDA();
         *dat |= (dat_bit << dat_index);
-        atk_mc2640_sccb_delay();
-        ATK_MC2640_SCCB_SCL(0);
+        _atk_mc2640_sccb_delay();
+        _ATK_MC2640_SCCB_SCL(0);
     }
 
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SCL(1);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SCL(0);
-    atk_mc2640_sccb_delay();
-    ATK_MC2640_SCCB_SDA(0);
-    atk_mc2640_sccb_delay();
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SCL(1);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SCL(0);
+    _atk_mc2640_sccb_delay();
+    _ATK_MC2640_SCCB_SDA(0);
+    _atk_mc2640_sccb_delay();
 
-    atk_mc2640_sccb_set_sda_output();
+    _atk_mc2640_sccb_set_sda_output();
 }
 
 /**
@@ -714,12 +714,12 @@ static void atk_mc2640_sccb_read_byte(uint8 *dat)
  * @param       无
  * @retval      无
  */
-void atk_mc2640_sccb_init(void)
+void _atk_mc2640_sccb_init(void)
 {
     IfxPort_setPinMode(CAM_SDA_PORT, CAM_SDA_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinMode(CAM_SCL_PORT, CAM_SCL_PIN, IfxPort_Mode_outputPushPullGeneral);
 
-    atk_mc2640_sccb_stop();
+    _atk_mc2640_sccb_stop();
 }
 
 /**
@@ -729,13 +729,13 @@ void atk_mc2640_sccb_init(void)
  *              dat     : Write Data
  * @retval      无
  */
-void atk_mc2640_sccb_3_phase_write(uint8 id_addr, uint8 sub_addr, uint8 dat)
+void _atk_mc2640_sccb_3_phase_write(uint8 id_addr, uint8 sub_addr, uint8 dat)
 {
-    atk_mc2640_sccb_start();
-    atk_mc2640_sccb_write_byte((id_addr << 1) | ATK_MC2640_SCCB_WRITE);
-    atk_mc2640_sccb_write_byte(sub_addr);
-    atk_mc2640_sccb_write_byte(dat);
-    atk_mc2640_sccb_stop();
+    _atk_mc2640_sccb_start();
+    _atk_mc2640_sccb_write_byte((id_addr << 1) | ATK_MC2640_SCCB_WRITE);
+    _atk_mc2640_sccb_write_byte(sub_addr);
+    _atk_mc2640_sccb_write_byte(dat);
+    _atk_mc2640_sccb_stop();
 }
 
 /**
@@ -744,12 +744,12 @@ void atk_mc2640_sccb_3_phase_write(uint8 id_addr, uint8 sub_addr, uint8 dat)
  *              sub_addr: Sub-address
  * @retval      无
  */
-void atk_mc2640_sccb_2_phase_write(uint8 id_addr, uint8 sub_addr)
+void _atk_mc2640_sccb_2_phase_write(uint8 id_addr, uint8 sub_addr)
 {
-    atk_mc2640_sccb_start();
-    atk_mc2640_sccb_write_byte((id_addr << 1) | ATK_MC2640_SCCB_WRITE);
-    atk_mc2640_sccb_write_byte(sub_addr);
-    atk_mc2640_sccb_stop();
+    _atk_mc2640_sccb_start();
+    _atk_mc2640_sccb_write_byte((id_addr << 1) | ATK_MC2640_SCCB_WRITE);
+    _atk_mc2640_sccb_write_byte(sub_addr);
+    _atk_mc2640_sccb_stop();
 }
 
 /**
@@ -758,12 +758,12 @@ void atk_mc2640_sccb_2_phase_write(uint8 id_addr, uint8 sub_addr)
  *              dat: 读取到的数据
  * @retval      无
  */
-void atk_mc2640_sccb_2_phase_read(uint8 id_addr, uint8 *dat)
+void _atk_mc2640_sccb_2_phase_read(uint8 id_addr, uint8 *dat)
 {
-    atk_mc2640_sccb_start();
-    atk_mc2640_sccb_write_byte((id_addr << 1) | ATK_MC2640_SCCB_READ);
-    atk_mc2640_sccb_read_byte(dat);
-    atk_mc2640_sccb_stop();
+    _atk_mc2640_sccb_start();
+    _atk_mc2640_sccb_write_byte((id_addr << 1) | ATK_MC2640_SCCB_READ);
+    _atk_mc2640_sccb_read_byte(dat);
+    _atk_mc2640_sccb_stop();
 }
 
 
@@ -812,9 +812,9 @@ static struct
  *              dat: 待写入的值
  * @retval      无
  */
-static void atk_mc2640_write_reg(uint8 reg, uint8 dat)
+static void _atk_mc2640_write_reg(uint8 reg, uint8 dat)
 {
-    atk_mc2640_sccb_3_phase_write(ATK_MC2640_SCCB_ADDR, reg, dat);
+    _atk_mc2640_sccb_3_phase_write(ATK_MC2640_SCCB_ADDR, reg, dat);
 }
 
 /**
@@ -822,12 +822,12 @@ static void atk_mc2640_write_reg(uint8 reg, uint8 dat)
  * @param       reg: 寄存器的地址
  * @retval      读取到的寄存器值
  */
-static uint8 atk_mc2640_read_reg(uint8 reg)
+static uint8 _atk_mc2640_read_reg(uint8 reg)
 {
     uint8 dat = 0;
 
-    atk_mc2640_sccb_2_phase_write(ATK_MC2640_SCCB_ADDR, reg);
-    atk_mc2640_sccb_2_phase_read(ATK_MC2640_SCCB_ADDR, &dat);
+    _atk_mc2640_sccb_2_phase_write(ATK_MC2640_SCCB_ADDR, reg);
+    _atk_mc2640_sccb_2_phase_read(ATK_MC2640_SCCB_ADDR, &dat);
 
     return dat;
 }
@@ -839,18 +839,18 @@ static uint8 atk_mc2640_read_reg(uint8 reg)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块启用的寄存器块成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-static uint8 atk_mc2640_reg_bank_select(atk_mc2640_reg_bank_t bank)
+static uint8 _atk_mc2640_reg_bank_select(atk_mc2640_reg_bank_t bank)
 {
     switch (bank)
     {
         case ATK_MC2640_REG_BANK_DSP:
         {
-            atk_mc2640_write_reg(ATK_MC2640_REG_BANK_SEL, 0x00);
+            _atk_mc2640_write_reg(ATK_MC2640_REG_BANK_SEL, 0x00);
             break;
         }
         case ATK_MC2640_REG_BANK_SENSOR:
         {
-            atk_mc2640_write_reg(ATK_MC2640_REG_BANK_SEL, 0x01);
+            _atk_mc2640_write_reg(ATK_MC2640_REG_BANK_SEL, 0x01);
             break;
         }
         default:
@@ -867,7 +867,7 @@ static uint8 atk_mc2640_reg_bank_select(atk_mc2640_reg_bank_t bank)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_hw_init(void)
+static void _atk_mc2640_hw_init(void)
 {
     IfxPort_setPinMode(CAM_VSYNC_HW_PORT, CAM_VSYNC_HW_PIN, IfxPort_Mode_inputNoPullDevice);
     IfxPort_setPinMode(CAM_HSYNC_HW_PORT, CAM_HSYNC_HW_PIN, IfxPort_Mode_inputNoPullDevice);
@@ -887,9 +887,9 @@ static void atk_mc2640_hw_init(void)
     IfxPort_setPinMode(CAM_PWDN_PORT, CAM_PWDN_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinMode(CAM_FLASH_PORT, CAM_FLASH_PIN, IfxPort_Mode_outputPushPullGeneral);
 
-    ATK_MC2640_RST(1);
-    ATK_MC2640_PWDN(1);
-    ATK_MC2640_FLASH(0);
+    _ATK_MC2640_RST(1);
+    _ATK_MC2640_PWDN(1);
+    _ATK_MC2640_FLASH(0);
 }
 
 /**
@@ -897,9 +897,9 @@ static void atk_mc2640_hw_init(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_exit_power_down(void)
+static void _atk_mc2640_exit_power_down(void)
 {
-    ATK_MC2640_PWDN(0);
+    _ATK_MC2640_PWDN(0);
     Time_Delay_us(10000);
 }
 
@@ -908,11 +908,11 @@ static void atk_mc2640_exit_power_down(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_hw_reset(void)
+static void _atk_mc2640_hw_reset(void)
 {
-    ATK_MC2640_RST(0);
+    _ATK_MC2640_RST(0);
     Time_Delay_us(10000);
-    ATK_MC2640_RST(1);
+    _ATK_MC2640_RST(1);
     Time_Delay_us(10000);
 }
 
@@ -921,10 +921,10 @@ static void atk_mc2640_hw_reset(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_sw_reset(void)
+static void _atk_mc2640_sw_reset(void)
 {
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, 0x80);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, 0x80);
     Time_Delay_us(50000);
 }
 
@@ -933,13 +933,13 @@ static void atk_mc2640_sw_reset(void)
  * @param       无
  * @retval      制造商ID
  */
-static uint16 atk_mc2640_get_mid(void)
+static uint16 _atk_mc2640_get_mid(void)
 {
     uint16 mid;
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    mid = atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_MIDH) << 8;
-    mid |= atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_MIDL);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    mid = _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_MIDH) << 8;
+    mid |= _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_MIDL);
 
     return mid;
 }
@@ -949,13 +949,13 @@ static uint16 atk_mc2640_get_mid(void)
  * @param       无
  * @retval      产品ID
  */
-static uint16 atk_mc2640_get_pid(void)
+static uint16 _atk_mc2640_get_pid(void)
 {
     uint16 pid;
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    pid = atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_PIDH) << 8;
-    pid |= atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_PIDL);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    pid = _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_PIDH) << 8;
+    pid |= _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_PIDL);
 
     return pid;
 }
@@ -965,7 +965,7 @@ static uint16 atk_mc2640_get_pid(void)
  * @param       无
  * @retval      无
  */
-static void atk_mc2640_init_reg(void)
+static void _atk_mc2640_init_reg(void)
 {
     uint32 cfg_index;
     uint8 zmow;
@@ -974,7 +974,7 @@ static void atk_mc2640_init_reg(void)
 
     for (cfg_index=0; cfg_index<(sizeof(atk_mc2640_init_uxga_cfg)/sizeof(atk_mc2640_init_uxga_cfg[0])); cfg_index++)
     {
-        atk_mc2640_write_reg(atk_mc2640_init_uxga_cfg[cfg_index][0], atk_mc2640_init_uxga_cfg[cfg_index][1]);
+        _atk_mc2640_write_reg(atk_mc2640_init_uxga_cfg[cfg_index][0], atk_mc2640_init_uxga_cfg[cfg_index][1]);
     }
 
 //    for (cfg_index=0; cfg_index<(sizeof(atk_mc2640_init_svga_cfg)/sizeof(atk_mc2640_init_svga_cfg[0])); cfg_index++)
@@ -982,10 +982,10 @@ static void atk_mc2640_init_reg(void)
 //        atk_mc2640_write_reg(atk_mc2640_init_svga_cfg[cfg_index][0], atk_mc2640_init_svga_cfg[cfg_index][1]);
 //    }
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-    zmow = atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMOW);
-    zmoh = atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMOH);
-    zmhh = atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMHH);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+    zmow = _atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMOW);
+    zmoh = _atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMOH);
+    zmhh = _atk_mc2640_read_reg(ATK_MC2640_REG_DSP_ZMHH);
 
     g_atk_mc2640_sta.output.width = ((uint16)zmow | ((zmhh & 0x03) << 8)) << 2;
     g_atk_mc2640_sta.output.height = ((uint16)zmoh | ((zmhh & 0x04) << 6)) << 2;
@@ -998,30 +998,30 @@ static void atk_mc2640_init_reg(void)
  *              ATK_MC2640_ERROR : 通讯出错，ATK-MC2640模块初始化失败
  *              ATK_MC2640_ENOMEM: 内存不足，ATK-MC2640模块初始化失败
  */
-uint8 atk_mc2640_init(void)
+uint8 _atk_mc2640_init(void)
 {
     uint16 mid;
     uint16 pid;
 
-    atk_mc2640_hw_init();           /* ATK-MC2640模块硬件初始化 */
-    atk_mc2640_exit_power_down();   /* ATK-MC2640模块退出掉电模式 */
-    atk_mc2640_hw_reset();          /* ATK-MC2640模块硬件复位 */
-    atk_mc2640_sccb_init();         /* ATK-MC2640 SCCB接口初始化 */
-    atk_mc2640_sw_reset();          /* ATK-MC2640模块软件复位 */
+    _atk_mc2640_hw_init();           /* ATK-MC2640模块硬件初始化 */
+    _atk_mc2640_exit_power_down();   /* ATK-MC2640模块退出掉电模式 */
+    _atk_mc2640_hw_reset();          /* ATK-MC2640模块硬件复位 */
+    _atk_mc2640_sccb_init();         /* ATK-MC2640 SCCB接口初始化 */
+    _atk_mc2640_sw_reset();          /* ATK-MC2640模块软件复位 */
 
-    mid = atk_mc2640_get_mid();     /* 获取制造商ID */
+    mid = _atk_mc2640_get_mid();     /* 获取制造商ID */
     if (mid != ATK_MC2640_MID)
     {
         return ATK_MC2640_ERROR;
     }
 
-    pid = atk_mc2640_get_pid();     /* 获取产品ID */
+    pid = _atk_mc2640_get_pid();     /* 获取产品ID */
     if (pid != ATK_MC2640_PID)
     {
         return ATK_MC2640_ERROR;
     }
 
-    atk_mc2640_init_reg();          /* 初始化ATK-MC2640寄存器配置 */
+    _atk_mc2640_init_reg();          /* 初始化ATK-MC2640寄存器配置 */
 
     return ATK_MC2640_EOK;
 }
@@ -1031,9 +1031,9 @@ uint8 atk_mc2640_init(void)
  * @param       无
  * @retval      无
  */
-void atk_mc2640_led_on(void)
+void _atk_mc2640_led_on(void)
 {
-    ATK_MC2640_FLASH(1);
+    _ATK_MC2640_FLASH(1);
 }
 
 /**
@@ -1041,9 +1041,9 @@ void atk_mc2640_led_on(void)
  * @param       无
  * @retval      无
  */
-void atk_mc2640_led_off(void)
+void _atk_mc2640_led_off(void)
 {
-    ATK_MC2640_FLASH(0);
+    _ATK_MC2640_FLASH(0);
 }
 
 /**
@@ -1051,11 +1051,11 @@ void atk_mc2640_led_off(void)
  * @param       无
  * @retval      无
  */
-void atk_mc2640_led_enable(void)
+void _atk_mc2640_led_enable(void)
 {
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM22, 0x81);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM22, 0x01);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM22, 0x81);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM22, 0x01);
 }
 
 /**
@@ -1068,50 +1068,50 @@ void atk_mc2640_led_enable(void)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块灯光模式成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_light_mode(atk_mc2640_light_mode_t mode)
+uint8 _atk_mc2640_set_light_mode(atk_mc2640_light_mode_t mode)
 {
     switch (mode)
     {
         case ATK_MC2640_LIGHT_MODE_AUTO:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0xC7, 0x00);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0xC7, 0x00);
             break;
         }
         case ATK_MC2640_LIGHT_MODE_SUNNY:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0xC7, 0x40);
-            atk_mc2640_write_reg(0xCC, 0x5E);
-            atk_mc2640_write_reg(0xCD, 0x41);
-            atk_mc2640_write_reg(0xCE, 0x54);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0xC7, 0x40);
+            _atk_mc2640_write_reg(0xCC, 0x5E);
+            _atk_mc2640_write_reg(0xCD, 0x41);
+            _atk_mc2640_write_reg(0xCE, 0x54);
             break;
         }
         case ATK_MC2640_LIGHT_MODE_CLOUDY:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0xC7, 0x40);
-            atk_mc2640_write_reg(0xCC, 0x65);
-            atk_mc2640_write_reg(0xCD, 0x41);
-            atk_mc2640_write_reg(0xCE, 0x4F);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0xC7, 0x40);
+            _atk_mc2640_write_reg(0xCC, 0x65);
+            _atk_mc2640_write_reg(0xCD, 0x41);
+            _atk_mc2640_write_reg(0xCE, 0x4F);
             break;
         }
         case ATK_MC2640_LIGHT_MODE_OFFICE:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0xC7, 0x40);
-            atk_mc2640_write_reg(0xCC, 0x52);
-            atk_mc2640_write_reg(0xCD, 0x41);
-            atk_mc2640_write_reg(0xCE, 0x66);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0xC7, 0x40);
+            _atk_mc2640_write_reg(0xCC, 0x52);
+            _atk_mc2640_write_reg(0xCD, 0x41);
+            _atk_mc2640_write_reg(0xCE, 0x66);
             break;
         }
         case ATK_MC2640_LIGHT_MODE_HOME:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0xC7, 0x40);
-            atk_mc2640_write_reg(0xCC, 0x42);
-            atk_mc2640_write_reg(0xCD, 0x3F);
-            atk_mc2640_write_reg(0xCE, 0x71);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0xC7, 0x40);
+            _atk_mc2640_write_reg(0xCC, 0x42);
+            _atk_mc2640_write_reg(0xCD, 0x3F);
+            _atk_mc2640_write_reg(0xCE, 0x71);
             break;
         }
         default:
@@ -1133,58 +1133,58 @@ uint8 atk_mc2640_set_light_mode(atk_mc2640_light_mode_t mode)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块色彩饱和度成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_color_saturation(atk_mc2640_color_saturation_t saturation)
+uint8 _atk_mc2640_set_color_saturation(atk_mc2640_color_saturation_t saturation)
 {
     switch (saturation)
     {
         case ATK_MC2640_COLOR_SATURATION_0:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x02);
-            atk_mc2640_write_reg(0x7C, 0x03);
-            atk_mc2640_write_reg(0x7D, 0x68);
-            atk_mc2640_write_reg(0x7D, 0x68);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x02);
+            _atk_mc2640_write_reg(0x7C, 0x03);
+            _atk_mc2640_write_reg(0x7D, 0x68);
+            _atk_mc2640_write_reg(0x7D, 0x68);
             break;
         }
         case ATK_MC2640_COLOR_SATURATION_1:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x02);
-            atk_mc2640_write_reg(0x7C, 0x03);
-            atk_mc2640_write_reg(0x7D, 0x58);
-            atk_mc2640_write_reg(0x7D, 0x58);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x02);
+            _atk_mc2640_write_reg(0x7C, 0x03);
+            _atk_mc2640_write_reg(0x7D, 0x58);
+            _atk_mc2640_write_reg(0x7D, 0x58);
             break;
         }
         case ATK_MC2640_COLOR_SATURATION_2:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x02);
-            atk_mc2640_write_reg(0x7C, 0x03);
-            atk_mc2640_write_reg(0x7D, 0x48);
-            atk_mc2640_write_reg(0x7D, 0x48);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x02);
+            _atk_mc2640_write_reg(0x7C, 0x03);
+            _atk_mc2640_write_reg(0x7D, 0x48);
+            _atk_mc2640_write_reg(0x7D, 0x48);
             break;
         }
         case ATK_MC2640_COLOR_SATURATION_3:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x02);
-            atk_mc2640_write_reg(0x7C, 0x03);
-            atk_mc2640_write_reg(0x7D, 0x38);
-            atk_mc2640_write_reg(0x7D, 0x38);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x02);
+            _atk_mc2640_write_reg(0x7C, 0x03);
+            _atk_mc2640_write_reg(0x7D, 0x38);
+            _atk_mc2640_write_reg(0x7D, 0x38);
             break;
         }
         case ATK_MC2640_COLOR_SATURATION_4:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x02);
-            atk_mc2640_write_reg(0x7C, 0x03);
-            atk_mc2640_write_reg(0x7D, 0x28);
-            atk_mc2640_write_reg(0x7D, 0x28);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x02);
+            _atk_mc2640_write_reg(0x7C, 0x03);
+            _atk_mc2640_write_reg(0x7D, 0x28);
+            _atk_mc2640_write_reg(0x7D, 0x28);
             break;
         }
         default:
@@ -1206,58 +1206,58 @@ uint8 atk_mc2640_set_color_saturation(atk_mc2640_color_saturation_t saturation)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块亮度成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_brightness(atk_mc2640_brightness_t brightness)
+uint8 _atk_mc2640_set_brightness(atk_mc2640_brightness_t brightness)
 {
     switch (brightness)
     {
         case ATK_MC2640_BRIGHTNESS_0:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x09);
-            atk_mc2640_write_reg(0x7D, 0x40);
-            atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x09);
+            _atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_write_reg(0x7D, 0x00);
             break;
         }
         case ATK_MC2640_BRIGHTNESS_1:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x09);
-            atk_mc2640_write_reg(0x7D, 0x30);
-            atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x09);
+            _atk_mc2640_write_reg(0x7D, 0x30);
+            _atk_mc2640_write_reg(0x7D, 0x00);
             break;
         }
         case ATK_MC2640_BRIGHTNESS_2:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x09);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x09);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x00);
             break;
         }
         case ATK_MC2640_BRIGHTNESS_3:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x09);
-            atk_mc2640_write_reg(0x7D, 0x10);
-            atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x09);
+            _atk_mc2640_write_reg(0x7D, 0x10);
+            _atk_mc2640_write_reg(0x7D, 0x00);
             break;
         }
         case ATK_MC2640_BRIGHTNESS_4:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x09);
-            atk_mc2640_write_reg(0x7D, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x09);
+            _atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x00);
             break;
         }
         default:
@@ -1279,68 +1279,68 @@ uint8 atk_mc2640_set_brightness(atk_mc2640_brightness_t brightness)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块对比度成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_contrast(atk_mc2640_contrast_t contrast)
+uint8 _atk_mc2640_set_contrast(atk_mc2640_contrast_t contrast)
 {
     switch (contrast)
     {
         case ATK_MC2640_CONTRAST_0:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x07);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x28);
-            atk_mc2640_write_reg(0x7D, 0x0C);
-            atk_mc2640_write_reg(0x7D, 0x06);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x07);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x28);
+            _atk_mc2640_write_reg(0x7D, 0x0C);
+            _atk_mc2640_write_reg(0x7D, 0x06);
             break;
         }
         case ATK_MC2640_CONTRAST_1:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x07);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x24);
-            atk_mc2640_write_reg(0x7D, 0x16);
-            atk_mc2640_write_reg(0x7D, 0x06);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x07);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x24);
+            _atk_mc2640_write_reg(0x7D, 0x16);
+            _atk_mc2640_write_reg(0x7D, 0x06);
             break;
         }
         case ATK_MC2640_CONTRAST_2:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x07);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x06);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x07);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x06);
             break;
         }
         case ATK_MC2640_CONTRAST_3:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x07);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x1C);
-            atk_mc2640_write_reg(0x7D, 0x2A);
-            atk_mc2640_write_reg(0x7D, 0x06);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x07);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x1C);
+            _atk_mc2640_write_reg(0x7D, 0x2A);
+            _atk_mc2640_write_reg(0x7D, 0x06);
             break;
         }
         case ATK_MC2640_CONTRAST_4:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x04);
-            atk_mc2640_write_reg(0x7C, 0x07);
-            atk_mc2640_write_reg(0x7D, 0x20);
-            atk_mc2640_write_reg(0x7D, 0x18);
-            atk_mc2640_write_reg(0x7D, 0x34);
-            atk_mc2640_write_reg(0x7D, 0x06);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x04);
+            _atk_mc2640_write_reg(0x7C, 0x07);
+            _atk_mc2640_write_reg(0x7D, 0x20);
+            _atk_mc2640_write_reg(0x7D, 0x18);
+            _atk_mc2640_write_reg(0x7D, 0x34);
+            _atk_mc2640_write_reg(0x7D, 0x06);
             break;
         }
         default:
@@ -1365,88 +1365,88 @@ uint8 atk_mc2640_set_contrast(atk_mc2640_contrast_t contrast)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块特殊效果成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_special_effect(atk_mc2640_special_effect_t effect)
+uint8 _atk_mc2640_set_special_effect(atk_mc2640_special_effect_t effect)
 {
     switch (effect)
     {
         case ATK_MC2640_SPECIAL_EFFECT_ANTIQUE:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x18);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x40);
-            atk_mc2640_write_reg(0x7D, 0xA6);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x18);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_write_reg(0x7D, 0xA6);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_BLUISH:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x18);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0xA0);
-            atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x18);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0xA0);
+            _atk_mc2640_write_reg(0x7D, 0x40);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_GREENISH:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x18);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x40);
-            atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x18);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_write_reg(0x7D, 0x40);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_REDISH:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x18);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x40);
-            atk_mc2640_write_reg(0x7D, 0xC0);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x18);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_write_reg(0x7D, 0xC0);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_BW:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x18);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x80);
-            atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x18);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_write_reg(0x7D, 0x80);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_NEGATIVE:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x40);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x80);
-            atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x40);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_write_reg(0x7D, 0x80);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_BW_NEGATIVE:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x58);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x80);
-            atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x58);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_write_reg(0x7D, 0x80);
             break;
         }
         case ATK_MC2640_SPECIAL_EFFECT_NORMAL:
         {
-            atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-            atk_mc2640_write_reg(0x7C, 0x00);
-            atk_mc2640_write_reg(0x7D, 0x00);
-            atk_mc2640_write_reg(0x7C, 0x05);
-            atk_mc2640_write_reg(0x7D, 0x80);
-            atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+            _atk_mc2640_write_reg(0x7C, 0x00);
+            _atk_mc2640_write_reg(0x7D, 0x00);
+            _atk_mc2640_write_reg(0x7C, 0x05);
+            _atk_mc2640_write_reg(0x7D, 0x80);
+            _atk_mc2640_write_reg(0x7D, 0x80);
             break;
         }
         default:
@@ -1465,7 +1465,7 @@ uint8 atk_mc2640_set_special_effect(atk_mc2640_special_effect_t effect)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块输出图像格式成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_output_format(atk_mc2640_output_format_t format)
+uint8 _atk_mc2640_set_output_format(atk_mc2640_output_format_t format)
 {
     uint32 cfg_index;
 
@@ -1475,7 +1475,7 @@ uint8 atk_mc2640_set_output_format(atk_mc2640_output_format_t format)
         {
             for (cfg_index=0; cfg_index<(sizeof(atk_mc2640_set_rgb565_cfg)/sizeof(atk_mc2640_set_rgb565_cfg[0])); cfg_index++)
             {
-                atk_mc2640_write_reg(atk_mc2640_set_rgb565_cfg[cfg_index][0], atk_mc2640_set_rgb565_cfg[cfg_index][1]);
+                _atk_mc2640_write_reg(atk_mc2640_set_rgb565_cfg[cfg_index][0], atk_mc2640_set_rgb565_cfg[cfg_index][1]);
             }
             break;
         }
@@ -1483,11 +1483,11 @@ uint8 atk_mc2640_set_output_format(atk_mc2640_output_format_t format)
         {
             for (cfg_index=0; cfg_index<(sizeof(atk_mc2640_set_yuv422_cfg)/sizeof(atk_mc2640_set_yuv422_cfg[0])); cfg_index++)
             {
-                atk_mc2640_write_reg(atk_mc2640_set_yuv422_cfg[cfg_index][0], atk_mc2640_set_yuv422_cfg[cfg_index][1]);
+                _atk_mc2640_write_reg(atk_mc2640_set_yuv422_cfg[cfg_index][0], atk_mc2640_set_yuv422_cfg[cfg_index][1]);
             }
             for (cfg_index=0; cfg_index<(sizeof(atk_mc2640_set_jpeg_cfg)/sizeof(atk_mc2640_set_jpeg_cfg[0])); cfg_index++)
             {
-                atk_mc2640_write_reg(atk_mc2640_set_jpeg_cfg[cfg_index][0], atk_mc2640_set_jpeg_cfg[cfg_index][1]);
+                _atk_mc2640_write_reg(atk_mc2640_set_jpeg_cfg[cfg_index][0], atk_mc2640_set_jpeg_cfg[cfg_index][1]);
             }
             break;
         }
@@ -1508,7 +1508,7 @@ uint8 atk_mc2640_set_output_format(atk_mc2640_output_format_t format)
  *              ATK_MC2640_EINVAL: 传入参数错误
  *              ATK_MC2640_ENOMEM: 内存不足
  */
-uint8 atk_mc2640_set_output_size(uint16 width, uint16 height)
+uint8 _atk_mc2640_set_output_size(uint16 width, uint16 height)
 {
     uint16 output_width;
     uint16 output_height;
@@ -1524,12 +1524,12 @@ uint8 atk_mc2640_set_output_size(uint16 width, uint16 height)
     output_width = width >> 2;
     output_height = height >> 2;
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x04);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_ZMOW, (uint8)(output_width & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_ZMOH, (uint8)(output_height & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_ZMHH, ((uint8)(output_width >> 8) & 0x03) | ((uint8)(output_height >> 6) & 0x04));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x00);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x04);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_ZMOW, (uint8)(output_width & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_ZMOH, (uint8)(output_height & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_ZMHH, ((uint8)(output_width >> 8) & 0x03) | ((uint8)(output_height >> 6) & 0x04));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x00);
 
     return ATK_MC2640_EOK;
 }
@@ -1540,9 +1540,10 @@ uint8 atk_mc2640_set_output_size(uint16 width, uint16 height)
  *              start_y: 传感器窗口起始Y坐标
  *              width  : 传感器窗口宽度
  *              height : 传感器窗口高度
- * @retval      无
+ * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块输出图像大小成功
+ *              ATK_MC2640_EINVAL: 传入参数错误
  */
-void atk_mc2640_set_sensor_window(uint16 start_x, uint16 start_y, uint16 width, uint16 height)
+uint8 _atk_mc2640_set_sensor_window(uint16 start_x, uint16 start_y, uint16 width, uint16 height)
 {
     uint16 end_x;
     uint16 end_y;
@@ -1554,19 +1555,21 @@ void atk_mc2640_set_sensor_window(uint16 start_x, uint16 start_y, uint16 width, 
     end_x = start_x + (width >> 1);
     end_y = start_y + (height >> 1);
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
 
-    raw_com1 = atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_COM1);
+    raw_com1 = _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_COM1);
     com1 = (raw_com1 & 0xF0) | (((end_y & 0x03) << 2) | (start_y & 0x03));
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM1, com1);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_VSTRT, start_y >> 2);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_VEND, end_y >> 2);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM1, com1);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_VSTRT, start_y >> 2);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_VEND, end_y >> 2);
 
-    raw_reg32 = atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_REG32);
+    raw_reg32 = _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_REG32);
     reg32 = (raw_reg32 & 0xC0) | (((end_x & 0x07) << 3) | (start_x & 0x07));
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_REG32, reg32);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_HREFST, start_x >> 3);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_HREFEND, end_x >> 3);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_REG32, reg32);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_HREFST, start_x >> 3);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_HREFEND, end_x >> 3);
+
+    return ATK_MC2640_EOK;
 }
 
 /**
@@ -1578,7 +1581,7 @@ void atk_mc2640_set_sensor_window(uint16 start_x, uint16 start_y, uint16 width, 
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块输出图像大小成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_image_window(uint16 off_x, uint16 off_y, uint16 width, uint16 height)
+uint8 _atk_mc2640_set_image_window(uint16 off_x, uint16 off_y, uint16 width, uint16 height)
 {
     uint16 hsize;
     uint16 vsize;
@@ -1594,15 +1597,15 @@ uint8 atk_mc2640_set_image_window(uint16 off_x, uint16 off_y, uint16 width, uint
 
     vhyx = (uint8)(((vsize >> 1) & 0x80) | ((off_y >> 4) & 0x70) | ((hsize >> 5) & 0x08) | ((off_x >> 8) & 0x07));
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x04);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_HSIZE, (uint8)(hsize & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_VSIZE, (uint8)(vsize & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_XOFFL, (uint8)(off_x & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_YOFFL, (uint8)(off_y & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_VHYX, vhyx);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_TEST, (uint8)((hsize >> 2) & 0x80));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x00);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x04);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_HSIZE, (uint8)(hsize & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_VSIZE, (uint8)(vsize & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_XOFFL, (uint8)(off_x & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_YOFFL, (uint8)(off_y & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_VHYX, vhyx);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_TEST, (uint8)((hsize >> 2) & 0x80));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x00);
 
     return ATK_MC2640_EOK;
 }
@@ -1616,18 +1619,47 @@ uint8 atk_mc2640_set_image_window(uint16 off_x, uint16 off_y, uint16 width, uint
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块输出图像大小成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-void atk_mc2640_set_image_size(uint16 width, uint16 height)
+void _atk_mc2640_set_image_size(uint16 width, uint16 height)
 {
     uint8 sizel;
 
     sizel = (uint8)(((width & 0x07) << 3) | (height & 0x07) | ((width >> 4) & 0x80));
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x04);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_HSIZE8, (uint8)((width >> 3) & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_VSIZE8, (uint8)((height >> 3) & 0x00FF));
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_SIZEL, sizel);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x00);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x04);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_HSIZE8, (uint8)((width >> 3) & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_VSIZE8, (uint8)((height >> 3) & 0x00FF));
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_SIZEL, sizel);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_RESET, 0x00);
+}
+
+/**
+ * @brief       设置ATK-MC2640模块纵向和横向跳采样系数
+ * @param       V_DIVIDER : 纵向跳采样系数（对本程序2比较合适）
+ *              H_DIVIDER : 横向跳采样系数（对本程序2比较合适）
+ * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块跳采样系数成功
+ *              ATK_MC2640_EINVAL: 传入参数错误
+ */
+uint8 _atk_mc2640_set_divider(uint8 V_DIVIDER, uint8 H_DIVIDER)
+{
+    _atk_mc2640_write_reg(0x50, ((V_DIVIDER << 3) & 0x38) + (H_DIVIDER & 0x07));
+    return ATK_MC2640_EOK;
+}
+
+/**
+ * @brief       设置ATK-MC2640模块纵向和横向翻转
+ * @param       Vertical_flip : 纵向是否翻转
+ *              Horizontal_mirror : 横向是否翻转
+ * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块跳采样系数成功
+ *              ATK_MC2640_EINVAL: 传入参数错误
+ */
+uint8 _atk_mc2640_set_flip(uint8 Vertical_flip, uint8 Horizontal_mirror)
+{
+    uint8 temp = _atk_mc2640_read_reg(0x04);
+    temp |= (Horizontal_mirror << 7) + (Vertical_flip << 6);
+    _atk_mc2640_write_reg(0xff, 0x01);
+    _atk_mc2640_write_reg(0x04, temp);
+    return ATK_MC2640_EOK;
 }
 
 /**
@@ -1637,7 +1669,7 @@ void atk_mc2640_set_image_size(uint16 width, uint16 height)
  * @retval      ATK_MC2640_EOK   : 设置ATK-MC2640模块输出速率成功
  *              ATK_MC2640_EINVAL: 传入参数错误
  */
-uint8 atk_mc2640_set_output_speed(uint8 clk_dev, uint8 pclk_dev)
+uint8 _atk_mc2640_set_output_speed(uint8 clk_dev, uint8 pclk_dev)
 {
     if (clk_dev > 63)
     {
@@ -1649,10 +1681,10 @@ uint8 atk_mc2640_set_output_speed(uint8 clk_dev, uint8 pclk_dev)
         return ATK_MC2640_EINVAL;
     }
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
-    atk_mc2640_write_reg(ATK_MC2640_REG_DSP_R_DVP_SP, pclk_dev);
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_CLKRC, clk_dev);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_DSP);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_DSP_R_DVP_SP, pclk_dev);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_CLKRC, clk_dev);
 
     return ATK_MC2640_EOK;
 }
@@ -1662,14 +1694,14 @@ uint8 atk_mc2640_set_output_speed(uint8 clk_dev, uint8 pclk_dev)
  * @param       无
  * @retval      无
  */
-void atk_mc2640_colorbar_enable(void)
+void _atk_mc2640_colorbar_enable(void)
 {
     uint8 com7;
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    com7 = atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_COM7);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    com7 = _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_COM7);
     com7 |= (uint8)(1 << 1);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, com7);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, com7);
 }
 
 /**
@@ -1677,17 +1709,21 @@ void atk_mc2640_colorbar_enable(void)
  * @param       无
  * @retval      无
  */
-void atk_mc2640_colorbar_disable(void)
+void _atk_mc2640_colorbar_disable(void)
 {
     uint8 com7;
 
-    atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
-    com7 = atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_COM7);
+    _atk_mc2640_reg_bank_select(ATK_MC2640_REG_BANK_SENSOR);
+    com7 = _atk_mc2640_read_reg(ATK_MC2640_REG_SENSOR_COM7);
     com7 &= ~(uint8)(1 << 1);
-    atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, com7);
+    _atk_mc2640_write_reg(ATK_MC2640_REG_SENSOR_COM7, com7);
 }
 
-
+/**
+ * @brief       帧中断函数
+ * @param       无
+ * @retval      无
+ */
 void IO_Vsync_ISR(void) {
     if (IfxPort_getPinState(CAM_VSYNC_SW_PORT, CAM_VSYNC_SW_PIN) == 1) {
         IfxDma_setChannelDestinationAddress(&MODULE_DMA, CAMERA_PCLK_PRIORITY,
@@ -1699,6 +1735,11 @@ void IO_Vsync_ISR(void) {
     IfxPort_togglePin(IO_LED2_PORT, IO_LED2_PIN);
 }
 
+/**
+ * @brief       行中断函数
+ * @param       无
+ * @retval      无
+ */
 void IO_Hsync_ISR(void) {
     if (IfxPort_getPinState(CAM_HSYNC_SW_PORT, CAM_HSYNC_SW_PIN) == 1) {
         IfxDma_enableChannelTransaction(&MODULE_DMA, CAMERA_PCLK_PRIORITY);
@@ -1720,13 +1761,14 @@ const unsigned char PinIrqVectabNum[4] =
 // EXI priority
 const unsigned char PinIrqPriority[4] = {CAMERA_VSYNC_PRIORITY, 0, CAMERA_PCLK_PRIORITY, CAMERA_HSYNC_PRIORITY};
 
-// ISR pointers
-//const void *PinIrqFuncPointer[4] = {&PIN_INT0_IRQHandler, &PIN_INT1_IRQHandler, &PIN_INT2_IRQHandler,
-//        &PIN_INT3_IRQHandler};
-
-
-
-void PIN_Exti (Ifx_P *port, uint8 pinIndex, IfxPort_InputMode mode)
+/**
+ * @brief       外部中断引脚设置
+ * @param       port : 中断脚port
+ *              pin  : 中断脚pin
+ *              mode : 中断触发边沿配置
+ * @retval      无
+ */
+void _PIN_Exti (Ifx_P *port, uint8 pinIndex, IfxPort_InputMode mode)
 {
     int i, j;
 
@@ -1800,9 +1842,6 @@ void PIN_Exti (Ifx_P *port, uint8 pinIndex, IfxPort_InputMode mode)
         IfxSrc_enable(src);
     }
 
-    // install int.
-//    IfxCpu_Irq_installInterruptHandler((void*) PinIrqFuncPointer[(int) inputChannel % 4], Priority);
-
     // enable interrupts
     IfxCpu_restoreInterrupts(interruptState);
 }
@@ -1819,7 +1858,7 @@ typedef struct
 
 Dma_Camera_t g_DmaCameraLinkedList;
 
-void DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAddr, unsigned long channel)
+void _DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAddr, unsigned long channel)
 {
     /* 关闭中断 */
     boolean interruptState = IfxCpu_disableInterrupts();
@@ -1843,7 +1882,6 @@ void DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAdd
     cfg.operationMode = IfxDma_ChannelOperationMode_continuous;            //传输完成继续传输
     cfg.hardwareRequestEnabled = TRUE;                                     //使能硬件触发传输
     cfg.sourceAddress = IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), srcStartAddr);  //设置源地址
-//    cfg.sourceAddress = srcStartAddr;  //设置源地址
     cfg.sourceCircularBufferEnabled = TRUE;                                      //保持源地址不变
     cfg.sourceAddressCircularRange = IfxDma_ChannelIncrementCircular_none;
     cfg.channelId = channel;                                                 //设置DMA通道
@@ -1853,7 +1891,6 @@ void DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAdd
 
     /* 设置传输表述符 */
     cfg.destinationAddress = IFXCPU_GLB_ADDR_DSPR(IfxCpu_getCoreId(), dstStartAddr);
-//    cfg.destinationAddress = dstStartAddr;
 
     /* address to next transaction set */
     cfg.shadowAddress = 0;
@@ -1866,8 +1903,6 @@ void DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAdd
 
     /* transfer into linked list storage */
     IfxDma_Dma_initLinkedListEntry((void*) &g_DmaCameraLinkedList.linkedList[0], &cfg);
-
-//    IfxCpu_Irq_installInterruptHandler((void*) DMA_IRQHandler, DMA_PRIORITY);
 
     /* clear service request flag */
     (IfxDma_Dma_getSrcPointer(&g_DmaCameraLinkedList.chn))->B.CLRR = 1;
@@ -1891,24 +1926,13 @@ void DMA_CameraInitConfig (unsigned long srcStartAddr, unsigned long dstStartAdd
 uint8 Camera_Init(void) {
 
     uint8 ret;
-    ret  = atk_mc2640_init();                                               /* 初始化ATK-MC2640模块 */
-    ret |= atk_mc2640_set_output_format(ATK_MC2640_OUTPUT_FORMAT_RGB565);   /* 输出图像格式 */
-    ret |= atk_mc2640_set_output_size(CAM_IMAGE_WIDTH, CAM_IMAGE_HEIGHT);         /* 输出图像分辨率 */
-    ret |= atk_mc2640_set_image_window(100, 0, CAM_IMAGE_WIDTH * 8, CAM_IMAGE_HEIGHT * 8);
-
-    uint8 V_DIVIDER = 2;
-    uint8 H_DIVIDER = 2;
-    atk_mc2640_write_reg(0x50, ((V_DIVIDER << 3) & 0x38) + (H_DIVIDER & 0x07));
-
-    atk_mc2640_set_sensor_window(200, 0, CAM_IMAGE_WIDTH * 8, CAM_IMAGE_HEIGHT * 8);
-
-    uint8 Horizontal_mirror = 0;
-    uint8 Vertical_flip = 1;
-    uint8 temp = atk_mc2640_read_reg(0x04);
-    temp |= (Horizontal_mirror << 7) + (Vertical_flip << 6);
-    atk_mc2640_write_reg(0xff, 0x01);
-    atk_mc2640_write_reg(0x04, temp);
-
+    ret  = _atk_mc2640_init();                                               /* 初始化ATK-MC2640模块 */
+    ret |= _atk_mc2640_set_output_format(ATK_MC2640_OUTPUT_FORMAT_RGB565);   /* 输出图像格式 */
+    ret |= _atk_mc2640_set_output_size(CAM_IMAGE_WIDTH, CAM_IMAGE_HEIGHT);         /* 输出图像分辨率 */
+    ret |= _atk_mc2640_set_image_window(100, 0, CAM_IMAGE_WIDTH * 8, CAM_IMAGE_HEIGHT * 8);
+    ret |= _atk_mc2640_set_divider(2, 2);
+    ret |= _atk_mc2640_set_sensor_window(200, 0, CAM_IMAGE_WIDTH * 8, CAM_IMAGE_HEIGHT * 8);
+    ret |= _atk_mc2640_set_flip(1, 0);
     if (ret != 0) {
         return 0;
         // printf("ATK-MC2640 Init Failed!\r\n");
@@ -1916,21 +1940,21 @@ uint8 Camera_Init(void) {
 //
 //        }
     }
-    atk_mc2640_set_output_speed(2, 22);                                     /* 输出速率 */
-    atk_mc2640_set_light_mode(ATK_MC2640_LIGHT_MODE_SUNNY);                 /* 设置灯光模式 */
-    atk_mc2640_set_color_saturation(ATK_MC2640_COLOR_SATURATION_1);         /* 设置色彩饱和度 */
-    atk_mc2640_set_brightness(ATK_MC2640_BRIGHTNESS_1);                     /* 设置亮度 */
-    atk_mc2640_set_contrast(ATK_MC2640_CONTRAST_2);                         /* 设置对比度 */
-    atk_mc2640_set_special_effect(ATK_MC2640_SPECIAL_EFFECT_NORMAL);        /* 设置特殊效果 */
+    _atk_mc2640_set_output_speed(2, 22);                                     /* 输出速率 */
+    _atk_mc2640_set_light_mode(ATK_MC2640_LIGHT_MODE_SUNNY);                 /* 设置灯光模式 */
+    _atk_mc2640_set_color_saturation(ATK_MC2640_COLOR_SATURATION_1);         /* 设置色彩饱和度 */
+    _atk_mc2640_set_brightness(ATK_MC2640_BRIGHTNESS_1);                     /* 设置亮度 */
+    _atk_mc2640_set_contrast(ATK_MC2640_CONTRAST_2);                         /* 设置对比度 */
+    _atk_mc2640_set_special_effect(ATK_MC2640_SPECIAL_EFFECT_NORMAL);        /* 设置特殊效果 */
 
 
     IfxCpu_disableInterrupts();
 
-    PIN_Exti(CAM_PCLK_SW_PORT, CAM_PCLK_SW_PIN, PIN_IRQ_MODE_RISING);
-    PIN_Exti(CAM_VSYNC_SW_PORT, CAM_VSYNC_SW_PIN, PIN_IRQ_MODE_RISING_FALLING);
-    PIN_Exti(CAM_HSYNC_SW_PORT, CAM_HSYNC_SW_PIN, PIN_IRQ_MODE_RISING_FALLING);
+    _PIN_Exti(CAM_PCLK_SW_PORT, CAM_PCLK_SW_PIN, PIN_IRQ_MODE_RISING);
+    _PIN_Exti(CAM_VSYNC_SW_PORT, CAM_VSYNC_SW_PIN, PIN_IRQ_MODE_RISING_FALLING);
+    _PIN_Exti(CAM_HSYNC_SW_PORT, CAM_HSYNC_SW_PIN, PIN_IRQ_MODE_RISING_FALLING);
 
-    DMA_CameraInitConfig((unsigned long) (&(MODULE_P02.IN.U)), (unsigned long) writing_img_ptr, CAMERA_PCLK_PRIORITY);
+    _DMA_CameraInitConfig((unsigned long) (&(MODULE_P02.IN.U)), (unsigned long) writing_img_ptr, CAMERA_PCLK_PRIORITY);
 
     IfxCpu_enableInterrupts();
 

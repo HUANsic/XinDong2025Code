@@ -1,6 +1,12 @@
 #include "Encoder.h"
 
+#define ENCODER_MAX_COUNT     0xFFFF
+#define ENCODER_T2_SRC        &SRC_GPT120T2
+#define ENCODER_REVERSE       TRUE
+
+
 volatile sint32 encoderCount = 0;
+
 
 void Encoder_Overflow_ISR(void) {
     boolean dir = IfxPort_getPinState(ENCODER_B_PORT, ENCODER_B_PIN);

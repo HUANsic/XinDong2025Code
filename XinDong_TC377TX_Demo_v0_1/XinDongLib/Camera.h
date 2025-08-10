@@ -23,30 +23,6 @@
 #define PIN_IRQ_MODE_FALLING            IfxPort_InputMode_pullUp       /*!< 下降沿（上拉）触发中断 */
 #define PIN_IRQ_MODE_RISING_FALLING     IfxPort_InputMode_noPullDevice /*!< 双边沿（开漏）触发中断 */
 
-///** GPIO外部中断 组0中断服务函数优先级   范围：1-255   数字越大 优先级越高  注意优先级不要重复 vsync */
-//#define PIN_INT0_PRIORITY    253
-//
-///** GPIO外部中断 组0中断归哪个内核管理？ 范围：0：CPU0   1：CPU1   3：DMA*/
-//#define PIN_INT0_TypeOfService    1
-//
-///** GPIO外部中断 组1中断服务函数优先级   范围：1-255   数字越大 优先级越高  注意优先级不要重复 */
-//#define PIN_INT1_PRIORITY     101
-//
-///** GPIO外部中断 组1中断归哪个内核管理？ 范围：0：CPU0   1：CPU1   3：DMA*/
-//#define PIN_INT1_TypeOfService    0
-//
-///** GPIO外部中断 组2中断服务函数优先级   范围：1-255   数字越大 优先级越高  注意优先级不要重复  pixel clock  */
-//#define PIN_INT2_PRIORITY     40
-//
-///** GPIO外部中断 组2中断归哪个内核管理？ 范围：0：CPU0   1：CPU1   3：DMA*/
-//#define PIN_INT2_TypeOfService    3
-//
-///** GPIO外部中断 组3中断服务函数优先级   范围：1-255   数字越大 优先级越高  注意优先级不要重复 */
-//#define PIN_INT3_PRIORITY     100
-//
-///** GPIO外部中断 组3中断归哪个内核管理？ 范围：0：CPU0   1：CPU1   3：DMA*/
-//#define PIN_INT3_TypeOfService    0
-
 /* SCCB接口读写通讯地址bit0 */
 #define ATK_MC2640_SCCB_WRITE   0x00
 #define ATK_MC2640_SCCB_READ    0x01

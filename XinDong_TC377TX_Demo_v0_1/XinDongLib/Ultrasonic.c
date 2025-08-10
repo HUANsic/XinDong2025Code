@@ -1,9 +1,14 @@
 #include "Ultrasonic.h"
 
+
+#define SOUND_SPEED_MM_US 0.343
+
+
 IfxGtm_Tim_In timDriver_pulseIn;
 
 volatile uint32     ultrasonicDistance = 0;
 volatile uint8      ultrasonicReady = 0;
+
 
 void Ultrasonic_PulseIn_ISR(void)
 {
