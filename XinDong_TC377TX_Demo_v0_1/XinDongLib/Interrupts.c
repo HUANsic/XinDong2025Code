@@ -289,6 +289,22 @@ __weak__ void Camera_Hsync_ISR(void) {
 	;		// defined in Camera.c if using software flow control
 }
 
+__weak__ void Periodic_1s_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_100ms_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_10ms_ISR(void) {
+	;		// defined in main.c
+}
+
+__weak__ void Periodic_PID_ISR(void) {
+	;		// defined in main.c
+}
+
 __weak__ void SWINT_User0_ISR(void) {
 	;		// defined in main.c
 }
