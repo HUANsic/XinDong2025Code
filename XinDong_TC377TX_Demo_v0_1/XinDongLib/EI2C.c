@@ -18,8 +18,6 @@
 //boolean _EI2C_ReadBit(EI2C_Typedef *ei2c);
 //boolean _EI2C_SendByte(EI2C_Typedef *ei2c, uint8 byte);
 //uint8 _EI2C_ReadByte(EI2C_Typedef *ei2c, boolean ack);
-uint8 initialized = 0;
-
 inline void _EI2C_SCL_Rise(EI2C_Typedef *ei2c) {
 	IfxPort_setPinState(ei2c->scl_port, ei2c->scl_pin, IfxPort_State_high);
 }
@@ -50,7 +48,7 @@ void EI2C_Hold() {
 	 EI2C_Hold:	.type	func	instruction cycle count (total cycle count)
 	 mov	d0,#0				1(1)
 	 .L283:
-	 j	.L2					1(2)
+	 j	.L2						1(2)
 	 .L3:
 	 NOP						1((n-1)*30+3)
 	 .L383:
@@ -110,7 +108,7 @@ void EI2C_Hold() {
 	 .L2:
 	 mov	d15,#100			1(n*30+1)
 	 .L410:
-	 jlt.u	d0,d15,.L3		1~3(n*30+2)(n*30+4)
+	 jlt.u	d0,d15,.L3			1~3(n*30+2)(n*30+4)
 	 .L411:
 	 ret						1(n*30+5)
 	 */
@@ -295,13 +293,10 @@ uint8 _EI2C_ReadByte(EI2C_Typedef *ei2c, boolean ack) {
 }
 
 void EI2C_Init(EI2C_Typedef *ei2c) {
-	if (!initialized) {
-		IfxPort_setPinMode(ei2c->scl_port, ei2c->scl_pin, IfxPort_Mode_outputOpenDrainGeneral);
-		IfxPort_setPinMode(ei2c->sda_port, ei2c->sda_pin, IfxPort_Mode_outputOpenDrainGeneral);
-		_EI2C_SCL_Rise(ei2c);
-		_EI2C_SDA_High(ei2c);
-		initialized = 1;
-	}
+	IfxPort_setPinMode(ei2c->scl_port, ei2c->scl_pin, IfxPort_Mode_outputOpenDrainGeneral);
+	IfxPort_setPinMode(ei2c->sda_port, ei2c->sda_pin, IfxPort_Mode_outputOpenDrainGeneral);
+	_EI2C_SCL_Rise(ei2c);
+	_EI2C_SDA_High(ei2c);
 }
 
 /*           ___ ____ ___ ____ ___ ___ ____ ___ ___ ___ ___ ____ ___
