@@ -1,21 +1,25 @@
 /**********************************************************************************************************************
- * Author: Zonghuan Wu
+ * Author: Yikai Huang
  * Description:
  * 
  * Version:
  *********************************************************************************************************************/
 
-#ifndef XINDONGLIB_EI2C_H_
-#define XINDONGLIB_EI2C_H_
+#ifndef XINDONGLIB_IMU_H_
+#define XINDONGLIB_IMU_H_
 
 /*********************************************************************************************************************/
 /*-----------------------------------------------------Includes------------------------------------------------------*/
 /*********************************************************************************************************************/
 #include "XinDong_Config.h"
+#include "EI2C.h"
+#include "Time.h"
+#include <math.h>
 
 /*********************************************************************************************************************/
 /*------------------------------------------------------Macros-------------------------------------------------------*/
 /*********************************************************************************************************************/
+
 
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
@@ -24,21 +28,6 @@
 /*********************************************************************************************************************/
 /*-------------------------------------------------Data Structures---------------------------------------------------*/
 /*********************************************************************************************************************/
-typedef enum {
-	EI2C_OK = 0,
-	EI2C_NO_DEVICE,
-	EI2C_INVALID_ADDRESS,
-	EI2C_ACK_MISSING,
-	EI2C_WRONG_DEVICE,
-	EI2C_NO_ACCESS,
-	EI2C_NOT_READY
-} EI2C_Status;
-
-typedef struct {
-	Ifx_P *scl_port, *sda_port;
-	uint8 scl_pin, sda_pin;
-	EI2C_Status status;
-} EI2C_Typedef;
 
 /*********************************************************************************************************************/
 /*--------------------------------------------Private Variables/Constants--------------------------------------------*/
@@ -47,12 +36,26 @@ typedef struct {
 /*********************************************************************************************************************/
 /*------------------------------------------------Function Prototypes------------------------------------------------*/
 /*********************************************************************************************************************/
-void EI2C_Init(EI2C_Typedef *ei2c);
+void MPU6050_Init(void);
 
-EI2C_Status EI2C_Mem_Read(EI2C_Typedef *ei2c, uint8 slaveAddress, uint8 MemAddress, uint8 *pData, uint16 size);
+EI2C_Status MPU6050_Read_Accel(void);
 
-EI2C_Status EI2C_Mem_Write(EI2C_Typedef *ei2c, uint8 slaveAddress, uint8 MemAddress, uint8 *pData, uint16 size);
+EI2C_Status MPU6050_Read_Gyro(void);
 
-EI2C_Status EI2C_Call(EI2C_Typedef *ei2c, uint8 slaveAddress);
+void MPU6050_Read_Theta(void);
 
-#endif /* XINDONGLIB_EI2C_H_ */
+void MPU6050_Get_Omega(float *omegaX, float *omegaY, float *omegaZ);
+
+void MPU6050_Get_Accel(float *accelX, float *accelY, float *accelZ);
+
+void MPU6050_Get_Theta(float *thetaX, float *thetaY, float *thetaZ);
+
+void MPU6050_Set_AccelOffset(void);
+
+void MPU6050_Set_OmegaOffset(void);
+
+void MPU6050_Set_ThetaOffset(void);
+
+void MPU6050_Step_Theta(float dt);
+
+#endif /* XINDONGLIB_IMU_H_ */
