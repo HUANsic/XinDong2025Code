@@ -91,11 +91,4 @@ void OLED_DrawCircle(uint8 X, uint8 Y, uint8 Radius, uint8 IsFilled);
 void OLED_DrawEllipse(uint8 X, uint8 Y, uint8 A, uint8 B, uint8 IsFilled);
 void OLED_DrawArc(uint8 X, uint8 Y, uint8 Radius, uint16 StartAngle, uint16 EndAngle, uint8 IsFilled);
 
-//自定义函数
-/*********************函数声明*/
-//void OLED_Rotation_C_P(int8 CX, int8 CY, float* PX, float* PY, int16 Angle);	//点旋转
-//void OLED_Rotation_Block(int8 X, int8 Y, int8 Width, int16 Angle);			//区块旋转
-//void bresenham_ellipse(int x0, int y0, int rx, int ry);
-//void ellipse_algorithm(int8 x0, int8 y0, int8 a, int8 b);
-
 #endif /* XINDONGLIB_DISPLAY_H_ */

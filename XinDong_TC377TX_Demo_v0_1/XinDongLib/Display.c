@@ -617,7 +617,7 @@ uint8 OLED_DisplayBuf[8][128];
 
 /*I2C通信函数*/
 
-void OLED_GPIO_Init(void)
+void _OLED_GPIO_Init(void)
 {
     /*I2C初始化*/
     OLED_I2C_Struct.scl_port = I2C_SCL_PORT;
@@ -637,7 +637,7 @@ void OLED_GPIO_Init(void)
   * 返 回 值：无
   * 说    明：此函数用于向OLED发送指令
   */
-void OLED_WriteCommand(uint8 Command)
+void _OLED_WriteCommand(uint8 Command)
 {
     EI2C_Mem_Write(&OLED_I2C_Struct, OLED_I2C_ADDRESS, 0x00, &Command, 1);
 }
@@ -649,7 +649,7 @@ void OLED_WriteCommand(uint8 Command)
   * 返 回 值：无
   * 说    明：此函数用于向OLED发送数据
   */
-void OLED_WriteData(uint8 *Data, uint16 Length)
+void _OLED_WriteData(uint8 *Data, uint16 Length)
 {
     EI2C_Mem_Write(&OLED_I2C_Struct, OLED_I2C_ADDRESS, 0x40, Data, Length);
 }
@@ -664,46 +664,46 @@ void OLED_WriteData(uint8 *Data, uint16 Length)
   */
 void OLED_Init(void)
 {
-	OLED_GPIO_Init();			//先调用底层的端口初始化
+	_OLED_GPIO_Init();			//先调用底层的端口初始化
 	
 	/*写入一系列的命令，对OLED进行初始化配置*/
-	OLED_WriteCommand(0xAE);	//设置显示开启/关闭，0xAE关闭，0xAF开启
+	_OLED_WriteCommand(0xAE);	//设置显示开启/关闭，0xAE关闭，0xAF开启
 	
-	OLED_WriteCommand(0xD5);	//设置显示时钟分频比/振荡器频率
-	OLED_WriteCommand(0x80);	//0x00~0xFF
+	_OLED_WriteCommand(0xD5);	//设置显示时钟分频比/振荡器频率
+	_OLED_WriteCommand(0x80);	//0x00~0xFF
 	
-	OLED_WriteCommand(0xA8);	//设置多路复用率
-	OLED_WriteCommand(0x3F);	//0x0E~0x3F
+	_OLED_WriteCommand(0xA8);	//设置多路复用率
+	_OLED_WriteCommand(0x3F);	//0x0E~0x3F
 	
-	OLED_WriteCommand(0xD3);	//设置显示偏移
-	OLED_WriteCommand(0x00);	//0x00~0x7F
+	_OLED_WriteCommand(0xD3);	//设置显示偏移
+	_OLED_WriteCommand(0x00);	//0x00~0x7F
 	
-	OLED_WriteCommand(0x40);	//设置显示开始行，0x40~0x7F
+	_OLED_WriteCommand(0x40);	//设置显示开始行，0x40~0x7F
 	
-	OLED_WriteCommand(0xA1);	//设置左右方向，0xA1正常，0xA0左右反置
+	_OLED_WriteCommand(0xA1);	//设置左右方向，0xA1正常，0xA0左右反置
 	
-	OLED_WriteCommand(0xC8);	//设置上下方向，0xC8正常，0xC0上下反置
+	_OLED_WriteCommand(0xC8);	//设置上下方向，0xC8正常，0xC0上下反置
 
-	OLED_WriteCommand(0xDA);	//设置COM引脚硬件配置
-	OLED_WriteCommand(0x12);
+	_OLED_WriteCommand(0xDA);	//设置COM引脚硬件配置
+	_OLED_WriteCommand(0x12);
 	
-	OLED_WriteCommand(0x81);	//设置对比度
-	OLED_WriteCommand(0xCF);	//0x00~0xFF
+	_OLED_WriteCommand(0x81);	//设置对比度
+	_OLED_WriteCommand(0xCF);	//0x00~0xFF
 
-	OLED_WriteCommand(0xD9);	//设置预充电周期
-	OLED_WriteCommand(0xF1);
+	_OLED_WriteCommand(0xD9);	//设置预充电周期
+	_OLED_WriteCommand(0xF1);
 
-	OLED_WriteCommand(0xDB);	//设置VCOMH取消选择级别
-	OLED_WriteCommand(0x30);
+	_OLED_WriteCommand(0xDB);	//设置VCOMH取消选择级别
+	_OLED_WriteCommand(0x30);
 
-	OLED_WriteCommand(0xA4);	//设置整个显示打开/关闭
+	_OLED_WriteCommand(0xA4);	//设置整个显示打开/关闭
 
-	OLED_WriteCommand(0xA6);	//设置正常/反色显示，0xA6正常，0xA7反色
+	_OLED_WriteCommand(0xA6);	//设置正常/反色显示，0xA6正常，0xA7反色
 
-	OLED_WriteCommand(0x8D);	//设置充电泵
-	OLED_WriteCommand(0x14);
+	_OLED_WriteCommand(0x8D);	//设置充电泵
+	_OLED_WriteCommand(0x14);
 
-	OLED_WriteCommand(0xAF);	//开启显示
+	_OLED_WriteCommand(0xAF);	//开启显示
 	
 	OLED_Clear();				//清空显存数组
 	OLED_Update();				//更新显示，清屏，防止初始化后未显示内容时花屏
@@ -716,7 +716,7 @@ void OLED_Init(void)
   * 返 回 值：无
   * 说    明：OLED默认的Y轴，只能8个Bit为一组写入，即1页等于8个Y轴坐标
   */
-void OLED_SetCursor(uint8 Page, uint8 X)
+void _OLED_SetCursor(uint8 Page, uint8 X)
 {
 	/*如果使用此程序驱动1.3寸的OLED显示屏，则需要解除此注释*/
 	/*因为1.3寸的OLED驱动芯片（SH1106）有132列*/
@@ -725,9 +725,9 @@ void OLED_SetCursor(uint8 Page, uint8 X)
 //	X += 2;
 	
 	/*通过指令设置页地址和列地址*/
-	OLED_WriteCommand(0xB0 | Page);					//设置页位置
-	OLED_WriteCommand(0x10 | ((X & 0xF0) >> 4));	//设置X位置高4位
-	OLED_WriteCommand(0x00 | (X & 0x0F));			//设置X位置低4位
+	_OLED_WriteCommand(0xB0 | Page);					//设置页位置
+	_OLED_WriteCommand(0x10 | ((X & 0xF0) >> 4));	//设置X位置高4位
+	_OLED_WriteCommand(0x00 | (X & 0x0F));			//设置X位置低4位
 }
 
 /*********************硬件配置*/
@@ -743,7 +743,7 @@ void OLED_SetCursor(uint8 Page, uint8 X)
   * 参    数：Y 指数
   * 返 回 值：等于X的Y次方
   */
-uint32 OLED_Pow(uint32 X, uint32 Y)
+uint32 _OLED_Pow(uint32 X, uint32 Y)
 {
 	uint32 Result = 1;	//结果默认为1
 	while (Y --)			//累乘Y次
@@ -760,7 +760,7 @@ uint32 OLED_Pow(uint32 X, uint32 Y)
   * 参    数：testx testy 测试点的X和y坐标
   * 返 回 值：指定点是否在指定多边形内部，1：在内部，0：不在内部
   */
-uint8 OLED_pnpoly(uint8 nvert, uint16 *vertx, uint16 *verty, uint16 testx, uint16 testy)
+uint8 _OLED_pnpoly(uint8 nvert, uint16 *vertx, uint16 *verty, uint16 testx, uint16 testy)
 {
 	uint16 i, j, c = 0;
 	
@@ -784,7 +784,7 @@ uint8 OLED_pnpoly(uint8 nvert, uint16 *vertx, uint16 *verty, uint16 testx, uint1
   *           水平向右为0度，水平向左为180度或-180度，下方为正数，上方为负数，顺时针旋转
   * 返 回 值：指定点是否在指定角度内部，1：在内部，0：不在内部
   */
-uint8 OLED_IsInAngle(uint16 X, uint16 Y, uint16 StartAngle, uint16 EndAngle)
+uint8 _OLED_IsInAngle(uint16 X, uint16 Y, uint16 StartAngle, uint16 EndAngle)
 {
 	uint16 PointAngle;
 	PointAngle = atan2(Y, X) / 3.14 * 180;	//计算指定点的弧度，并转换为角度表示
@@ -830,9 +830,9 @@ void OLED_Update(void)
 	for (j = 0; j < 8; j ++)
 	{
 		/*设置光标位置为每一页的第一列*/
-		OLED_SetCursor(j, 0);
+		_OLED_SetCursor(j, 0);
 		/*连续写入128个数据，将显存数组的数据写入到OLED硬件*/
-		OLED_WriteData(OLED_DisplayBuf[j], 128);
+		_OLED_WriteData(OLED_DisplayBuf[j], 128);
 	}
 }
 
@@ -865,9 +865,9 @@ void OLED_UpdateArea(uint8 X, uint8 Y, uint8 Width, uint8 Height)
 	for (j = Y / 8; j < (Y + Height - 1) / 8 + 1; j ++)
 	{
 		/*设置光标位置为相关页的指定列*/
-		OLED_SetCursor(j, X);
+		_OLED_SetCursor(j, X);
 		/*连续写入Width个数据，将显存数组的数据写入到OLED硬件*/
-		OLED_WriteData(&OLED_DisplayBuf[j][X], Width);
+		_OLED_WriteData(&OLED_DisplayBuf[j][X], Width);
 	}
 }
 
@@ -1029,7 +1029,7 @@ void OLED_ShowNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSize)
 		/*调用OLED_ShowChar函数，依次显示每个数字*/
 		/*Number / OLED_Pow(10, Length - i - 1) % 10 可以十进制提取数字的每一位*/
 		/*+ '0' 可将数字转换为字符格式*/
-		OLED_ShowChar(X + i * FontSize, Y, Number / OLED_Pow(10, Length - i - 1) % 10 + '0', FontSize);
+		OLED_ShowChar(X + i * FontSize, Y, Number / _OLED_Pow(10, Length - i - 1) % 10 + '0', FontSize);
 	}
 }
 
@@ -1066,7 +1066,7 @@ void OLED_ShowSignedNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 Fon
 		/*调用OLED_ShowChar函数，依次显示每个数字*/
 		/*Number1 / OLED_Pow(10, Length - i - 1) % 10 可以十进制提取数字的每一位*/
 		/*+ '0' 可将数字转换为字符格式*/
-		OLED_ShowChar(X + (i + 1) * FontSize, Y, Number1 / OLED_Pow(10, Length - i - 1) % 10 + '0', FontSize);
+		OLED_ShowChar(X + (i + 1) * FontSize, Y, Number1 / _OLED_Pow(10, Length - i - 1) % 10 + '0', FontSize);
 	}
 }
 
@@ -1088,7 +1088,7 @@ void OLED_ShowHexNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSi
 	for (i = 0; i < Length; i++)		//遍历数字的每一位
 	{
 		/*以十六进制提取数字的每一位*/
-		SingleNumber = Number / OLED_Pow(16, Length - i - 1) % 16;
+		SingleNumber = Number / _OLED_Pow(16, Length - i - 1) % 16;
 		
 		if (SingleNumber < 10)			//单个数字小于10
 		{
@@ -1125,7 +1125,7 @@ void OLED_ShowBinNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSi
 		/*调用OLED_ShowChar函数，依次显示每个数字*/
 		/*Number / OLED_Pow(2, Length - i - 1) % 2 可以二进制提取数字的每一位*/
 		/*+ '0' 可将数字转换为字符格式*/
-		OLED_ShowChar(X + i * FontSize, Y, Number / OLED_Pow(2, Length - i - 1) % 2 + '0', FontSize);
+		OLED_ShowChar(X + i * FontSize, Y, Number / _OLED_Pow(2, Length - i - 1) % 2 + '0', FontSize);
 	}
 }
 
@@ -1159,7 +1159,7 @@ void OLED_ShowFloatNum(uint8 X, uint8 Y, double Number, uint8 IntLength, uint8 F
 	/*提取整数部分和小数部分*/
 	IntNum = Number;						//直接赋值给整型变量，提取整数
 	Number -= IntNum;						//将Number的整数减掉，防止之后将小数乘到整数时因数过大造成错误
-	PowNum = OLED_Pow(10, FraLength);		//根据指定小数的位数，确定乘数
+	PowNum = _OLED_Pow(10, FraLength);		//根据指定小数的位数，确定乘数
 	FraNum = (uint32)(Number * PowNum + 0.5);		//将小数乘到整数，同时四舍五入，避免显示误差
 	IntNum += FraNum / PowNum;				//若四舍五入造成了进位，则需要再加给整数
 	
@@ -1334,8 +1334,8 @@ uint8 OLED_GetPoint(uint8 X, uint8 Y)
   */
 void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 {
-	uint16 x, y, dx, dy, d, incrE, incrNE, temp;
-	uint16 x0 = X0, y0 = Y0, x1 = X1, y1 = Y1;
+	int x, y, dx, dy, d, incrE, incrNE, temp;
+	int x0 = X0, y0 = Y0, x1 = X1, y1 = Y1;
 	uint8 yflag = 0, xyflag = 0;
 	
 	if (y0 == y1)		//横线单独处理
@@ -1533,7 +1533,7 @@ void OLED_DrawTriangle(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1, uint8 X2, uint8 Y
 			{
 				/*调用OLED_pnpoly，判断指定点是否在指定三角形之中*/
 				/*如果在，则画点，如果不在，则不做处理*/
-				if (OLED_pnpoly(3, vx, vy, i, j)) {OLED_DrawPoint(i, j);}
+				if (_OLED_pnpoly(3, vx, vy, i, j)) {OLED_DrawPoint(i, j);}
 			}
 		}
 	}
@@ -1758,10 +1758,10 @@ void OLED_DrawArc(uint8 X, uint8 Y, uint8 Radius, uint16 StartAngle, uint16 EndA
 	y = Radius;
 	
 	/*在画圆的每个点时，判断指定点是否在指定角度内，在，则画点，不在，则不做处理*/
-	if (OLED_IsInAngle(x, y, StartAngle, EndAngle))	{OLED_DrawPoint(X + x, Y + y);}
-	if (OLED_IsInAngle(-x, -y, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y - y);}
-	if (OLED_IsInAngle(y, x, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y + x);}
-	if (OLED_IsInAngle(-y, -x, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y - x);}
+	if (_OLED_IsInAngle(x, y, StartAngle, EndAngle))	{OLED_DrawPoint(X + x, Y + y);}
+	if (_OLED_IsInAngle(-x, -y, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y - y);}
+	if (_OLED_IsInAngle(y, x, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y + x);}
+	if (_OLED_IsInAngle(-y, -x, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y - x);}
 	
 	if (IsFilled)	//指定圆弧填充
 	{
@@ -1769,7 +1769,7 @@ void OLED_DrawArc(uint8 X, uint8 Y, uint8 Radius, uint16 StartAngle, uint16 EndA
 		for (j = -y; j < y; j ++)
 		{
 			/*在填充圆的每个点时，判断指定点是否在指定角度内，在，则画点，不在，则不做处理*/
-			if (OLED_IsInAngle(0, j, StartAngle, EndAngle)) {OLED_DrawPoint(X, Y + j);}
+			if (_OLED_IsInAngle(0, j, StartAngle, EndAngle)) {OLED_DrawPoint(X, Y + j);}
 		}
 	}
 	
@@ -1787,14 +1787,14 @@ void OLED_DrawArc(uint8 X, uint8 Y, uint8 Radius, uint16 StartAngle, uint16 EndA
 		}
 		
 		/*在画圆的每个点时，判断指定点是否在指定角度内，在，则画点，不在，则不做处理*/
-		if (OLED_IsInAngle(x, y, StartAngle, EndAngle)) {OLED_DrawPoint(X + x, Y + y);}
-		if (OLED_IsInAngle(y, x, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y + x);}
-		if (OLED_IsInAngle(-x, -y, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y - y);}
-		if (OLED_IsInAngle(-y, -x, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y - x);}
-		if (OLED_IsInAngle(x, -y, StartAngle, EndAngle)) {OLED_DrawPoint(X + x, Y - y);}
-		if (OLED_IsInAngle(y, -x, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y - x);}
-		if (OLED_IsInAngle(-x, y, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y + y);}
-		if (OLED_IsInAngle(-y, x, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y + x);}
+		if (_OLED_IsInAngle(x, y, StartAngle, EndAngle)) {OLED_DrawPoint(X + x, Y + y);}
+		if (_OLED_IsInAngle(y, x, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y + x);}
+		if (_OLED_IsInAngle(-x, -y, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y - y);}
+		if (_OLED_IsInAngle(-y, -x, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y - x);}
+		if (_OLED_IsInAngle(x, -y, StartAngle, EndAngle)) {OLED_DrawPoint(X + x, Y - y);}
+		if (_OLED_IsInAngle(y, -x, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y - x);}
+		if (_OLED_IsInAngle(-x, y, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y + y);}
+		if (_OLED_IsInAngle(-y, x, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y + x);}
 		
 		if (IsFilled)	//指定圆弧填充
 		{
@@ -1802,16 +1802,16 @@ void OLED_DrawArc(uint8 X, uint8 Y, uint8 Radius, uint16 StartAngle, uint16 EndA
 			for (j = -y; j < y; j ++)
 			{
 				/*在填充圆的每个点时，判断指定点是否在指定角度内，在，则画点，不在，则不做处理*/
-				if (OLED_IsInAngle(x, j, StartAngle, EndAngle)) {OLED_DrawPoint(X + x, Y + j);}
-				if (OLED_IsInAngle(-x, j, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y + j);}
+				if (_OLED_IsInAngle(x, j, StartAngle, EndAngle)) {OLED_DrawPoint(X + x, Y + j);}
+				if (_OLED_IsInAngle(-x, j, StartAngle, EndAngle)) {OLED_DrawPoint(X - x, Y + j);}
 			}
 			
 			/*遍历两侧部分*/
 			for (j = -x; j < x; j ++)
 			{
 				/*在填充圆的每个点时，判断指定点是否在指定角度内，在，则画点，不在，则不做处理*/
-				if (OLED_IsInAngle(-y, j, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y + j);}
-				if (OLED_IsInAngle(y, j, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y + j);}
+				if (_OLED_IsInAngle(-y, j, StartAngle, EndAngle)) {OLED_DrawPoint(X - y, Y + j);}
+				if (_OLED_IsInAngle(y, j, StartAngle, EndAngle)) {OLED_DrawPoint(X + y, Y + j);}
 			}
 		}
 	}
