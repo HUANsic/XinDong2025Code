@@ -29,15 +29,18 @@
 #include "IfxScuWdt.h"
 
 #include "XinDongLib/XinDong_Config.h"
+#include "XinDongLib/Interrupts.h"
 #include "XinDongLib/Intercore.h"
+#include "XinDongLib/Time.h"
+#include "XinDongLib/IO.h"
+
 #include "XinDongLib/Time.h"
 #include "XinDongLib/IO.h"
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 void core0_main(void) {
-	IfxCpu_enableInterrupts();
-
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
 	 * Enable the watchdogs and service them periodically if it is required
 	 */
@@ -50,33 +53,31 @@ void core0_main(void) {
 
 	// initialize timer
 	Time_Start();
+	Interrupts_Init();
+
 	// initialize LEDs and DIP switches, and the input for detecting battery balancing connector
+	IO_Init();
 
 	// if battery balancing connector not connected
+
 	// then set one of the LED and wait until it is connected
 
 	// allow initialization of other cores
 	Intercore_AllowInitialize();
+
 	// initialize other modules
-
-	/*
-	 * test start
-	 */
-
-	IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
-
-	/*
-	 * test end
-	 */
 
 	// wait for other cores to finish initialization
 	Intercore_CPU0_Ready();
+
 	while (Intercore_ReadyToGo() == 0)
 		;
 
 	while (1) {
 		// some code to indicate that the core is not dead
+		IO_LED_Toggle(1);
+		Time_Delay_us(100000);
 	}
 }
 
-// list out all ISR for CPU0
+/* list out all ISR for CPU0 */

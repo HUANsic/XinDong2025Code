@@ -32,6 +32,15 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------Function Prototypes------------------------------------------------*/
 /*********************************************************************************************************************/
-void Serial_Received(uint8 buff);
+void Serial_Init(void);
+
+uint8 Serial_Transmit(uint8 *dataptr, sint16 length);
+
+uint8 Serial_Receive(uint8 *dataptr, uint32 length, uint8 tag);
+
+uint8 Serial_Receive_Abort(void);
+
+// define below function in main
+void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag);
 
 #endif /* XINDONGLIB_SERIAL_H_ */

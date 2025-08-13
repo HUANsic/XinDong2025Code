@@ -34,16 +34,21 @@
 #include "XinDongLib/Display.h"
 #include "XinDongLib/Encoder.h"
 #include "XinDongLib/IMU.h"
+#include "XinDongLib/IO.h"
 #include "XinDongLib/Movements.h"
 #include "XinDongLib/Serial.h"
 #include "XinDongLib/Ultrasonic.h"
+#include "XinDongLib/Encoder.h"
 #include "XinDongLib/Time.h"
 
+#include "XinDongLib/IO.h"
+#include "XinDongLib/ADC.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
+sint32 pos;
+float target_speed;
 
 void core2_main(void) {
-	IfxCpu_enableInterrupts();
-
+    IfxCpu_enableInterrupts();
 	/* !!WATCHDOG2 IS DISABLED HERE!!
 	 * Enable the watchdog and service it periodically if it is required
 	 */
@@ -56,47 +61,78 @@ void core2_main(void) {
 	// wait for signal to begin initialization
 	while (Intercore_InitAllowed() == 0)
 		;
-	// initialize any module needed
 
+	// initialize any module needed
+	ADC_Init();
+	Ultrasonic_Init();
+	Encoder_Init();
+	Servo_Init();
+	Motor_Init();
+	PID_Init(0.1, 0.0, 0.0);
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
 		;
 
+	Bluetooth_AT(1);
+
 	while (1) {
 		// some code to indicate that the core is not dead
+		IO_LED_Toggle(3);
+		Time_Delay_us(100000);
 	}
 }
 
-// list out all ISR for CPU2
-void Periodic_1s_ISR(void){
+/* list out all ISR for CPU2 */
+
+void Periodic_1s_ISR(void) {
 	;
 }
 
-void Periodic_100ms_ISR(void){
+void Periodic_100ms_ISR(void) {
 	;
 }
 
-void Periodic_10ms_ISR(void){
+void Periodic_10ms_ISR(void) {
 	;
 }
 
-void Periodic_PID_ISR(void){
+void Periodic_PID_ISR(void) {
 	;
 }
 
-void SWINT_User0_ISR(void){
+void SWINT_User0_ISR(void) {
 	;
 }
 
-void SWINT_User1_ISR(void){
+void SWINT_User1_ISR(void) {
 	;
 }
 
-void SWINT_User2_ISR(void){
+void SWINT_User2_ISR(void) {
 	;
 }
 
-void SWINT_User3_ISR(void){
+void SWINT_User3_ISR(void) {
 	;
+}
+
+void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		;
+	}
+}
+
+void Bluetooth_Received(uint8 *dataptr, uint32 length, uint8 tag) {
+	switch (tag) {
+	case 1:
+
+		break;
+	default:
+		;
+	}
 }

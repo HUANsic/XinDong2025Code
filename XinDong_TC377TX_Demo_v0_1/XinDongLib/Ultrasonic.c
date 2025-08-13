@@ -1,9 +1,37 @@
 #include "Ultrasonic.h"
 
+
+#define SOUND_SPEED_MM_US 0.343
+
+
 IfxGtm_Tim_In timDriver_pulseIn;
 
-void Ultrasonic_PulseIn_ISR(void) {
-	;		// do something
+volatile uint32     ultrasonicDistance = 0;
+volatile uint8      ultrasonicReady = 0;
+
+
+void Ultrasonic_PulseIn_ISR(void)
+{
+    uint16 cnt = timDriver_pulseIn.channel->GPR1.B.GPR1;
+    IfxGtm_Tim_In_update(&timDriver_pulseIn);
+
+    timDriver_pulseIn.channel->CNTS.B.CNTS = 0;
+
+    // disable interrupts
+    IfxGtm_Tim_Ch_setChannelNotification(timDriver_pulseIn.channel, 0, 0, 0, 0);
+
+    // deal with data
+    if (cnt > 5000){
+        ultrasonicReady = 1;
+        ultrasonicDistance = -1;
+    }
+    else {
+        ultrasonicReady = 1;
+        // find length in millimeters
+        ultrasonicDistance = cnt;
+        ultrasonicDistance *= 340000 / 2;
+        ultrasonicDistance /= timDriver_pulseIn.captureClockFrequency;
+    }
 }
 
 void Ultrasonic_Init() {
@@ -11,6 +39,7 @@ void Ultrasonic_Init() {
     IfxPort_setPinMode(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_Mode_outputPushPullGeneral);
     IfxPort_setPinState(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_State_low);
 
+    // initialize echo pin
     IfxGtm_Tim_In_Config config;
 
     IfxGtm_Tim_In_initConfig(&config, &MODULE_GTM);
@@ -26,13 +55,11 @@ void Ultrasonic_Init() {
 }
 
 void Ultrasonic_Trigger() {
-    // generate 10us pulse
-    uint16 i;
+    // generate 15us pulse
     IfxPort_setPinState(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_State_high);
     Time_Delay_us(10);
     IfxPort_setPinState(ULTRA_TRIG_PORT, ULTRA_TRIG_PIN, IfxPort_State_low);
 
-    // force CNT to zero on next CLK, and trigger a time out for previous run
     timDriver_pulseIn.channel->CNTS.B.CNTS = 0;
     while (timDriver_pulseIn.channel->CNT.B.CNT != 0)
         ;       // wait for it
@@ -45,5 +72,12 @@ void Ultrasonic_Trigger() {
 
     // enable new value and timeout interrupt
     IfxGtm_Tim_Ch_setChannelNotification(timDriver_pulseIn.channel, 1, 1, 0, 0);
-    // timer in gated mode will start when rising edge hits
+}
+
+uint32 Ultrasonic_GetValue(){
+    return ultrasonicDistance;
+}
+
+uint8 Ultrasonic_IsReady(){
+    return ultrasonicReady;
 }

@@ -1,73 +1,53 @@
 #include "Encoder.h"
 
-uint32           g_intCount;            /* Interrupt counter                                                         */
-IfxGpt12_IncrEnc g_gpt12IncrEnc;        /* Incremental encoder handle                                                */
+#define ENCODER_MAX_COUNT     0xFFFF
+#define ENCODER_T2_SRC        &SRC_GPT120T2
+#define ENCODER_REVERSE       TRUE
+
+
+volatile sint32 encoderCount = 0;
+
 
 void Encoder_Overflow_ISR(void) {
-    g_intCount++;
-    IfxGpt12_IncrEnc_onZeroIrq(&g_gpt12IncrEnc);
+    boolean dir = IfxPort_getPinState(ENCODER_B_PORT, ENCODER_B_PIN);
+    if (dir)
+        encoderCount -= ENCODER_MAX_COUNT + 1;
+    else
+        encoderCount += ENCODER_MAX_COUNT + 1;
+
+    IfxSrc_clearRequest(ENCODER_T2_SRC);
 }
 
 void Encoder_Init() {
-    /* Initialize global clocks */
+    // counter for encoder initialize
     IfxGpt12_enableModule(&MODULE_GPT120);
-    /* Set the GPT1 block prescaler */
-    IfxGpt12_setGpt1BlockPrescaler(&MODULE_GPT120, IfxGpt12_Gpt1BlockPrescaler_8);
-    /* Set the GPT2 block prescaler */
+    IfxGpt12_setGpt1BlockPrescaler(&MODULE_GPT120, IfxGpt12_Gpt1BlockPrescaler_4);
     IfxGpt12_setGpt2BlockPrescaler(&MODULE_GPT120, IfxGpt12_Gpt2BlockPrescaler_4);
 
-    IfxGpt12_IncrEnc_Config gpt12Config;
-    IfxGpt12_IncrEnc_initConfig(&gpt12Config, &MODULE_GPT120);
+    IfxGpt12_T2_setInput(&MODULE_GPT120, IfxGpt12_Input_B);
+    IfxGpt12_T2_setEudInput(&MODULE_GPT120, IfxGpt12_EudInput_B);
 
-    /* Configure sensor, T3 used as position acquisition core */
+    IfxGpt12_T2_setMode(&MODULE_GPT120, IfxGpt12_Mode_counter);
+    IfxGpt12_T2_setCounterInputMode(&MODULE_GPT120, IfxGpt12_CounterInputMode_risingEdgeTxIN);
+    IfxGpt12_T2_setDirectionSource(&MODULE_GPT120, IfxGpt12_TimerDirectionSource_external);
 
-    /* Configure position sensor offset */
-    gpt12Config.base.offset             = ENCODER_OFFSET;
-    /* The sensor direction is reversed */
-    gpt12Config.base.reversed           = ENCODER_REVERSED;
-    /* Sensor resolution (number of pulses per revolution) */
-    gpt12Config.base.resolution         = ENCODER_RESOLUTION;
-    /* Resolution multiplier for encoder interface, Timer T3 is clocked by each transition on both of the external
-     * input pins. */
-    gpt12Config.base.resolutionFactor   = IfxStdIf_Pos_ResolutionFactor_fourFold;
+    // overflow/underflow interrupt initialize
+    IfxGpt12_T2_setInterruptEnable(&MODULE_GPT120, TRUE);
 
-    /* Configure speed parameters */
+    IfxSrc_init(ENCODER_T2_SRC, IfxSrc_Tos_cpu2, ENCODER_OVERFLOW_PRIORITY);
+    IfxSrc_enable(ENCODER_T2_SRC);
 
-    /* Threshold used for speed calculation using pulse count mode or time diff. mode in rad/s */
-    gpt12Config.base.speedModeThreshold = ENCODER_SPEED_MODE_THRESHOLD;
-    /* Absolute minimal allowed speed. below speed is recognized as 0 rad/s */
-    gpt12Config.base.minSpeed           = ENCODER_BASE_MIN_SPEED;
-    /* Absolute maximal allowed speed. Above speed is recognized as error */
-    gpt12Config.base.maxSpeed           = ENCODER_BASE_MAX_SPEED;
-    gpt12Config.base.speedFilterEnabled        = TRUE;
-    gpt12Config.base.speedFilerCutOffFrequency = 1000;
-    /* Configure Handler */
+    IfxGpt12_T2_run(&MODULE_GPT120, IfxGpt12_TimerRun_start);
 
-    /* Update period in seconds */
-    gpt12Config.base.updatePeriod       = ENCODER_UPDATE_PERIOD;
-    /* Interrupt isrPriority of the zero interrupt */
-    gpt12Config.zeroIsrPriority    = ENCODER_OVERFLOW_PRIORITY;
-    /* Interrupt service provider for the zero interrupt */
-    gpt12Config.zeroIsrProvider    = ENCODER_OVERFLOW_TOS;
-
-    /* Configure Hardware Resources */
-    gpt12Config.pinA               = &ENCODER_A_GPT12_PIN;                   /* Encoder A signal, connected to T3IN   */
-    gpt12Config.pinB               = &ENCODER_B_GPT12_PIN;                   /* Encoder B signal, connected to T3EUD  */
-    gpt12Config.pinDriver          = IfxPort_PadDriver_cmosAutomotiveSpeed3;/* Pad Driver                            */
-
-    /* Initialize the Incremental Encoder handle */
-    IfxGpt12_IncrEnc_init(&g_gpt12IncrEnc, &gpt12Config);
-    /* Calculate value for the T2 timer */
-    sint32 resolution = g_gpt12IncrEnc.resolution - 1;
-    /* Set the timer T2 mode of operation to reload mode */
-    IfxGpt12_T2_setMode(&MODULE_GPT120, IfxGpt12_Mode_reload);
-    /* Set value for the T2 timer */
-    IfxGpt12_T2_setTimerValue(&MODULE_GPT120, (uint16)resolution);
-    /* Set the input edge selection for the reload mode of the T2 timer */
-    IfxGpt12_T2_setReloadInputMode(&MODULE_GPT120, IfxGpt12_ReloadInputMode_bothEdgesTxOTL);
+    encoderCount = 0;
 }
 
-inline float Encoder_GetValue(){
-    return (float)IfxGpt12_IncrEnc_getRawPosition(&g_gpt12IncrEnc);
-}
+sint32 Encoder_GetValue()
+{
+    uint16 raw = IfxGpt12_T2_getTimerValue(&MODULE_GPT120);
+    sint32 total;
 
+    total = encoderCount + raw;
+
+    return ENCODER_REVERSE ? -total : total;
+}

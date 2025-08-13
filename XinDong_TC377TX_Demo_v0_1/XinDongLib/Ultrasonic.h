@@ -12,6 +12,9 @@
 /*-----------------------------------------------------Includes------------------------------------------------------*/
 /*********************************************************************************************************************/
 #include "IfxGtm_Tim_In.h"
+#include "IfxGtm_regdef.h"
+#include "IfxSrc_reg.h"
+#include "Ifx_Types.h"
 
 #include "XinDong_Config.h"
 #include "Interrupts.h"
@@ -38,5 +41,9 @@
 void Ultrasonic_Init(void);
 
 void Ultrasonic_Trigger(void);
+
+uint32 Ultrasonic_GetValue(void);
+
+uint8 Ultrasonic_IsReady(void);
 
 #endif /* XINDONGLIB_ULTRASONIC_H_ */

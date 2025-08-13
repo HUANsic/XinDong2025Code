@@ -390,3 +390,191 @@ float CV_CalcMidlineSlopeAngle(uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
  * }
  */
 
+// ================== 中线左右两侧颜色检测 ==================
+// 获取中线左右两侧的颜色值
+// input_img: 输入图像
+// y_position: 检测的Y坐标位置
+// left_range: 左侧检测范围（像素数）
+// right_range: 右侧检测范围（像素数）
+// left_color: 输出左侧平均颜色值
+// right_color: 输出右侧平均颜色值
+void CV_GetMidlineSideColors(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                            uint16 y_position, uint16 left_range, uint16 right_range,
+                            uint16* left_color, uint16* right_color) {
+    uint16 x;
+    uint16 center_x = CV_IMAGE_WIDTH / 2;  // 图像中心X坐标
+    uint16 left_start, left_end, right_start, right_end;
+    uint32 left_sum = 0, right_sum = 0;
+    uint16 left_count = 0, right_count = 0;
+    
+    // 参数检查
+    if (input_img == NULL || left_color == NULL || right_color == NULL) {
+        return;
+    }
+    
+    // 检查Y坐标是否有效
+    if (y_position >= CV_IMAGE_HEIGHT) {
+        return;
+    }
+    
+    // 计算左侧检测范围
+    left_start = (center_x > left_range) ? (center_x - left_range) : 0;
+    left_end = center_x;
+    
+    // 计算右侧检测范围
+    right_start = center_x;
+    right_end = (center_x + right_range < CV_IMAGE_WIDTH) ? (center_x + right_range) : CV_IMAGE_WIDTH;
+    
+    // 计算左侧平均颜色值
+    for (x = left_start; x < left_end; x++) {
+        left_sum += (*input_img)[y_position][x];
+        left_count++;
+    }
+    
+    // 计算右侧平均颜色值
+    for (x = right_start; x < right_end; x++) {
+        right_sum += (*input_img)[y_position][x];
+        right_count++;
+    }
+    
+    // 计算平均值并输出
+    if (left_count > 0) {
+        *left_color = (uint16)(left_sum / left_count);
+    } else {
+        *left_color = 0;
+    }
+    
+    if (right_count > 0) {
+        *right_color = (uint16)(right_sum / right_count);
+    } else {
+        *right_color = 0;
+    }
+}
+
+/*
+ * 使用示例：
+ * 
+ * uint16 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * uint16 left_color, right_color;
+ * 
+ * // 获取图像缓冲区
+ * img_ptr = (uint16 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
+ * 
+ * if (img_ptr != NULL) {
+ *     // 获取中线左右两侧的颜色（在Y=100位置，左右各检测10个像素）
+ *     CV_GetMidlineSideColors(img_ptr, 100, 10, 10, &left_color, &right_color);
+ *     
+ *     // 使用颜色值进行判断
+ *     if (left_color > right_color) {
+ *         // 左侧颜色较亮
+ *     } else if (right_color > left_color) {
+ *         // 右侧颜色较亮
+ *     } else {
+ *         // 两侧颜色相近
+ *     }
+ *     
+ *     // 释放图像缓冲区
+ *     Camera_Release(img_ptr);
+ * }
+ */
+
+// 获取动态中线左右两侧的颜色值（基于检测到的中线位置）
+// input_img: 输入图像
+// mask: 二值化掩码图像
+// y_position: 检测的Y坐标位置
+// left_range: 左侧检测范围（像素数）
+// right_range: 右侧检测范围（像素数）
+// left_color: 输出左侧平均颜色值
+// right_color: 输出右侧平均颜色值
+// midline_x: 输出检测到的中线X坐标
+void CV_GetDynamicMidlineSideColors(uint16 (*input_img)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH], 
+                                   uint16 (*mask)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH],
+                                   uint16 y_position, uint16 left_range, uint16 right_range,
+                                   uint16* left_color, uint16* right_color, uint16* midline_x) {
+    uint16 x;
+    uint16 detected_midline_x;
+    uint16 left_start, left_end, right_start, right_end;
+    uint32 left_sum = 0, right_sum = 0;
+    uint16 left_count = 0, right_count = 0;
+    
+    // 参数检查
+    if (input_img == NULL || mask == NULL || left_color == NULL || right_color == NULL || midline_x == NULL) {
+        return;
+    }
+    
+    // 检查Y坐标是否有效
+    if (y_position >= CV_IMAGE_HEIGHT) {
+        return;
+    }
+    
+    // 检测指定Y位置的中线X坐标
+    detected_midline_x = CV_CalculateAveragePosition(mask, y_position, 0, CV_IMAGE_WIDTH);
+    *midline_x = detected_midline_x;
+    
+    // 计算左侧检测范围
+    left_start = (detected_midline_x > left_range) ? (detected_midline_x - left_range) : 0;
+    left_end = detected_midline_x;
+    
+    // 计算右侧检测范围
+    right_start = detected_midline_x;
+    right_end = (detected_midline_x + right_range < CV_IMAGE_WIDTH) ? (detected_midline_x + right_range) : CV_IMAGE_WIDTH;
+    
+    // 计算左侧平均颜色值
+    for (x = left_start; x < left_end; x++) {
+        left_sum += (*input_img)[y_position][x];
+        left_count++;
+    }
+    
+    // 计算右侧平均颜色值
+    for (x = right_start; x < right_end; x++) {
+        right_sum += (*input_img)[y_position][x];
+        right_count++;
+    }
+    
+    // 计算平均值并输出
+    if (left_count > 0) {
+        *left_color = (uint16)(left_sum / left_count);
+    } else {
+        *left_color = 0;
+    }
+    
+    if (right_count > 0) {
+        *right_color = (uint16)(right_sum / right_count);
+    } else {
+        *right_color = 0;
+    }
+}
+
+/*
+ * 使用示例：
+ * 
+ * uint16 (*img_ptr)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * static uint16 mask[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH];
+ * uint16 left_color, right_color, midline_x;
+ * 
+ * // 获取图像缓冲区
+ * img_ptr = (uint16 (*)[CV_IMAGE_HEIGHT][CV_IMAGE_WIDTH])Camera_GetLatest();
+ * 
+ * if (img_ptr != NULL) {
+ *     // 生成二值化掩码
+ *     CV_PreprocessImage(img_ptr, &mask);
+ *     
+ *     // 获取动态中线左右两侧的颜色（在Y=100位置，左右各检测10个像素）
+ *     CV_GetDynamicMidlineSideColors(img_ptr, &mask, 100, 10, 10, &left_color, &right_color, &midline_x);
+ *     
+ *     // 使用颜色值和中线位置进行判断
+ *     printf("中线位置: %d, 左侧颜色: %d, 右侧颜色: %d\n", midline_x, left_color, right_color);
+ *     
+ *     if (left_color > right_color) {
+ *         // 左侧颜色较亮
+ *     } else if (right_color > left_color) {
+ *         // 右侧颜色较亮
+ *     } else {
+ *         // 两侧颜色相近
+ *     }
+ *     
+ *     // 释放图像缓冲区
+ *     Camera_Release(img_ptr);
+ * }
+ */
+
