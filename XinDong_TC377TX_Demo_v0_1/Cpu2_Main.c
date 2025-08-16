@@ -40,14 +40,15 @@
 #include "XinDongLib/Ultrasonic.h"
 #include "XinDongLib/Encoder.h"
 #include "XinDongLib/Time.h"
+#include "XinDongLib/ADC.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
-float center1 = 0, range1 = 0.5, output = 0, increment = range1 / 10;
+float center1 = 0, range1 = 0.32, output = 0, increment = 0.1;
 uint8 state = 0;
 
 void core2_main(void) {
-    IfxCpu_enableInterrupts();
+	IfxCpu_enableInterrupts();
 	/* !!WATCHDOG2 IS DISABLED HERE!!
 	 * Enable the watchdog and service it periodically if it is required
 	 */
@@ -66,12 +67,15 @@ void core2_main(void) {
 	Encoder_Init();
 	Servo_Init();
 	Motor_Init();
+	ADC_Init();
 	// wait for other cores to finish initialization
 	Intercore_CPU2_Ready();
 	while (Intercore_ReadyToGo() == 0)
 		;
 
 	//
+	ADC_Start();
+	increment = range1 / 10;
 
 	while (1) {
 		// some code to indicate that the core is not dead
@@ -80,23 +84,31 @@ void core2_main(void) {
 
 		// check state
 		state = (IO_DIP_Read(2) ? 2 : 0) + (IO_DIP_Read(1) ? 1 : 0);
-		switch(state) {
-		// center mode
+		switch (state) {
 		case 0:
+			// center mode
 			output = center1;
 			Servo_Set(output);
 			break;
-		// sweep mode
 		case 1:
+			// sweep mode
 			output += increment;
-			if(output >= range1)
+			if (output >= range1 || output <= -range1)
 				increment *= -1;
 			Servo_Set(output);
-		}
-		// follow mode
+			break;
 		case 2:
+			// follow mode
 		case 3:
-			output =
+			// follow mode
+			ADC_Read();
+			output = (ADC_GetVoltage(0) / 3.3 * 2 - 1) * range1;
+			Servo_Set(output);
+			ADC_Start();
+			break;
+		default:
+			break;
+		}
 	}
 }
 
