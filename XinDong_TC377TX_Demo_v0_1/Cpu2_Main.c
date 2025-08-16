@@ -42,7 +42,7 @@
 #include "XinDongLib/Time.h"
 
 #include "XinDongLib/IO.h"
-
+#include "XinDongLib/ADC.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 sint32 pos;
 float target_speed;
@@ -63,6 +63,7 @@ void core2_main(void) {
 		;
 
 	// initialize any module needed
+	ADC_Init();
 	Ultrasonic_Init();
 	Encoder_Init();
 	Servo_Init();

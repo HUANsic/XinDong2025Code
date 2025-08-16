@@ -1,4 +1,8 @@
+#include "Ifx_Types.h"
+#include "IfxGtm_Tom_Pwm.h"
+
 #include "Movements.h"
+
 
 #define SERVO_FREQUENCY 50
 #define SERVO_PERIOD 50000
@@ -27,8 +31,8 @@ void Servo_Init(){
 
     IfxGtm_Tom_Pwm_initConfig(&config, &MODULE_GTM);
 
-    config.tom = IfxGtm_Tom_1;
-    config.tomChannel = IfxGtm_Tom_Ch_0;
+    config.tom = SERVO_TOM_PIN.tom;
+    config.tomChannel = SERVO_TOM_PIN.channel;
     config.clock = IfxGtm_Tom_Ch_ClkSrc_cmuFxclk0;
     config.period = SERVO_PERIOD;
     config.dutyCycle = (uint32) (SERVO_1MS_COUNT * 1.5);
@@ -60,8 +64,8 @@ void Motor_Init() {
     /* Initialize the configuration structure with default parameters */
     IfxGtm_Tom_Pwm_initConfig(&config, &MODULE_GTM);
 
-    config.tom = IfxGtm_Tom_2;
-    config.tomChannel = IfxGtm_Tom_Ch_0;
+    config.tom = MOTOR_OUTB_TOM_PIN.tom;
+    config.tomChannel = MOTOR_OUTB_TOM_PIN.channel;
     config.clock = IfxGtm_Tom_Ch_ClkSrc_cmuFxclk0;
     config.period = MOTOR_PERIOD;
     config.dutyCycle = 0;
@@ -71,7 +75,8 @@ void Motor_Init() {
 
     IfxGtm_Tom_Pwm_init(&driverPositive, &config);
 
-    config.tomChannel = IfxGtm_Tom_Ch_1;
+    config.tom = MOTOR_OUTA_TOM_PIN.tom;
+    config.tomChannel = MOTOR_OUTA_TOM_PIN.channel;
     config.pin.outputPin = &MOTOR_OUTA_TOM_PIN;
 
     IfxGtm_Tom_Pwm_init(&driverNegative, &config);
