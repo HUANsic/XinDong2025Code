@@ -75,6 +75,7 @@ void core2_main(void) {
 
 	//
 	ADC_Start();
+	Servo_SetCenter(-0.06);
 	increment = range1 / 10;
 
 	while (1) {
