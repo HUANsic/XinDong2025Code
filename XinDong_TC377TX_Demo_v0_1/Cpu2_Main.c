@@ -43,8 +43,8 @@
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
-struct PID pid;
-float center1 = 0;
+float center1 = 0, range1 = 0.5, output = 0, increment = range1 / 10;
+uint8 state = 0;
 
 void core2_main(void) {
     IfxCpu_enableInterrupts();
@@ -78,7 +78,25 @@ void core2_main(void) {
 		IO_LED_Toggle(3);
 		Time_Delay_us(100000);
 
-		Servo_Set(center1);
+		// check state
+		state = (IO_DIP_Read(2) ? 2 : 0) + (IO_DIP_Read(1) ? 1 : 0);
+		switch(state) {
+		// center mode
+		case 0:
+			output = center1;
+			Servo_Set(output);
+			break;
+		// sweep mode
+		case 1:
+			output += increment;
+			if(output >= range1)
+				increment *= -1;
+			Servo_Set(output);
+		}
+		// follow mode
+		case 2:
+		case 3:
+			output =
 	}
 }
 
