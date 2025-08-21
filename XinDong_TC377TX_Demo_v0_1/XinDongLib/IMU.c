@@ -175,7 +175,7 @@ uint8 dmpcfgupddata[192] = {
     0x04,   0x02,   0x03,   0x0D, 0x35, 0x5D,
     0x04,   0x09,   0x04,   0x87, 0x2D, 0x35, 0x3D,
     0x00,   0xA3,   0x01,   0x00,
-    0x00,   0x00,   0x01,   0x01,   //这里是开启DMP的特殊中断的
+    0x00,   0x00,   0x00,   0x01,   //这里是开启DMP的特殊中断的
     //原程序中此行代码为(这里不一定错)
     //0x00,   0x00,   0x00,   0x01,  即LENGTH=0x00，有错
 
@@ -271,6 +271,7 @@ uint8 _MPU6050_Load_Firmware() {
 
             EI2C_Mem_Write(&MPU6050_I2C_Struct, MPU6050_ADDR, 0x6f, dmpmemorydata + datanum, 16);
             datanum += 16;
+            addr += 16;
         }
     }
     _MPU6050_Write_Byte(0x6d,7);
@@ -467,7 +468,7 @@ void MPU6050_Init() {
 //    _MPU6050_Write_Bits(0x1C, 4, 2, 0x00); // Set accelerometer sensitivity to ±2g
 
     _DMP_Init(); // Initialize DMP
-    MPU6050_Check_DMP_Status();
+//    MPU6050_Check_DMP_Status();
     return;
 }
 
@@ -507,6 +508,24 @@ EI2C_Status MPU6050_Read_Gyro() {
     return retVal;
 }
 
+void _MPU6050_Smooth_Theta() {
+    // if(*ang_last>145.0 && *ang_now<-145.0) *ang_state=*ang_state+1;
+	// if(*ang_last<-145.0 && *ang_now>145.0) *ang_state=*ang_state-1;
+	// return ((*ang_now)+(*ang_state)*360.0);
+
+    static double theta_last[3] = {0, 0, 0};
+    static int theta_state[3] = {0, 0, 0};
+    for (int i = 0; i < 3; i++) {
+        if (theta_last[i] > 145.0 && theta[i] < -145.0) {
+            theta_state[i]++;
+        } else if (theta_last[i] < -145.0 && theta[i] > 145.0) {
+            theta_state[i]--;
+        }
+        theta[i] += theta_state[i] * 360.0;
+        theta_last[i] = theta[i];
+    }
+}
+
 void MPU6050_Read_Theta() {
     uint8 zd;
     uint32 i = MPU6050_Get_FIFO_Count();
@@ -518,30 +537,31 @@ void MPU6050_Read_Theta() {
         while (i < 42) i = MPU6050_Get_FIFO_Count();
         _MPU6050_Read_DMP(dmpData); // Read DMP data
         // Process quaternion data to calculate theta
-        uint16 q0 = (dmpData[1] << 8) | dmpData[0];
-        uint16 q1 = (dmpData[5] << 8) | dmpData[4];
-        uint16 q2 = (dmpData[9] << 8) | dmpData[8];
-        uint16 q3 = (dmpData[13] << 8) | dmpData[12];
+        double q0 = ((dmpData[0] << 8) | dmpData[1])/ 16384.0;
+        double q1 = ((dmpData[4] << 8) | dmpData[5])/ 16384.0;
+        double q2 = ((dmpData[8] << 8) | dmpData[9])/ 16384.0;
+        double q3 = ((dmpData[12] << 8) | dmpData[13])/ 16384.0;
 
         // Convert quaternion to Euler angles (theta)
         theta[0] = atan2(2.0 * (q1 * q2 + q0 * q3),
                         1 - 2.0 * (q2 * q2 + q3 * q3));
-        theta[1] = asin(2.0 * (q0 * q2 - q1 * q3));
+        theta[1] = asin(2.0 * (q0 * q2 - q1 * q3)) * 57.3;
         theta[2] = atan2(2.0 * (q0 * q1 + q2 * q3),
                         1 - 2.0 * (q1 * q1 + q2 * q2));
     }
+    _MPU6050_Smooth_Theta(); // Smooth theta values
 }
 
 void MPU6050_Get_Omega(float *omegaX, float *omegaY, float *omegaZ) {
-    *omegaX = omega[0];
-    *omegaY = omega[1];
-    *omegaZ = omega[2];
+    *omegaX = omega[0] - omega_offset[0];
+    *omegaY = omega[1] - omega_offset[1];
+    *omegaZ = omega[2] - omega_offset[2];
 }
 
 void MPU6050_Get_Accel(float *accelX, float *accelY, float *accelZ) {
-    *accelX = accel[0];
-    *accelY = accel[1];
-    *accelZ = accel[2];
+    *accelX = accel[0] - accel_offset[0];
+    *accelY = accel[1] - accel_offset[1];
+    *accelZ = accel[2] - accel_offset[2];
 }
 
 void MPU6050_Get_Theta(float *thetaX, float *thetaY, float *thetaZ) {
