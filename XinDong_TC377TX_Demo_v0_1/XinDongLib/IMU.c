@@ -1,5 +1,6 @@
 #include "IMU.h"
 #include "Display.h"
+#include "Time.h"
 
 #define MPU6050_OMEGA_INT_THRESHOLD 0.03
 
@@ -465,7 +466,7 @@ void MPU6050_Init() {
 //    _MPU6050_Write_Bits(0x1B, 4, 2, 0x03); // Set gyro sensitivity to ±2000 deg/sec
 //    _MPU6050_Write_Bits(0x1C, 4, 2, 0x00); // Set accelerometer sensitivity to ±2g
 
-//    _DMP_Init(); // Initialize DMP
+    _DMP_Init(); // Initialize DMP
     MPU6050_Check_DMP_Status();
     return;
 }

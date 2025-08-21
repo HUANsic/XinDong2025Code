@@ -34,105 +34,108 @@
 #include "XinDongLib/Display.h"
 #include "XinDongLib/Encoder.h"
 #include "XinDongLib/IMU.h"
-#include "XinDongLib/IO.h"
 #include "XinDongLib/Movements.h"
 #include "XinDongLib/Serial.h"
 #include "XinDongLib/Ultrasonic.h"
-#include "XinDongLib/Encoder.h"
 #include "XinDongLib/Time.h"
 
-#include "XinDongLib/IO.h"
-#include "XinDongLib/ADC.h"
 extern IfxCpu_syncEvent g_cpuSyncEvent;
-sint32 pos;
-float target_speed;
 
 void core2_main(void) {
     IfxCpu_enableInterrupts();
-	/* !!WATCHDOG2 IS DISABLED HERE!!
-	 * Enable the watchdog and service it periodically if it is required
-	 */
-	IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
 
-	/* Wait for CPU sync event */
-	IfxCpu_emitEvent(&g_cpuSyncEvent);
-	IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
+    /* !!WATCHDOG2 IS DISABLED HERE!!
+     * Enable the watchdog and service it periodically if it is required
+     */
+    IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
 
-	// wait for signal to begin initialization
-	while (Intercore_InitAllowed() == 0)
-		;
+    /* Wait for CPU sync event */
+    IfxCpu_emitEvent(&g_cpuSyncEvent);
+    IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
-	// initialize any module needed
-	ADC_Init();
-	Ultrasonic_Init();
-	Encoder_Init();
-	Servo_Init();
-	Motor_Init();
-	PID_Init(0.1, 0.0, 0.0);
-	// wait for other cores to finish initialization
-	Intercore_CPU2_Ready();
-	while (Intercore_ReadyToGo() == 0)
-		;
+    // wait for signal to begin initialization
+    while (Intercore_InitAllowed() == 0)
+        ;
+    // initialize any module needed
+    IfxPort_setPinMode(IO_LED1_PORT, IO_LED1_PIN, IfxPort_Mode_outputPushPullGeneral);
+    OLED_Init();
+    MPU6050_Init();
 
-	Bluetooth_AT(1);
+    // wait for other cores to finish initialization
+    Intercore_CPU2_Ready();
+    while (Intercore_ReadyToGo() == 0)
+        ;
 
-	while (1) {
-		// some code to indicate that the core is not dead
-		IO_LED_Toggle(3);
-		Time_Delay_us(100000);
-	}
+    Time_Delay_us(100000);
+//  OLED_Clear();
+//  Time_Delay(1);
+//  OLED_Printf(5,5,6,"Hello World!");
+//  OLED_ShowChinese(5,30,"加速中");
+//  OLED_DrawLine(100,40,90,35);
+//  OLED_DrawCircle(90,40,15,1);
+//  OLED_DrawTriangle(100,40,90,35,110,45,0);
+//  OLED_DrawRectangle(80,40,20,10,0);
+
+    IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
+    float accel_x, accel_y, accel_z;
+    float omega_x, omega_y, omega_z;
+    float theta_x, theta_y, theta_z;
+
+    while (1) {
+        // some code to indicate that the core is not dead
+        MPU6050_Read_Accel();
+        MPU6050_Get_Accel(&accel_x,&accel_y,&accel_z);
+        OLED_Printf(5,15,6,"%f",accel_x);
+        OLED_Printf(5,25,6,"%f",accel_y);
+        OLED_Printf(5,35,6,"%f",accel_z);
+
+        MPU6050_Read_Gyro();
+        MPU6050_Get_Omega(&omega_x,&omega_y,&omega_z);
+        OLED_Printf(65,15,6,"%f",omega_x);
+        OLED_Printf(65,25,6,"%f",omega_y);
+        OLED_Printf(65,35,6,"%f",omega_z);
+
+//        MPU6050_Read_Theta();
+//        MPU6050_Get_Theta(&theta_x, &theta_y,&theta_z);
+//        OLED_Printf(5,45,6,"%f",theta_x);
+//        OLED_Printf(5,55,6,"%f",theta_y);
+//        OLED_Printf(65,45,6,"%f",theta_z);
+//        OLED_Printf(65,35,6,"%f",mpuData[6]);
+        Time_Delay_us(10000);
+        OLED_Update();
+        IfxPort_togglePin(IO_LED1_PORT, IO_LED1_PIN);
+    }
 }
 
-/* list out all ISR for CPU2 */
-
-void Periodic_1s_ISR(void) {
-	;
+// list out all ISR for CPU2
+void Periodic_1s_ISR(void){
+    ;
 }
 
-void Periodic_100ms_ISR(void) {
-	;
+void Periodic_100ms_ISR(void){
+    ;
 }
 
-void Periodic_10ms_ISR(void) {
-	;
+void Periodic_10ms_ISR(void){
+    ;
 }
 
-void Periodic_PID_ISR(void) {
-	;
+void Periodic_PID_ISR(void){
+    ;
 }
 
-void SWINT_User0_ISR(void) {
-	;
+void SWINT_User0_ISR(void){
+    ;
 }
 
-void SWINT_User1_ISR(void) {
-	;
+void SWINT_User1_ISR(void){
+    ;
 }
 
-void SWINT_User2_ISR(void) {
-	;
+void SWINT_User2_ISR(void){
+    ;
 }
 
-void SWINT_User3_ISR(void) {
-	;
-}
-
-void Serial_Received(uint8 *dataptr, uint32 length, uint8 tag) {
-	switch (tag) {
-	case 1:
-
-		break;
-	default:
-		;
-	}
-}
-
-void Bluetooth_Received(uint8 *dataptr, uint32 length, uint8 tag) {
-	switch (tag) {
-	case 1:
-
-		break;
-	default:
-		;
-	}
+void SWINT_User3_ISR(void){
+    ;
 }
