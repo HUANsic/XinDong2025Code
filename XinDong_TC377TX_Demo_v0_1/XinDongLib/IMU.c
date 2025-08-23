@@ -15,7 +15,7 @@
 #define PWR_MGMT_1_REG 0x6B
 #define WHO_AM_I_REG 0x75
 
-float accel[3], omega[3], theta[3], accel_offset[3], omega_offset[3], theta_offset[3];
+double accel[3], omega[3], theta[3], accel_offset[3], omega_offset[3], theta_offset[3];
 
 EI2C_Typedef MPU6050_I2C_Struct;
 
@@ -279,8 +279,8 @@ uint8 _MPU6050_Load_Firmware() {
 
     EI2C_Mem_Write(&MPU6050_I2C_Struct, MPU6050_ADDR, 0x6f, dmpmemorydata + datanum, 9);
 
-    OLED_Printf(65,45,6,"%d",datanum + 9);
-    OLED_Update();
+//    OLED_Printf(65,45,6,"%d",datanum + 9);
+//    OLED_Update();
     return 1;
 }
 
@@ -340,9 +340,9 @@ uint8 _MPU6050_DMP_Updates(uint8 datacounts) {
 uint32 MPU6050_Get_FIFO_Count() {
     uint8 i[2];
     EI2C_Mem_Read(&MPU6050_I2C_Struct, MPU6050_ADDR, 0x72, i, 2);
-    OLED_Printf(5,45,6,"%d",i[0]);
-    OLED_Printf(5,55,6,"%d",i[1]);
-    OLED_Update();
+//    OLED_Printf(5,45,6,"%d",i[0]);
+//    OLED_Printf(5,55,6,"%d",i[1]);
+//    OLED_Update();
     return ((i[0] << 8) + i[1]);
 }
 
@@ -425,21 +425,18 @@ void _DMP_Init() {
 
 }
 
-void MPU6050_Check_DMP_Status() {
-    uint8 int_enable, int_status, user_ctrl;
+void _MPU6050_Data_Init() {
+    // Initialize DMP data
+    for (int i = 0; i < 3; i++) {
+        theta[i] = 0;
+        omega[i] = 0;
+        accel[i] = 0;
 
-    _MPU6050_Read(0x38, 1, &int_enable);
-    _MPU6050_Read(0x3A, 1, &int_status);
-    _MPU6050_Read(0x6A, 1, &user_ctrl);
-
-    OLED_Clear();
-    OLED_Printf(5, 45, 6, "IntEn:0x%02X", int_enable);
-    OLED_Printf(5, 55, 6, "IntSt:0x%02X", int_status);
-    OLED_Printf(5, 5, 6, "UserCtrl:0x%02X", user_ctrl);
-    OLED_Update();
+        theta_offset[i] = 0;
+        omega_offset[i] = 0;
+        accel_offset[i] = 0;
+    }
 }
-
-
 
 void MPU6050_Init() {
     //port configuration
@@ -468,7 +465,8 @@ void MPU6050_Init() {
 //    _MPU6050_Write_Bits(0x1C, 4, 2, 0x00); // Set accelerometer sensitivity to ±2g
 
     _DMP_Init(); // Initialize DMP
-//    MPU6050_Check_DMP_Status();
+    _MPU6050_Data_Init(); // Initialize DMP data
+
     return;
 }
 
@@ -501,9 +499,9 @@ EI2C_Status MPU6050_Read_Gyro() {
         Gyro_Y_RAW = (sint16) ((uint16) Rec_Data[2] << 8 | Rec_Data[3]);
         Gyro_Z_RAW = (sint16) ((uint16) Rec_Data[4] << 8 | Rec_Data[5]);
 
-        omega[0] = Gyro_X_RAW / 131.0 / 180.0 * 3.1415926 - omega_offset[0];
-        omega[1] = Gyro_Y_RAW / 131.0 / 180.0 * 3.1415926 - omega_offset[1];
-        omega[2] = Gyro_Z_RAW / 131.0 / 180.0 * 3.1415926 - omega_offset[2];
+        omega[0] = Gyro_X_RAW / 131.0 - omega_offset[0];
+        omega[1] = Gyro_Y_RAW / 131.0 - omega_offset[1];
+        omega[2] = Gyro_Z_RAW / 131.0 - omega_offset[2];
     }
     return retVal;
 }
@@ -537,34 +535,39 @@ void MPU6050_Read_Theta() {
         while (i < 42) i = MPU6050_Get_FIFO_Count();
         _MPU6050_Read_DMP(dmpData); // Read DMP data
         // Process quaternion data to calculate theta
-        double q0 = ((dmpData[0] << 8) | dmpData[1])/ 16384.0;
-        double q1 = ((dmpData[4] << 8) | dmpData[5])/ 16384.0;
-        double q2 = ((dmpData[8] << 8) | dmpData[9])/ 16384.0;
-        double q3 = ((dmpData[12] << 8) | dmpData[13])/ 16384.0;
+        double q0 = (double)(((sint16)dmpData[0] << 8) | dmpData[1])/ 16384.0;
+        double q1 = (double)(((sint16)dmpData[4] << 8) | dmpData[5])/ 16384.0;
+        double q2 = (double)(((sint16)dmpData[8] << 8) | dmpData[9])/ 16384.0;
+        double q3 = (double)(((sint16)dmpData[12] << 8) | dmpData[13])/ 16384.0;
 
         // Convert quaternion to Euler angles (theta)
         theta[0] = atan2(2.0 * (q1 * q2 + q0 * q3),
-                        1 - 2.0 * (q2 * q2 + q3 * q3));
-        theta[1] = asin(2.0 * (q0 * q2 - q1 * q3)) * 57.3;
+                        1 - 2.0 * (q2 * q2 + q3 * q3)) * 57.3;
+        double sinp = 2.0 * (q0 * q2 - q3 * q1);
+        if (sinp >= 1)
+            sinp = 1;
+        else if (sinp <= -1)
+            sinp = -1;
+        theta[1] = asin(sinp) * 57.3;
         theta[2] = atan2(2.0 * (q0 * q1 + q2 * q3),
-                        1 - 2.0 * (q1 * q1 + q2 * q2));
+                        1 - 2.0 * (q1 * q1 + q2 * q2)) * 57.3;
     }
     _MPU6050_Smooth_Theta(); // Smooth theta values
 }
 
-void MPU6050_Get_Omega(float *omegaX, float *omegaY, float *omegaZ) {
-    *omegaX = omega[0] - omega_offset[0];
-    *omegaY = omega[1] - omega_offset[1];
-    *omegaZ = omega[2] - omega_offset[2];
+void MPU6050_Get_Omega(double *omegaX, double *omegaY, double *omegaZ) {
+    *omegaX = omega[0];
+    *omegaY = omega[1];
+    *omegaZ = omega[2];
 }
 
-void MPU6050_Get_Accel(float *accelX, float *accelY, float *accelZ) {
-    *accelX = accel[0] - accel_offset[0];
-    *accelY = accel[1] - accel_offset[1];
-    *accelZ = accel[2] - accel_offset[2];
+void MPU6050_Get_Accel(double *accelX, double *accelY, double *accelZ) {
+    *accelX = accel[0];
+    *accelY = accel[1];
+    *accelZ = accel[2];
 }
 
-void MPU6050_Get_Theta(float *thetaX, float *thetaY, float *thetaZ) {
+void MPU6050_Get_Theta(double *thetaX, double *thetaY, double *thetaZ) {
     *thetaX = theta[0] - theta_offset[0];
     *thetaY = theta[1] - theta_offset[1];
     *thetaZ = theta[2] - theta_offset[2];

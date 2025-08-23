@@ -77,9 +77,10 @@ void core2_main(void) {
 //  OLED_DrawRectangle(80,40,20,10,0);
 
     IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
-    float accel_x, accel_y, accel_z;
-    float omega_x, omega_y, omega_z;
-    float theta_x, theta_y, theta_z;
+    double accel_x, accel_y, accel_z;
+    double omega_x, omega_y, omega_z;
+    double theta_x, theta_y, theta_z;
+
 
     MPU6050_Read_Accel();
     MPU6050_Read_Gyro();
@@ -110,8 +111,8 @@ void core2_main(void) {
         OLED_Printf(5,45,6,"%06.3f",theta_x);
         OLED_Printf(5,55,6,"%06.3f",theta_y);
         OLED_Printf(65,45,6,"%06.3f",theta_z);
-//        OLED_Printf(65,35,6,"%f",mpuData[6]);
-        Time_Delay_us(50000);
+
+        Time_Delay_us(10000);
         OLED_Update();
         IfxPort_togglePin(IO_LED1_PORT, IO_LED1_PIN);
     }
