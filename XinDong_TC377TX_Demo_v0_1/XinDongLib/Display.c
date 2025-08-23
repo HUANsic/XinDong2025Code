@@ -774,7 +774,7 @@ uint8 _OLED_pnpoly(uint8 nvert, uint16 *vertx, uint16 *verty, uint16 testx, uint
 			c = !c;
 		}
 	}
-	return c;
+	return (uint8)c;
 }
 
 /**
@@ -1029,7 +1029,7 @@ void OLED_ShowNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSize)
 		/*调用OLED_ShowChar函数，依次显示每个数字*/
 		/*Number / OLED_Pow(10, Length - i - 1) % 10 可以十进制提取数字的每一位*/
 		/*+ '0' 可将数字转换为字符格式*/
-		OLED_ShowChar(X + i * FontSize, Y, Number / _OLED_Pow(10, Length - i - 1) % 10 + '0', FontSize);
+		OLED_ShowChar(X + i * FontSize, Y, (char)(Number / _OLED_Pow(10, Length - i - 1) % 10 + '0'), FontSize);
 	}
 }
 
@@ -1048,7 +1048,7 @@ void OLED_ShowNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSize)
 void OLED_ShowSignedNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSize)
 {
 	uint8 i;
-	uint32 Number1;
+	int Number1;
 	
 	if (Number >= 0)						//数字大于等于0
 	{
@@ -1058,7 +1058,7 @@ void OLED_ShowSignedNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 Fon
 	else									//数字小于0
 	{
 		OLED_ShowChar(X, Y, '-', FontSize);	//显示-号
-		Number1 = -Number;					//Number1等于Number取负
+		Number1 = -1 * Number;					//Number1等于Number取负
 	}
 	
 	for (i = 0; i < Length; i++)			//遍历数字的每一位								
@@ -1066,7 +1066,7 @@ void OLED_ShowSignedNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 Fon
 		/*调用OLED_ShowChar函数，依次显示每个数字*/
 		/*Number1 / OLED_Pow(10, Length - i - 1) % 10 可以十进制提取数字的每一位*/
 		/*+ '0' 可将数字转换为字符格式*/
-		OLED_ShowChar(X + (i + 1) * FontSize, Y, Number1 / _OLED_Pow(10, Length - i - 1) % 10 + '0', FontSize);
+		OLED_ShowChar(X + (i + 1) * FontSize, Y, (char)(Number1 / _OLED_Pow(10, Length - i - 1) % 10) + '0', FontSize);
 	}
 }
 
@@ -1125,7 +1125,7 @@ void OLED_ShowBinNum(uint8 X, uint8 Y, uint32 Number, uint8 Length, uint8 FontSi
 		/*调用OLED_ShowChar函数，依次显示每个数字*/
 		/*Number / OLED_Pow(2, Length - i - 1) % 2 可以二进制提取数字的每一位*/
 		/*+ '0' 可将数字转换为字符格式*/
-		OLED_ShowChar(X + i * FontSize, Y, Number / _OLED_Pow(2, Length - i - 1) % 2 + '0', FontSize);
+		OLED_ShowChar(X + i * FontSize, Y, (char)(Number / _OLED_Pow(2, Length - i - 1) % 2) + '0', FontSize);
 	}
 }
 
@@ -1334,7 +1334,8 @@ uint8 OLED_GetPoint(uint8 X, uint8 Y)
   */
 void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 {
-	int x, y, dx, dy, d, incrE, incrNE, temp;
+    int x, y, temp;
+    int dx, dy, d, incrE, incrNE;
 	int x0 = X0, y0 = Y0, x1 = X1, y1 = Y1;
 	uint8 yflag = 0, xyflag = 0;
 	
@@ -1346,7 +1347,7 @@ void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 		/*遍历X坐标*/
 		for (x = x0; x <= x1; x ++)
 		{
-			OLED_DrawPoint(x, y0);	//依次画点
+			OLED_DrawPoint((uint8)x, (uint8)y0);	//依次画点
 		}
 	}
 	else if (x0 == x1)	//竖线单独处理
@@ -1357,7 +1358,7 @@ void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 		/*遍历Y坐标*/
 		for (y = y0; y <= y1; y ++)
 		{
-			OLED_DrawPoint(x0, y);	//依次画点
+			OLED_DrawPoint((uint8)x0, (uint8)y);	//依次画点
 		}
 	}
 	else				//斜线
@@ -1378,8 +1379,8 @@ void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 		{
 			/*将Y坐标取负*/
 			/*取负后影响画线，但是画线方向由第一、四象限变为第一象限*/
-			y0 = -y0;
-			y1 = -y1;
+			y0 = -1 * y0;
+			y1 = -1 * y1;
 			
 			/*置标志位yflag，记住当前变换，在后续实际画线时，再将坐标换回来*/
 			yflag = 1;
@@ -1407,10 +1408,10 @@ void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 		y = y0;
 		
 		/*画起始点，同时判断标志位，将坐标换回来*/
-		if (yflag && xyflag){OLED_DrawPoint(y, -x);}
-		else if (yflag)		{OLED_DrawPoint(x, -y);}
-		else if (xyflag)	{OLED_DrawPoint(y, x);}
-		else				{OLED_DrawPoint(x, y);}
+		if (yflag && xyflag){OLED_DrawPoint((uint8)y, (uint8)(-x));}
+		else if (yflag)		{OLED_DrawPoint((uint8)x, (uint8)(-y));}
+		else if (xyflag)	{OLED_DrawPoint((uint8)y, (uint8)x);}
+		else				{OLED_DrawPoint((uint8)x, (uint8)y);}
 		
 		while (x < x1)		//遍历X轴的每个点
 		{
@@ -1426,10 +1427,10 @@ void OLED_DrawLine(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1)
 			}
 			
 			/*画每一个点，同时判断标志位，将坐标换回来*/
-			if (yflag && xyflag){OLED_DrawPoint(y, -x);}
-			else if (yflag)		{OLED_DrawPoint(x, -y);}
-			else if (xyflag)	{OLED_DrawPoint(y, x);}
-			else				{OLED_DrawPoint(x, y);}
+			if (yflag && xyflag){OLED_DrawPoint((uint8)y, (uint8)(-x));}
+			else if (yflag)		{OLED_DrawPoint((uint8)x, (uint8)(-y));}
+			else if (xyflag)	{OLED_DrawPoint((uint8)y, (uint8)x);}
+			else				{OLED_DrawPoint((uint8)x, (uint8)y);}
 		}	
 	}
 }
@@ -1552,7 +1553,7 @@ void OLED_DrawTriangle(uint8 X0, uint8 Y0, uint8 X1, uint8 Y1, uint8 X2, uint8 Y
   */
 void OLED_DrawCircle(uint8 X, uint8 Y, uint8 Radius, uint8 IsFilled)
 {
-	uint16 x, y, d, j;
+	int x, y, d, j;
 	
 	/*使用Bresenham算法画圆，可以避免耗时的浮点运算，效率更高*/
 	/*参考文档：https://www.cs.montana.edu/courses/spring2009/425/dslectures/Bresenham.pdf*/

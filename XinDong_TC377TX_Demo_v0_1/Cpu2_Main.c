@@ -67,53 +67,54 @@ void core2_main(void) {
         ;
 
     Time_Delay_us(100000);
-//  OLED_Clear();
+    OLED_Clear();
 //  Time_Delay(1);
 //  OLED_Printf(5,5,6,"Hello World!");
 //  OLED_ShowChinese(5,30,"加速中");
 //  OLED_DrawLine(100,40,90,35);
 //  OLED_DrawCircle(90,40,15,1);
-//  OLED_DrawTriangle(100,40,90,35,110,45,0);
+//  OLED_DrawTriangle(100,30,70,15,40,45,0);
+//    OLED_DrawLine(100,40,90,35);
 //  OLED_DrawRectangle(80,40,20,10,0);
 
     IfxPort_setPinState(IO_LED1_PORT, IO_LED1_PIN, IfxPort_State_low);
-    double accel_x, accel_y, accel_z;
-    double omega_x, omega_y, omega_z;
-    double theta_x, theta_y, theta_z;
-
-
-    MPU6050_Read_Accel();
-    MPU6050_Read_Gyro();
-    MPU6050_Read_Theta();
-
-    MPU6050_Set_AccelOffset();
-    MPU6050_Set_OmegaOffset();
-    MPU6050_Set_ThetaOffset();
+//    double accel_x, accel_y, accel_z;
+//    double omega_x, omega_y, omega_z;
+//    double theta_x, theta_y, theta_z;
+//
+//
+//    MPU6050_Read_Accel();
+//    MPU6050_Read_Gyro();
+//    MPU6050_Read_Theta();
+//
+//    MPU6050_Set_AccelOffset();
+//    MPU6050_Set_OmegaOffset();
+//    MPU6050_Set_ThetaOffset();
 
     while (1) {
         // some code to indicate that the core is not dead
-        OLED_Clear();
+//        OLED_Clear();
 
-        MPU6050_Read_Accel();
-        MPU6050_Get_Accel(&accel_x,&accel_y,&accel_z);
-        OLED_Printf(5,15,6,"%f",accel_x);
-        OLED_Printf(5,25,6,"%f",accel_y);
-        OLED_Printf(5,35,6,"%f",accel_z);
-
-        MPU6050_Read_Gyro();
-        MPU6050_Get_Omega(&omega_x,&omega_y,&omega_z);
-        OLED_Printf(65,15,6,"%f",omega_x);
-        OLED_Printf(65,25,6,"%f",omega_y);
-        OLED_Printf(65,35,6,"%f",omega_z);
-
-        MPU6050_Read_Theta();
-        MPU6050_Get_Theta(&theta_x, &theta_y,&theta_z);
-        OLED_Printf(5,45,6,"%06.3f",theta_x);
-        OLED_Printf(5,55,6,"%06.3f",theta_y);
-        OLED_Printf(65,45,6,"%06.3f",theta_z);
+//        MPU6050_Read_Accel();
+//        MPU6050_Get_Accel(&accel_x,&accel_y,&accel_z);
+//        OLED_Printf(5,15,6,"%f",accel_x);
+//        OLED_Printf(5,25,6,"%f",accel_y);
+//        OLED_Printf(5,35,6,"%f",accel_z);
+//
+//        MPU6050_Read_Gyro();
+//        MPU6050_Get_Omega(&omega_x,&omega_y,&omega_z);
+//        OLED_Printf(65,15,6,"%f",omega_x);
+//        OLED_Printf(65,25,6,"%f",omega_y);
+//        OLED_Printf(65,35,6,"%f",omega_z);
+//
+//        MPU6050_Read_Theta();
+//        MPU6050_Get_Theta(&theta_x, &theta_y,&theta_z);
+//        OLED_Printf(5,45,6,"%06.3f",theta_x);
+//        OLED_Printf(5,55,6,"%06.3f",theta_y);
+//        OLED_Printf(65,45,6,"%06.3f",theta_z);
 
         Time_Delay_us(10000);
-        OLED_Update();
+//        OLED_Update();
         IfxPort_togglePin(IO_LED1_PORT, IO_LED1_PIN);
     }
 }
