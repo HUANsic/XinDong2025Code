@@ -42,7 +42,7 @@ inline boolean _EI2C_SCL_State(EI2C_Typedef *ei2c) {
 	return IfxPort_getPinState(ei2c->scl_port, ei2c->scl_pin);
 }
 
-void EI2C_Hold() {
+void _EI2C_Hold() {
 	uint32 i;
 	/*
 	 EI2C_Hold:	.type	func	instruction cycle count (total cycle count)
@@ -161,15 +161,15 @@ void EI2C_Hold() {
  */
 void _EI2C_Start(EI2C_Typedef *ei2c) {
 	/// can not assume line is in proper state: SDA = SCL = PullUp
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Fall(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_High(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Rise(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_Low(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 }
 
 /*          ___         ___ ___ ___ ___
@@ -182,18 +182,18 @@ void _EI2C_Start(EI2C_Typedef *ei2c) {
  */
 void _EI2C_Restart(EI2C_Typedef *ei2c) {
 	/// can not assume line is in proper state: SDA = SCL = PullUp
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Fall(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_Low(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Rise(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_High(ei2c);
-	EI2C_Hold();
-	EI2C_Hold();
+	_EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_Low(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 }
 
 /*          ___         ___ ___
@@ -206,15 +206,15 @@ void _EI2C_Restart(EI2C_Typedef *ei2c) {
  */
 void _EI2C_Stop(EI2C_Typedef *ei2c) {
 	// can not assume line is in proper state: SDA = SCL = PullUp
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Fall(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_Low(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Rise(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_High(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 }
 
 /*          ___         ___
@@ -226,16 +226,16 @@ void _EI2C_Stop(EI2C_Typedef *ei2c) {
  *          ___ ___|___ ___
  */
 void _EI2C_SendBit(EI2C_Typedef *ei2c, boolean bit) {
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Fall(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	if (bit)
 		_EI2C_SDA_High(ei2c);
 	else
 		_EI2C_SDA_Low(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Rise(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 }
 
 /*          ___         ___
@@ -250,16 +250,16 @@ void _EI2C_SendBit(EI2C_Typedef *ei2c, boolean bit) {
  */
 boolean _EI2C_ReadBit(EI2C_Typedef *ei2c) {
 	boolean bit;
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Fall(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SDA_High(ei2c);    // release line
-	EI2C_Hold();
+	_EI2C_Hold();
 	_EI2C_SCL_Rise(ei2c);
 	while (!_EI2C_SCL_State(ei2c))
 		__nop();       // enable clock stretching
 	bit = _EI2C_SDA_State(ei2c);
-	EI2C_Hold();
+	_EI2C_Hold();
 	return bit;
 }
 
