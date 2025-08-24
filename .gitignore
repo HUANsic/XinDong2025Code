@@ -1,6 +1,7 @@
 */TriCore Debug (TASKING)/*
 language.settings.xml
 .metadata/*
+.vscode/*
 *.prefs
 *.o
 *.elf
